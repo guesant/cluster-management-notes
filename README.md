@@ -579,11 +579,30 @@ ssh -N -L 8080:127.0.0.1:8080 usuario@ip-do-servidor
 
 ```bash
 helm upgrade \
-  --repo https://argoproj.github.io/argo-helm argo-cd \
-  --install argocd \
+  --install argocd argo-cd \
+  --repo https://argoproj.github.io/argo-helm  \
   --namespace argocd \
   --create-namespace \
-  --values "$SCRIPT_DIR/values.yaml" \
+  --set server.ingress.enabled=false \
+  --set server.resources.requests.cpu=100m \
+  --set server.resources.requests.memory=128Mi \
+  --set server.resources.limits.cpu=500m \
+  --set server.resources.limits.memory=512Mi \
+  --set-string 'configs.params.server\.insecure=true' \
   --wait \
   ;
 ```
+
+Encaminhar argocd-server para 8080
+
+```sh
+kubectl --namespace argocd port-forward service/argocd-server 8080:80
+```
+
+Obter senha inicial
+
+```sh
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+```
+
+Troque a senha inicial!
