@@ -1,0 +1,26 @@
+gateway:
+  name: internal
+  namespace: gateway-system
+  listener: websecure
+  serviceName: rancher
+  servicePort: 80
+
+httpRoute:
+  # Opt-in: habilite somente depois de revisar Gateway, hostname e acesso de rede.
+  enabled: false
+
+rancher:
+  hostname: rancher.internal.example.com
+  ingress:
+    enabled: false
+  # O Gateway termina TLS; restrinja acesso direto ao Service HTTP.
+  tls: external
+  # Use 1 somente em laboratório; para HA mantenha múltiplas réplicas e nós.
+  replicas: 3
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
