@@ -71,9 +71,144 @@ ufw reload
 
 #### Caso use firewalld para controlar as regras
 
-### Configurar SSHD para somente acessar autenticação via chave SSH.
+TODO.
 
-TODO
+### Deixar o servidor SSH mais rígido
+
+Confirme que é possível entrar sem informar a senha da conta:
+
+```bash
+ssh usuario@ip-do-servidor
+```
+
+Mantenha essa sessão aberta enquanto altera a configuração. Ela poderá ser usada para corrigir o servidor caso uma nova conexão não funcione.
+
+```sh
+sudo install -d \
+  -o root \
+  -g root \
+  -m 0755 \
+  /etc/ssh/sshd_config.d \
+;
+```
+
+```sh
+${EDITOR:-nano} /etc/ssh/sshd_config.d/00-hardening.conf
+```
+
+```sh
+# Exigir autenticação por chave pública
+PubkeyAuthentication yes
+AuthenticationMethods publickey
+
+# Desabilitar autenticação por senha
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PermitEmptyPasswords no
+
+# Manter verificações de conta e sessão do PAM
+UsePAM yes
+
+# Impedir login direto como root
+PermitRootLogin no
+
+# Validar permissões do home, ~/.ssh e authorized_keys
+StrictModes yes
+
+# Reduzir a janela e o número de tentativas de autenticação
+LoginGraceTime 30
+MaxAuthTries 4
+
+# Desabilitar funcionalidades não utilizadas
+X11Forwarding no
+PermitTunnel no
+PermitUserEnvironment no
+
+# Aumentar os detalhes úteis para auditoria
+LogLevel VERBOSE
+```
+
+Restringir quais usuários podem acessar
+
+```sh
+groupadd --force ssh-users
+```
+
+```sh
+usermod -aG ssh-users $USER
+```
+
+Acrescente ao arquivo `/etc/ssh/sshd_config.d/00-hardening.conf`:
+
+```sh
+${EDITOR:-nano} /etc/ssh/sshd_config.d/00-hardening.conf
+```
+
+```text
+AllowGroups ssh-users
+```
+
+**Desabilitar encaminhamentos SSH**
+
+Caso o servidor não utilize túneis SSH, encaminhamento de portas, agent forwarding, X11, ProxyJump ou ferramentas que dependam dessas funcionalidades, pode-se acrescentar:
+
+```text
+DisableForwarding yes
+```
+
+Não habilite essa opção em servidores acessados por VS Code Remote SSH, túneis com `ssh -L`/`ssh -R`, bastion hosts ou conexões que utilizem `ProxyJump`.
+
+**Validar a configuração**
+
+Antes de aplicar, verifique a sintaxe:
+
+```bash
+sshd -t
+```
+
+Recarregue o serviço sem encerrar as conexões existentes:
+
+```bash
+systemctl reload ssh
+```
+
+bra outro terminal e teste uma nova conexão:
+
+```bash
+ssh usuario@ip-do-servidor
+```
+
+Também confirme que senha não é aceita:
+
+```bash
+ssh \
+  -o PubkeyAuthentication=no \
+  -o PreferredAuthentications=password,keyboard-interactive \
+  usuario@ip-do-servidor
+```
+
+Essa tentativa deverá terminar com uma mensagem semelhante a:
+
+```text
+Permission denied (publickey).
+```
+
+Somente encerre a sessão SSH original depois que a nova conexão por chave funcionar.
+
+**Permissões da chave autorizada**
+
+No servidor, o diretório e o arquivo de chaves devem pertencer ao usuário e não devem ser graváveis por terceiros:
+
+```bash
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+```
+
+Para corrigir o proprietário, quando necessário:
+
+```bash
+chown -R "$(id -un):$(id -gn)" ~/.ssh
+```
 
 ### Configurar fail2ban
 
