@@ -109,9 +109,6 @@ PermitEmptyPasswords no
 # Manter verificações de conta e sessão do PAM
 UsePAM yes
 
-# Impedir login direto como root
-PermitRootLogin no
-
 # Validar permissões do home, ~/.ssh e authorized_keys
 StrictModes yes
 
@@ -146,6 +143,11 @@ ${EDITOR:-nano} /etc/ssh/sshd_config.d/00-hardening.conf
 
 ```text
 AllowGroups ssh-users
+```
+
+```text
+# Impedir login direto como root
+PermitRootLogin no
 ```
 
 **Desabilitar encaminhamentos SSH**
@@ -363,6 +365,7 @@ bash <<'EOF'
     --token "${K3S_TOKEN}" \
     --tls-san "${K3S_API_HOST}" \
     --tls-san "${K3S_NODE_IP}" \
+    --disable local-storage \
     --cluster-init \
   ;
 
