@@ -538,3 +538,16 @@ kubectl --namespace longhorn-system port-forward service/longhorn-frontend 8080:
 ```bash
 ssh -N -L 8080:127.0.0.1:8080 usuario@ip-do-servidor
 ```
+
+### argocd
+
+```bash
+helm upgrade \
+  --repo https://argoproj.github.io/argo-helm argo-cd \
+  --install argocd \
+  --namespace argocd \
+  --create-namespace \
+  --values "$SCRIPT_DIR/values.yaml" \
+  --wait \
+  ;
+```
