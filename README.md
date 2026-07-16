@@ -84,7 +84,7 @@ ssh usuario@ip-do-servidor
 Mantenha essa sessão aberta enquanto altera a configuração. Ela poderá ser usada para corrigir o servidor caso uma nova conexão não funcione.
 
 ```sh
-sudo install -d \
+install -d \
   -o root \
   -g root \
   -m 0755 \
@@ -212,7 +212,126 @@ chown -R "$(id -un):$(id -gn)" ~/.ssh
 
 ### Configurar fail2ban
 
-TODO
+```bash
+apt update
+apt install --yes \
+  fail2ban \
+  python3-systemd
+```
+
+```bash
+${EDITOR:-nano} /etc/fail2ban/jail.d/sshd.local
+```
+
+```conf
+[DEFAULT]
+# Endereços que nunca devem ser bloqueados
+ignoreip = 127.0.0.1/8 ::1 # 192.168.0.0/24 10.0.0.0/8
+
+# Bloqueio inicial
+bantime = 1h
+
+# Janela na qual as falhas serão contabilizadas
+findtime = 10m
+
+# Quantidade de falhas permitidas dentro da janela
+maxretry = 5
+
+# Aumentar progressivamente o tempo de bloqueio para reincidentes
+bantime.increment = true
+bantime.maxtime = 1w
+
+# Não fazer resolução DNS para os endereços encontrados nos logs
+usedns = no
+
+[sshd]
+enabled = true
+port = ssh
+# Ler os eventos diretamente do journal do systemd
+backend = systemd
+# Modos disponíveis: normal, ddos, extra e aggressive
+mode = normal
+```
+
+**Validar a configuração**
+
+Antes de iniciar ou reiniciar o serviço:
+
+```bash
+fail2ban-client -t
+```
+
+A validação deve terminar com:
+
+```text
+OK: configuration test is successful
+```
+
+**Habilite e inicie o serviço:**
+
+```bash
+systemctl enable --now fail2ban
+```
+
+**Depois de alterar a configuração:**
+
+```bash
+fail2ban-client -t &&
+systemctl restart fail2ban
+```
+
+**Verificar o funcionamento**
+
+Verifique se o daemon está respondendo:
+
+```bash
+fail2ban-client ping
+```
+
+Saída esperada:
+
+```text
+Server replied: pong
+```
+
+Liste as jails habilitadas:
+
+```bash
+fail2ban-client status
+```
+
+Verifique especificamente a proteção do SSH:
+
+```bash
+fail2ban-client status sshd
+```
+
+**Acompanhar os logs**
+
+Logs do Fail2Ban:
+
+```bash
+journalctl \
+  --unit fail2ban \
+  --follow
+```
+
+Logs do SSH:
+
+```bash
+journalctl \
+  --unit ssh \
+  --follow
+```
+
+Eventos recentes de bloqueio:
+
+```bash
+journalctl \
+  --unit fail2ban \
+  --since "1 hour ago" \
+  | grep -E 'Ban|Unban'
+```
 
 ## Gestão dos nós do cluster k3s
 
