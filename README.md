@@ -373,11 +373,11 @@ bash <<'EOF'
 
   echo "aguardando kubeconfig..."
   until [[ -f ${KUBECONFIG} ]]; do
-    sleep 3
+    sleep 5
   done
 
   echo "aguardando ready..."
-  kubectl wait --for=condition=Ready node/${K3S_NODE_NAME} --timeout=120s
+  kubectl wait --for=condition=Ready "node/${K3S_NODE_NAME}" --timeout=120s
 
   echo "cluster instalado."
 EOF
@@ -475,6 +475,14 @@ EOF
 
 ## Subir serviços base
 
+Os comandos podem ser executados tanto diretamente no nó manager como em uma máquina remota que tenha acesso à API do k8s (mediante KUBECONFIG e kubectl).
+
+Instalar cli do helm
+
+```bash
+curl -sfL https://raw.githubusercontent.com/guesant/cluster-management-notes/refs/heads/main/scripts/install/helm.sh | bash -
+```
+
 ### cert-manager
 
 ```bash
@@ -501,24 +509,20 @@ Veja antes os requisitos: <https://longhorn.io/docs/1.12.0/deploy/install/#insta
 >
 > - Kubernetes >= v1.25
 > - RWX support requires that each node has a NFSv4 client installed.
->   - For installing a NFSv4 client, refer to Install NFSv4 client.
+>   - For installing a NFSv4 client, refer to [Install NFSv4 client](https://longhorn.io/docs/1.12.0/deploy/install/#install-nfsv4-client).
 > - bash, curl, findmnt, grep, awk, blkid, lsblk must be installed.
 > - Mount propagation must be enabled.
 
-O longhorn disponibiliza o `longhornctl` para ajudar com algumas operações, veja mais em: <https://longhorn.io/docs/1.12.0/advanced-resources/longhornctl/> e em <https://github.com/longhorn/cli>.
-
-```bash
-# identificar possíveis problemas antes do uso
-longhornctl check preflight
-
-# instalar depedências antes do uso
-longhornctl install preflight
+```sh
+apt install -y bash curl findmnt grep gawk util-linux
 ```
 
-Para instalar o longhornctl:
+```sh
+apt install -y nfs-common cryptsetup dmsetup open-iscsi
+```
 
-```bash
-curl -sfL https://raw.githubusercontent.com/guesant/cluster-management-notes/refs/heads/main/scripts/install/longhornctl.sh | bash -
+```sh
+modprobe iscsi_tcp
 ```
 
 ```bash
@@ -541,6 +545,22 @@ kubectl --namespace longhorn-system port-forward service/longhorn-frontend 8080:
 ```bash
 ssh -N -L 8080:127.0.0.1:8080 usuario@ip-do-servidor
 ```
+
+- longhornctl (instalação no nó)
+
+  O longhorn disponibiliza o `longhornctl` para ajudar com algumas operações, veja mais em: <https://longhorn.io/docs/1.12.0/advanced-resources/longhornctl/> e em <https://github.com/longhorn/cli>.
+
+  ```bash
+  curl -sfL https://raw.githubusercontent.com/guesant/cluster-management-notes/refs/heads/main/scripts/install/longhornctl.sh | bash -
+  ```
+
+  ```bash
+  # identificar possíveis problemas antes do uso
+  longhornctl check preflight
+
+  # instalar depedências antes do uso
+  longhornctl install preflight
+  ```
 
 ### argocd
 
