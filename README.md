@@ -1,30 +1,36 @@
 # cluster-management-notes
 
-## Configuração geral
+## Configuração geral das máquinas (físicas e virtuais)
 
 ### Por padrão, fechar todas as portas de entrada.
 
+#### Tome cuidado com as ports do docker
+
 > [!WARNING]
 > Quando uma porta de um container é publicada pelo Docker, ela pode não ser filtrada da maneira esperada pelo UFW ou pelo firewalld.
-> 
-> Com UFW, o Docker desvia o tráfego publicado antes que ele passe pelas chains normalmente gerenciadas pelo UFW. Com firewalld, o Docker cria uma zona chamada docker, cujo target padrão é ACCEPT.
-> 
-> Portanto, não considere uma porta publicada pelo Docker protegida apenas porque o firewall do host possui uma política padrão de bloqueio.
-> 
-> Para serviços que só devem ser acessados pelo próprio host, prefira:
-> 
-> ports:
->   - "127.0.0.1:5432:5432"
-> 
-> Para serviços que devem ser acessados somente por uma rede específica, também é possível fazer bind diretamente no endereço da interface:
-> 
-> ports:
->   - "192.168.1.10:5432:5432"
-> 
-> Evite publicar apenas como 5432:5432, pois isso normalmente faz bind em todas as interfaces disponíveis.
 
-**Caso esteja usando ufw:**
+Com UFW, o Docker desvia o tráfego publicado antes que ele passe pelas chains normalmente gerenciadas pelo UFW. Com firewalld, o Docker cria uma zona chamada docker, cujo target padrão é ACCEPT.
 
+Portanto, não considere uma porta publicada pelo Docker protegida apenas porque o firewall do host possui uma política padrão de bloqueio.
+
+Para serviços que só devem ser acessados pelo próprio host, prefira:
+
+```yaml
+ports:
+  - "127.0.0.1:5432:5432"
+```
+
+Para serviços que devem ser acessados somente por uma rede específica, também é possível fazer bind diretamente no endereço da interface:
+
+```yaml
+ports:
+  - "192.168.1.10:5432:5432"
+```
+
+Evite publicar apenas como 5432:5432, pois isso normalmente faz bind em todas as interfaces disponíveis.
+
+#### Caso use ufw para controlar as regras
+  
 Negar qualquer entrada, permitir qualquer saída.
 
 ```bash
@@ -60,8 +66,13 @@ ufw enable
 # caso já tenha habilitado, só fazer o reload
 ufw reload
 ```
+</details>
 
-2. Configurar SSHD para somente acessar autenticação via chave SSH.
+#### Caso use firewalld para controlar as regras
+
+### Configurar SSHD para somente acessar autenticação via chave SSH.
+
+TODO
 
 ### Configurar fail2ban
 
@@ -140,7 +151,8 @@ bash <<'EOF'
     --token "${K3S_TOKEN}" \
     --tls-san "${K3S_API_HOST}" \
     --tls-san "${K3S_NODE_IP}" \
-    --cluster-init
+    --cluster-init \
+  ;
 
   export KUBECONFIG="/etc/rancher/k3s/k3s.yaml"
 
@@ -171,7 +183,9 @@ bash <<'EOF'
     --node-ip "${K3S_NODE_IP}" \
     --node-name "${K3S_NODE_NAME}" \
     --token "${K3S_TOKEN}" \
-    --tls-san "${K3S_API_HOST}"
+    --tls-san "${K3S_API_HOST}" \
+    --disable local-storage \
+  ;
 
   export KUBECONFIG="/etc/rancher/k3s/k3s.yaml"
 
@@ -210,3 +224,22 @@ bash <<'EOF'
 EOF
 ```
 
+## Subir serviços base
+
+### cert-manager
+
+```bash
+helm upgrade \
+  --repo https://charts.jetstack.io cert-manager \
+  --install cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --set crds.enabled=true \
+  --set config.gatewayAPI.enabled=true \
+  --set-json 'extraArgs=[
+    "--dns01-recursive-nameservers-only",
+    "--dns01-recursive-nameservers=1.1.1.1:53,8.8.8.8:53"
+  ]' \
+  --wait \
+;
+```
