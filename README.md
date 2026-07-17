@@ -9,6 +9,8 @@ Minhas anotações sobre como criar e operar clusters K3s de nó único (*single
 
 - [Site publicado](https://guesant.github.io/cluster-management-notes/)
 - [Início do guia](docs/index.md)
+- [Ensaio: cluster K3s de nó único](docs/guides/k3s-single-node.md)
+- [Ensaio: cluster K3s multinó](docs/guides/k3s-multi-node.md)
 - [Segurança dos hosts](docs/security/hosts/firewall.md)
 - [Kubernetes](docs/k8s/concepts.md)
 - [K3s](docs/k8s/k3s/architecture.md)
