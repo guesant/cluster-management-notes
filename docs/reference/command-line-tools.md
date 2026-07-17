@@ -1,6 +1,5 @@
 # Ferramentas de linha de comando
 
-
 As ferramentas desta seção são clientes administrativos. Elas podem ser instaladas em um manager ou em uma estação externa; pertencer ao cluster não é requisito. Para operar recursos remotamente, a máquina precisa alcançar a API correspondente e possuir credenciais com as permissões necessárias.
 
 Os scripts deste repositório instalam binários em `/usr/local/bin` e usam `sudo` quando necessário. Revise o conteúdo antes de executar um script remoto. Para maior controle, clone o repositório e execute o arquivo localmente.
@@ -49,6 +48,16 @@ curl -sfL \
   | bash -
 ```
 
+## cmctl
+
+`cmctl` é o cliente administrativo do cert-manager. Ele verifica a disponibilidade da API e do webhook, reúne o estado dos recursos envolvidos na emissão de um certificado e permite solicitar uma reemissão manual controlada. A ferramenta usa o mesmo kubeconfig e contexto de `kubectl`; portanto, suas operações ficam limitadas pelas permissões da identidade ativa.
+
+A partir da versão 2, `cmctl` possui ciclo de releases independente do cert-manager. Não presuma que as duas versões precisam ser iguais. A versão de referência deste guia é `v2.5.0`; instale-a por um dos [métodos oficiais](https://cert-manager.io/docs/reference/cmctl/#installation), fixe a versão quando usar o binário de release e valide o arquivo com o `checksums.txt` publicado na mesma release.
+
+Não use a antiga imagem `cert-manager-ctl` como alternativa atual em Docker: o cert-manager 1.14 foi a última versão que a publicou. Este guia usa o binário standalone `cmctl`; o upstream também documenta o [modo de plugin `kubectl cert-manager`](https://cert-manager.io/docs/reference/cmctl/#kubectl-plugin), instalado com o mesmo binário sob o nome esperado pelo `kubectl`.
+
+Os procedimentos de `check api`, diagnóstico e renovação ficam na página do [cert-manager](../k8s/extensions/cert-manager.md).
+
 ## longhornctl
 
 `longhornctl` auxilia na preparação e no diagnóstico do Longhorn, principalmente por meio dos testes de preflight usados neste guia. Ele não monta volumes para as aplicações e não substitui a interface CSI; os Pods continuam solicitando armazenamento por PVCs Kubernetes.
@@ -74,5 +83,15 @@ Depois de instalar as ferramentas, valide as versões:
 kubectl version --client
 helm version
 argocd version --client
+cmctl version --client
 longhornctl version
 ```
+
+## Fontes e leitura adicional
+
+- [Introdução ao kubectl — Kubernetes](https://kubernetes.io/docs/reference/kubectl/introduction/): descreve o cliente, sua configuração e a comunicação com a API Kubernetes.
+- [Introdução ao Helm](https://helm.sh/docs/intro/introduction/): apresenta charts, releases, repositórios e o fluxo de instalação e atualização.
+- [Argo CD CLI](https://argo-cd.readthedocs.io/en/stable/user-guide/commands/argocd/): referência oficial dos comandos e opções do cliente Argo CD.
+- [`cmctl` — cert-manager](https://cert-manager.io/docs/reference/cmctl/): documenta instalação, versionamento independente e operações sobre certificados.
+- [`longhornctl` — Longhorn](https://longhorn.io/docs/1.12.0/advanced-resources/longhornctl/): explica instalação, preflight e comandos de diagnóstico da CLI.
+- [Boas práticas para kubeconfig — Kubernetes](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/): orienta sobre contextos, arquivos confiáveis e seleção de credenciais pelos clientes.

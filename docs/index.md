@@ -11,12 +11,21 @@ Minhas anotações sobre como criar e operar clusters K3s de nó único (*single
 ## Comece por aqui
 
 - [Ensaio: cluster K3s](guides/k3s.md): roteiro com caminho comum, escolha de topologia, checkpoints e módulos opcionais.
+- [Guia de operação contínua](guides/operations.md): checklist de boas práticas, monitoramento, alertas, atualizações, probes, manutenção e recuperação.
+- [Runbook de manutenção e mudanças](operations/maintenance-runbook.md): modelo preenchível para rotinas, mudanças, critérios de parada, rollback e evidências.
 - [Escopo, convenções e versões](reference/conventions.md): premissas adotadas pelos comandos e versões usadas como referência.
 
 ## Consulte por tema
 
 - [Fundamentos do Kubernetes](k8s/concepts.md) e [arquitetura do K3s](k8s/k3s/architecture.md).
 - [Segurança dos hosts](security/hosts/firewall.md).
+- [Prontidão de workloads](k8s/workloads/production-readiness.md), [ciclo de vida de imagens](strategies/deployment/image-lifecycle.md), [observabilidade](operations/observability-and-alerting.md) e [backup](operations/backup-and-recovery.md).
 - [Rede Kubernetes](k8s/networking/gateway-api-and-traefik.md), [segurança e acesso](k8s/security/remote-access.md) e [extensões](k8s/extensions/cert-manager.md).
 - [GitOps com Argo CD](strategies/deployment/argo-cd.md) e [gestão de segredos com Infisical](strategies/secrets/infisical.md).
-- [Ferramentas de linha de comando](reference/command-line-tools.md).
+- [Ferramentas de linha de comando](reference/command-line-tools.md) e [índice de ferramentas e catálogos](reference/tools-and-resources.md).
+
+## Fontes e leitura adicional
+
+- [Documentação do Kubernetes](https://kubernetes.io/docs/): referência oficial dos conceitos, APIs e procedimentos comuns usados ao longo do guia.
+- [Documentação do K3s](https://docs.k3s.io/): fonte oficial da arquitetura, instalação, configuração e operação da distribuição adotada pelo projeto.
+- [Cloud Native Glossary — CNCF](https://glossary.cncf.io/): glossário mantido pela Cloud Native Computing Foundation para termos do ecossistema cloud native.

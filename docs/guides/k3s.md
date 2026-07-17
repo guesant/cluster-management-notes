@@ -135,6 +135,14 @@ Quando usar os templates, conclua primeiro o bootstrap GitOps e respeite a ordem
 
 **Recomendada para todos os perfis.**
 
-Revise o [checklist operacional](../k8s/k3s/operations/checklist.md) somente para o núcleo e os módulos que escolheu. Depois, use [backup, atualização e remoção](../k8s/k3s/operations/cluster-maintenance.md) como referência recorrente para snapshots, mudanças de versão e ciclo de vida dos nós.
+Revise a [validação pós-instalação](../k8s/k3s/operations/checklist.md) somente para o núcleo e os módulos que escolheu. Depois, adote o [guia de operação contínua](operations.md) para definir responsáveis, cadências, monitoramento, alertas, política de versões e testes de recuperação. Registre cada rotina ou mudança no [runbook de manutenção](../operations/maintenance-runbook.md) e use [backup, atualização e remoção](../k8s/k3s/operations/cluster-maintenance.md) como referência para snapshots, mudanças de versão e ciclo de vida dos nós.
 
-**Checkpoint:** o cluster-base e cada módulo escolhido têm validação registrada, backup compatível com seus dados e um caminho conhecido de manutenção.
+**Checkpoint:** o cluster-base e cada módulo escolhido têm validação registrada, responsáveis e cadências definidos, backup compatível com seus dados e um caminho conhecido de manutenção.
+
+## Fontes e leitura adicional
+
+- [Quick-Start Guide — K3s](https://docs.k3s.io/quick-start): apresenta o fluxo oficial de instalação do primeiro servidor e de associação de agentes.
+- [Requisitos de instalação — K3s](https://docs.k3s.io/installation/requirements): documenta sistemas suportados, recursos mínimos e comunicação de rede entre os nós.
+- [HA com etcd embarcado — K3s](https://docs.k3s.io/datastore/ha-embedded): explica quorum, quantidade de servidores e inicialização de clusters altamente disponíveis.
+- [Acesso ao cluster — K3s](https://docs.k3s.io/cluster-access): descreve o kubeconfig administrativo e o acesso à API a partir de outra máquina.
+- [Backup e restauração do datastore — K3s](https://docs.k3s.io/datastore/backup-restore): referência para snapshots do etcd, token do servidor e procedimentos de recuperação.

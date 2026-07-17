@@ -55,3 +55,10 @@ Em um servidor ou estação com kubeconfig, valide o nó:
 ```bash
 kubectl get nodes -o wide
 ```
+
+## Fontes e leitura adicional
+
+- [K3s — Quick-Start Guide](https://docs.k3s.io/quick-start) — Apresenta o fluxo oficial para registrar agentes com o endereço e o token do servidor.
+- [K3s — `k3s agent`](https://docs.k3s.io/cli/agent) — Referência das opções do agent, incluindo `server`, `token`, `node-name` e `node-ip`.
+- [K3s — Architecture](https://docs.k3s.io/architecture) — Explica o registro dos agents, o balanceador local e as conexões mantidas com os servers.
+- [K3s — Token Management](https://docs.k3s.io/cli/token) — Diferencia tokens de server, agent e bootstrap e descreve como eles autenticam a entrada de nós.

@@ -183,3 +183,8 @@ Permission denied (publickey).
 
 Somente encerre a sessão SSH original depois que a nova conexão por chave funcionar.
 
+## Fontes e leitura adicional
+
+- [`sshd_config(5)` — OpenSSH/OpenBSD manual pages](https://man.openbsd.org/sshd_config): referência primária das diretivas de autenticação, acesso, encaminhamento, auditoria e validação usadas no hardening.
+- [`sshd(8)` — OpenSSH/OpenBSD manual pages](https://man.openbsd.org/sshd): documenta o formato de `authorized_keys`, as permissões esperadas e o fluxo de autenticação do servidor.
+- [OpenSSH server — Ubuntu Server documentation](https://ubuntu.com/server/docs/openssh-server/): orientações oficiais do Ubuntu para snippets em `sshd_config.d`, autenticação por chaves, validação com `sshd -t` e diagnóstico pelo journal.

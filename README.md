@@ -10,6 +10,11 @@ Minhas anotações sobre como criar e operar clusters K3s de nó único (*single
 - [Site publicado](https://guesant.github.io/cluster-management-notes/)
 - [Início do guia](docs/index.md)
 - [Ensaio: cluster K3s](docs/guides/k3s.md)
+- [Guia de operação contínua](docs/guides/operations.md)
+- [Prontidão de workloads](docs/k8s/workloads/production-readiness.md)
+- [Observabilidade e alertas](docs/operations/observability-and-alerting.md)
+- [Backup e recuperação](docs/operations/backup-and-recovery.md)
+- [Runbook de manutenção e mudanças](docs/operations/maintenance-runbook.md)
 - [Fundamentos](docs/k8s/concepts.md)
 - [Segurança dos hosts](docs/security/hosts/firewall.md)
 - [Rede Kubernetes](docs/k8s/networking/gateway-api-and-traefik.md)
@@ -18,6 +23,7 @@ Minhas anotações sobre como criar e operar clusters K3s de nó único (*single
 - [GitOps com Argo CD](docs/strategies/deployment/argo-cd.md)
 - [Gestão de segredos](docs/strategies/secrets/infisical.md)
 - [Referência](docs/reference/conventions.md)
+- [Ferramentas e catálogos do ecossistema](docs/reference/tools-and-resources.md)
 
 ## Validar a documentação com Docker
 

@@ -98,3 +98,10 @@ kubectl --namespace argocd delete secret argocd-initial-admin-secret
 ```
 
 Depois da instalação e da troca da senha inicial, continue em [Bootstrap GitOps com Argo CD](gitops-bootstrap.md).
+
+## Fontes e leitura adicional
+
+- [Getting Started — Argo CD](https://argo-cd.readthedocs.io/en/stable/getting_started/): fluxo oficial de instalação, acesso inicial e criação de uma aplicação.
+- [Helm chart do Argo CD](https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd): valores, templates e notas de versão do chart usado nesta página.
+- [Gestão de usuários — Argo CD](https://argo-cd.readthedocs.io/en/stable/operator-manual/user-management/): orienta sobre a conta `admin`, usuários locais e integração com provedores de identidade.
+- [Práticas de segurança — Argo CD](https://argo-cd.readthedocs.io/en/stable/operator-manual/security/): reúne o modelo de segurança, divulgações e recomendações operacionais do projeto.

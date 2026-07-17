@@ -56,3 +56,10 @@ EOF
 ```
 
 Se a API também for administrada por uma rede separada, acrescente uma regra TCP/6443 restrita a essa rede. Se usar Flannel WireGuard em vez de VXLAN, libere UDP/51820 e, para IPv6, UDP/51821 entre os nós no lugar de UDP/8472. Exponha TCP/80, TCP/443 e NodePorts somente quando a arquitetura dos serviços exigir.
+
+## Fontes e leitura adicional
+
+- [K3s — Requirements: Networking](https://docs.k3s.io/installation/requirements#networking) — Mantém a tabela oficial de portas, origens e destinos exigidos por API, Flannel, kubelet e etcd.
+- [K3s — Basic Network Options](https://docs.k3s.io/networking/basic-network-options) — Detalha os backends VXLAN e WireGuard do Flannel e as opções de rede alternativas.
+- [Ubuntu Server — Firewall](https://ubuntu.com/server/docs/how-to/security/firewalls/) — Referência oficial do Ubuntu para configurar e revisar regras com UFW.
+- [Kubernetes — Service](https://kubernetes.io/docs/concepts/services-networking/service/) — Explica os tipos de Service, incluindo `NodePort` e `LoadBalancer`, que podem exigir portas adicionais nos hosts.

@@ -63,5 +63,11 @@ read -r -p "Namespace que será auditado: " NETWORK_POLICY_NAMESPACE
 ./audit.sh "${NETWORK_POLICY_NAMESPACE}"
 ```
 
-NetworkPolicy não seleciona Services por nome e não interpreta hostnames, URLs HTTP ou identidades de usuário. Ela também não substitui TLS, autenticação, RBAC ou backups. Consulte o [guia completo do template](https://github.com/guesant/cluster-management-notes/blob/main/templates/gitops/apps/security/network-policies/README.md), a [documentação de NetworkPolicy do Kubernetes](https://kubernetes.io/docs/concepts/services-networking/network-policies/), as [recomendações de isolamento multi-tenant](https://kubernetes.io/docs/concepts/security/multi-tenancy/) e a [documentação de rede do K3s](https://docs.k3s.io/networking/networking-services#network-policy-controller).
+NetworkPolicy não seleciona Services por nome e não interpreta hostnames, URLs HTTP ou identidades de usuário. Ela também não substitui TLS, autenticação, RBAC ou backups. Consulte também o [guia completo do template](https://github.com/guesant/cluster-management-notes/blob/main/templates/gitops/apps/security/network-policies/README.md).
 
+## Fontes e leitura adicional
+
+- [Network Policies no Kubernetes](https://kubernetes.io/docs/concepts/services-networking/network-policies/): define isolamento, seleção de Pods, regras aditivas e o comportamento combinado de ingress e egress.
+- [Multi-tenancy](https://kubernetes.io/docs/concepts/security/multi-tenancy/): contextualiza NetworkPolicy como um dos controles necessários para separar tenants e fronteiras de confiança.
+- [Checklist de segurança do Kubernetes](https://kubernetes.io/docs/concepts/security/security-checklist/): reúne recomendações complementares para rede, RBAC, Pods, Secrets e exposição da API.
+- [Network Policy Controller do K3s](https://docs.k3s.io/networking/networking-services#network-policy-controller): descreve o controller incluído no K3s, sua desativação e a limpeza das regras aplicadas.

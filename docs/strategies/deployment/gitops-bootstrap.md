@@ -83,3 +83,11 @@ kubectl --namespace argocd describe application root
 ```
 
 Os templates começam com `prune: false`: o Argo CD corrige recursos alterados quando `selfHeal` está habilitado, mas não exclui automaticamente do cluster um recurso removido do Git. Revise os diffs e o comportamento de cada Application antes de habilitar `prune`, pois a exclusão no repositório poderá resultar na exclusão correspondente no cluster.
+
+## Fontes e leitura adicional
+
+- [Cluster bootstrapping — Argo CD](https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/): apresenta o padrão App-of-Apps, suas alternativas e cuidados de administração.
+- [Especificação de `Application` — Argo CD](https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/): referência dos campos usados para origem, destino e política de sincronização.
+- [Sincronização automatizada — Argo CD](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/): explica `selfHeal`, `prune` e os efeitos da reconciliação automática.
+- [Repositórios privados — Argo CD](https://argo-cd.readthedocs.io/en/stable/user-guide/private-repositories/): documenta credenciais HTTPS e SSH, chaves de deploy e verificação do servidor.
+- [Princípios do OpenGitOps](https://opengitops.dev/): descreve os princípios declarativo, versionado, aplicado automaticamente e continuamente reconciliado.

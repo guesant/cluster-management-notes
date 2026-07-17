@@ -81,3 +81,10 @@ ufw status verbose
 
 !!! note "TODO — firewalld"
     Documentar a configuração equivalente usando firewalld.
+
+## Fontes e leitura adicional
+
+- [Firewall — Ubuntu Server documentation](https://documentation.ubuntu.com/server/how-to/security/firewalls/): guia oficial para políticas, regras, estado e integração de aplicações com UFW.
+- [`ufw(8)` — Ubuntu Manpages](https://manpages.ubuntu.com/manpages/noble/man8/ufw.8.html): referência da sintaxe completa, administração remota, relatórios e comportamento das políticas do UFW.
+- [Conceitos do firewalld — documentação oficial](https://firewalld.org/documentation/concepts.html): descreve o modelo de zonas, níveis de confiança e políticas entre zonas.
+- [`firewall-cmd(1)` — documentação oficial do firewalld](https://firewalld.org/documentation/man-pages/firewall-cmd.html): referência das configurações de runtime e permanentes e dos comandos de consulta e alteração de regras.

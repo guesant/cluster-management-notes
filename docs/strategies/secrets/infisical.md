@@ -38,4 +38,11 @@ Os valores sincronizados continuam existindo como Secrets na API Kubernetes. As 
 !!! warning
     A documentação atual do Infisical lista Kubernetes 1.29 a 1.33 como suportados pelo operator. O K3s 1.36 sugerido neste guia está fora dessa matriz declarada; valide a combinação em homologação ou use versões oficialmente compatíveis antes de produção.
 
-Referências: [visão geral do Infisical Secrets Operator](https://infisical.com/docs/integrations/platforms/kubernetes/overview), [InfisicalAuth](https://infisical.com/docs/integrations/platforms/kubernetes/infisical-auth-crd), [InfisicalStaticSecret](https://infisical.com/docs/integrations/platforms/kubernetes/infisical-static-secret-crd) e [criptografia de Secrets no K3s](https://docs.k3s.io/cli/secrets-encrypt).
+## Fontes e leitura adicional
+
+- [Infisical Secrets Operator](https://infisical.com/docs/integrations/platforms/kubernetes/overview): apresenta arquitetura, requisitos e fluxo de sincronização do operator.
+- [`InfisicalAuth`](https://infisical.com/docs/integrations/platforms/kubernetes/infisical-auth-crd): referência oficial dos métodos e campos de autenticação disponíveis.
+- [`InfisicalStaticSecret`](https://infisical.com/docs/integrations/platforms/kubernetes/infisical-static-secret-crd): documenta origem, destino, ressincronização e comportamento do Secret gerenciado.
+- [Universal Auth](https://infisical.com/docs/documentation/platform/identities/universal-auth): explica a credencial de bootstrap usada pelo exemplo e seu ciclo de vida.
+- [Criptografia de Secrets — K3s](https://docs.k3s.io/cli/secrets-encrypt): documenta habilitação, estado e rotação da criptografia no datastore.
+- [Boas práticas para Secrets — Kubernetes](https://kubernetes.io/docs/concepts/security/secrets-good-practices/): reúne controles de acesso, criptografia e precauções no uso de Secrets.

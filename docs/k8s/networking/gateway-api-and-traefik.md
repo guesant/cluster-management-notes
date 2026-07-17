@@ -104,3 +104,10 @@ kubectl --namespace kube-system logs deployment/traefik --tail=100
 
 O chart não cria um `Gateway` por padrão. Crie `GatewayClass`, `Gateway` e rotas de acordo com a topologia do ambiente.
 
+## Fontes e leitura adicional
+
+- [Introdução à Gateway API](https://gateway-api.sigs.k8s.io/docs/introduction/): apresenta o projeto, seus objetivos e a separação de responsabilidades por papéis.
+- [Visão geral da API](https://gateway-api.sigs.k8s.io/concepts/api-overview/): detalha `GatewayClass`, `Gateway`, Routes, listeners e as relações entre esses recursos.
+- [Roteamento HTTP](https://gateway-api.sigs.k8s.io/guides/user-guides/http-routing/): fornece exemplos oficiais de associação de `HTTPRoute`, regras de correspondência e backends.
+- [Provider Kubernetes Gateway do Traefik](https://doc.traefik.io/traefik/reference/install-configuration/providers/kubernetes/kubernetes-gateway/): documenta a ativação e as opções do provider que reconcilia a Gateway API.
+- [Serviços de rede do K3s](https://docs.k3s.io/networking/networking-services#traefik-ingress-controller): explica como o K3s empacota, configura e atualiza o Traefik.

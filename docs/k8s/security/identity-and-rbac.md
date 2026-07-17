@@ -261,4 +261,11 @@ kubectl \
 
 Remover bindings interrompe as permissões fornecidas por eles, mas não invalida o certificado e não remove acessos concedidos por outros bindings. Kubernetes não oferece revogação de certificados de cliente: um certificado emitido continua autenticando até expirar. Em caso de comprometimento, remova imediatamente todos os bindings aplicáveis e verifique outros vínculos para o mesmo usuário; invalidar criptograficamente o certificado antes da expiração exige substituir a CA de clientes, uma operação ampla e disruptiva que afeta outras credenciais. Por isso, use certificados curtos e prefira OIDC quando precisar de revogação central, MFA e gestão frequente de usuários.
 
-Referências: [acesso ao cluster no K3s](https://docs.k3s.io/cluster-access), [autenticação por certificado no Kubernetes](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#x509-client-certs), [CertificateSigningRequest e signers](https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/) e [autorização RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/).
+## Fontes e leitura adicional
+
+- [Acesso ao cluster no K3s](https://docs.k3s.io/cluster-access): explica o kubeconfig administrativo, seus privilégios e o acesso externo com `kubectl`.
+- [Autenticação no Kubernetes](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#x509-client-certs): documenta identidades, grupos e certificados X.509 de cliente.
+- [CertificateSigningRequest e signers](https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/): detalha criação, aprovação, emissão e validade de certificados pela API.
+- [Autorização](https://kubernetes.io/docs/reference/access-authn-authz/authorization/): apresenta a etapa posterior à autenticação e os modos de autorização disponíveis.
+- [Autorização RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/): referência de `Role`, `ClusterRole`, bindings e papéis agregados padrão.
+- [Boas práticas de RBAC](https://kubernetes.io/docs/concepts/security/rbac-good-practices/): cobre privilégio mínimo e riscos de escalada por workloads, Secrets, bindings e impersonação.

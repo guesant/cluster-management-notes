@@ -115,3 +115,10 @@ journalctl --unit fail2ban --follow
 journalctl --unit ssh --follow
 journalctl --unit fail2ban --since "1 hour ago" | grep -E 'Ban|Unban'
 ```
+
+## Fontes e leitura adicional
+
+- [Fail2Ban — projeto oficial](https://github.com/fail2ban/fail2ban): apresenta o funcionamento, a estrutura de configuração e os canais oficiais do projeto.
+- [`jail.conf(5)` — Debian Manpages](https://manpages.debian.org/testing/fail2ban/jail.conf.5.en.html): documenta jails, filtros, ações, precedência dos arquivos `.conf` e `.local`, além de opções como `bantime`, `findtime` e `maxretry`.
+- [`fail2ban-client(1)` — Debian Manpages](https://manpages.debian.org/testing/fail2ban/fail2ban-client.1.en.html): referência dos comandos de validação, estado e controle usados para operar o serviço e suas jails.
+- [Filtro `sshd` — repositório oficial do Fail2Ban](https://github.com/fail2ban/fail2ban/blob/master/config/filter.d/sshd.conf): fonte dos modos e padrões utilizados para reconhecer falhas de autenticação do OpenSSH.

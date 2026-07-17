@@ -19,7 +19,7 @@ flowchart LR
     Engine -->|"escrita síncrona"| Replica3["Réplica no nó C"]
 ```
 
-O provisionador `local-storage` foi desabilitado na configuração K3s deste guia para que ele não se torne acidentalmente a classe padrão: seus dados ficam vinculados ao disco de um único nó e não recebem replicação Longhorn. Replicação, contudo, não é backup. Exclusão acidental, corrupção lógica ou credenciais comprometidas podem afetar todas as réplicas; mantenha backups em um destino independente do cluster. Referência: [arquitetura e conceitos do Longhorn](https://longhorn.io/docs/1.12.0/concepts/).
+O provisionador `local-storage` foi desabilitado na configuração K3s deste guia para que ele não se torne acidentalmente a classe padrão: seus dados ficam vinculados ao disco de um único nó e não recebem replicação Longhorn. Replicação, contudo, não é backup. Exclusão acidental, corrupção lógica ou credenciais comprometidas podem afetar todas as réplicas; mantenha backups em um destino independente do cluster e valide RPO, RTO e restauração pelo [guia de backup e recuperação](../../operations/backup-and-recovery.md). Referência: [arquitetura e conceitos do Longhorn](https://longhorn.io/docs/1.12.0/concepts/).
 
 Consulte os [requisitos do Longhorn 1.12.0](https://longhorn.io/docs/1.12.0/deploy/install/) antes de preparar os nós. Todos os nós que receberão volumes precisam cumprir os requisitos.
 
@@ -172,3 +172,11 @@ O túnel depende de encaminhamento SSH; ele não funcionará se `DisableForwardi
 
 !!! danger
     Antes de atualizar ou remover o Longhorn, confirme a saúde das réplicas, o destino de backup e o procedimento específico da versão. A remoção incorreta pode causar perda de dados.
+
+## Fontes e leitura adicional
+
+- [Arquitetura e conceitos do Longhorn 1.12.0](https://longhorn.io/docs/1.12.0/concepts/): fundamenta engines, réplicas, CSI, snapshots e armazenamento secundário.
+- [Requisitos e instalação do Longhorn 1.12.0](https://longhorn.io/docs/1.12.0/deploy/install/): lista sistemas suportados, dependências dos nós e métodos oficiais de instalação.
+- [longhornctl](https://longhorn.io/docs/1.12.0/advanced-resources/longhornctl/): documenta os comandos de preflight, operação, recuperação e diagnóstico usados nesta página.
+- [Backup e restauração](https://longhorn.io/docs/1.12.0/snapshots-and-backups/backup-and-restore/): orienta a configuração do destino, a criação de backups e a restauração de volumes.
+- [Boas práticas](https://longhorn.io/docs/1.12.0/best-practices/): reúne recomendações de réplicas, discos, capacidade, desempenho e operação.

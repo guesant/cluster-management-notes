@@ -18,3 +18,10 @@ kubectl auth can-i '*' '*' --all-namespaces
     Esse kubeconfig é administrativo. Não o compartilhe com aplicações nem com usuários que não devam ter acesso total ao cluster.
 
 Para criar credenciais menos privilegiadas, continue em [Identidade, autenticação e RBAC](identity-and-rbac.md).
+
+## Fontes e leitura adicional
+
+- [Acesso ao cluster no K3s](https://docs.k3s.io/cluster-access): descreve a origem do kubeconfig administrativo, a troca do endpoint e a renovação de suas credenciais.
+- [Organização do acesso com kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/): explica clusters, usuários, contextos e os cuidados ao carregar arquivos de configuração.
+- [Acesso a clusters pela API Kubernetes](https://kubernetes.io/docs/tasks/administer-cluster/access-cluster-api/): apresenta os caminhos suportados para clientes, proxies e acesso direto à API.
+- [Controle de acesso à API](https://kubernetes.io/docs/concepts/security/controlling-access/): relaciona transporte seguro, autenticação, autorização e admission control.

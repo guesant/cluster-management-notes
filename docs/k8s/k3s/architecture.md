@@ -28,4 +28,9 @@ flowchart TB
     ControlPlane <--> AgentRuntime
 ```
 
-Referência: [arquitetura do K3s](https://docs.k3s.io/architecture).
+## Fontes e leitura adicional
+
+- [K3s — Architecture](https://docs.k3s.io/architecture) — Define os papéis de server e agent, as topologias de nó único e HA e o processo de registro dos nós.
+- [K3s — Cluster Datastore](https://docs.k3s.io/datastore) — Compara SQLite, etcd embarcado e datastores externos usados pelo control plane.
+- [Kubernetes — Kubernetes Components](https://kubernetes.io/docs/concepts/overview/components/) — Apresenta os componentes do control plane e dos nós de trabalho em um cluster Kubernetes.
+- [Kubernetes — Nodes](https://kubernetes.io/docs/concepts/architecture/nodes/) — Detalha o modelo de nós, seu registro e as informações mantidas pelo control plane.

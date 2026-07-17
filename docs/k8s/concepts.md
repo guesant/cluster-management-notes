@@ -14,3 +14,9 @@ Alguns recursos aparecem repetidamente neste guia e nos templates:
 | CRD | Estende a API Kubernetes com um novo tipo de recurso, como `Certificate`, `Gateway` ou `Application` |
 | Controller | Observa recursos e reconcilia o sistema; Traefik, cert-manager, Longhorn e Argo CD adicionam controllers ao cluster |
 
+## Fontes e leitura adicional
+
+- [Conceitos do Kubernetes](https://kubernetes.io/docs/concepts/): ponto de entrada oficial para arquitetura, workloads, rede, armazenamento, configuração e segurança.
+- [Objetos no Kubernetes](https://kubernetes.io/docs/concepts/overview/working-with-objects/): fundamenta estado desejado, especificação, status e gerenciamento declarativo dos recursos da API.
+- [Controllers](https://kubernetes.io/docs/concepts/architecture/controller/): detalha o ciclo de controle e o processo de reconciliação.
+- [Pods](https://kubernetes.io/docs/concepts/workloads/pods/): aprofunda a menor unidade executável do Kubernetes e sua relação com containers, rede e armazenamento.

@@ -60,3 +60,10 @@ EOF
 
 !!! note
     Um cluster de dois servidores com etcd embarcado não oferece o quorum esperado para HA. Prefira três servidores.
+
+## Fontes e leitura adicional
+
+- [K3s — High Availability Embedded etcd](https://docs.k3s.io/datastore/ha-embedded) — Mostra como adicionar servidores ao etcd embarcado e explica a necessidade de um número ímpar de membros.
+- [K3s — `k3s server`](https://docs.k3s.io/cli/server) — Referência dos parâmetros de associação ao cluster e dos valores críticos que devem coincidir entre servidores.
+- [K3s — Configuration Options](https://docs.k3s.io/installation/configuration) — Documenta o uso do arquivo `config.yaml` e o erro causado por configurações críticas divergentes.
+- [K3s — Token Management](https://docs.k3s.io/cli/token) — Explica a autenticação de novos servidores, o formato seguro do token e os cuidados de armazenamento.

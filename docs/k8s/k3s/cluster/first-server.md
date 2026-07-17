@@ -76,3 +76,12 @@ kubectl get nodes -o wide
 kubectl get pods --all-namespaces
 EOF
 ```
+
+## Fontes e leitura adicional
+
+- [K3s — Quick-Start Guide](https://docs.k3s.io/quick-start) — Apresenta a instalação oficial por script e a validação inicial de um cluster de nó único.
+- [K3s — Configuration Options](https://docs.k3s.io/installation/configuration) — Explica o arquivo persistente `/etc/rancher/k3s/config.yaml` e a interação com o instalador.
+- [K3s — `k3s server`](https://docs.k3s.io/cli/server) — Referência das opções `cluster-init`, `tls-san`, `node-name`, `node-ip`, token e componentes desabilitados.
+- [K3s — High Availability Embedded etcd](https://docs.k3s.io/datastore/ha-embedded) — Documenta a inicialização do primeiro membro de um cluster HA com etcd embarcado.
+- [K3s — Secrets Encryption](https://docs.k3s.io/security/secrets-encryption) — Detalha a criptografia de Secrets em repouso habilitada por `secrets-encryption`.
+- [K3s — Token Management](https://docs.k3s.io/cli/token) — Explica por que o token do servidor concede acesso sensível e deve acompanhar os backups.
