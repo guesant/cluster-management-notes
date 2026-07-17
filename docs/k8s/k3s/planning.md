@@ -1,4 +1,4 @@
-# Planejamento e segredos
+# Planejamento do cluster K3s
 
 Antes da instalação:
 
@@ -24,4 +24,3 @@ Depois da instalação, o token persistido pode ser consultado no primeiro servi
 ```bash
 cat /var/lib/rancher/k3s/server/node-token
 ```
-

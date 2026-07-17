@@ -9,13 +9,15 @@ Minhas anotações sobre como criar e operar clusters K3s de nó único (*single
 
 - [Site publicado](https://guesant.github.io/cluster-management-notes/)
 - [Início do guia](docs/index.md)
-- [Ensaio: cluster K3s de nó único](docs/guides/k3s-single-node.md)
-- [Ensaio: cluster K3s multinó](docs/guides/k3s-multi-node.md)
+- [Ensaio: cluster K3s](docs/guides/k3s.md)
+- [Fundamentos](docs/k8s/concepts.md)
 - [Segurança dos hosts](docs/security/hosts/firewall.md)
-- [Kubernetes](docs/k8s/concepts.md)
-- [K3s](docs/k8s/k3s/architecture.md)
-- [Estratégias de deploy](docs/strategies/deployment/argo-cd.md)
-- [Estratégias de secrets](docs/strategies/secrets/infisical.md)
+- [Rede Kubernetes](docs/k8s/networking/gateway-api-and-traefik.md)
+- [Segurança e acesso](docs/k8s/security/remote-access.md)
+- [Extensões](docs/k8s/extensions/cert-manager.md)
+- [GitOps com Argo CD](docs/strategies/deployment/argo-cd.md)
+- [Gestão de segredos](docs/strategies/secrets/infisical.md)
+- [Referência](docs/reference/conventions.md)
 
 ## Validar a documentação com Docker
 
@@ -39,4 +41,4 @@ Antes da primeira publicação, selecione **GitHub Actions** em **Settings → P
 
 O workflow [`.github/workflows/actions-quality.yml`](.github/workflows/actions-quality.yml) executa o `actionlint` para validar a sintaxe e as expressões dos workflows e o `zizmor` para auditar problemas de segurança. Actions oficiais da organização `actions` usam a tag da versão principal mais recente; actions de terceiros são fixadas por SHA completo. Os checkouts não persistem credenciais.
 
-O [Dependabot](.github/dependabot.yml) verifica semanalmente as actions e as imagens Docker do MkDocs e do actionlint. Um cooldown de sete dias evita adotar imediatamente versões recém-publicadas.
+O [Dependabot](.github/dependabot.yml) verifica semanalmente as actions e a imagem Docker usada pelo MkDocs. Um cooldown de sete dias evita adotar imediatamente versões recém-publicadas.

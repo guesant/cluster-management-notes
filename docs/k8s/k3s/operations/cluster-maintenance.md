@@ -17,6 +17,9 @@ k3s etcd-snapshot list
 
 Copie os snapshots e o token de servidor para armazenamento externo. Um snapshot preso ao mesmo host não protege contra perda do nó ou do disco. Consulte o [procedimento oficial de backup e restauração](https://docs.k3s.io/datastore/backup-restore).
 
+!!! note "TODO — Velero"
+    Documentar o Velero como ferramenta de backup.
+
 ## Atualização
 
 1. Leia as notas da versão e verifique a compatibilidade dos componentes.
