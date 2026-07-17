@@ -66,34 +66,37 @@ markdown_extensions:
 
 nav:
   - Início: index.md
-  - Fundamentos:
-      - Kubernetes e K3s: concepts/kubernetes-and-k3s.md
-      - Planejamento e segredos: concepts/planning.md
-  - Preparação dos hosts:
-      - Firewall: preparation/firewall.md
-      - Hardening do SSH: preparation/ssh.md
-      - Fail2Ban: preparation/fail2ban.md
-  - Criação do cluster:
-      - Nó único / primeiro servidor: cluster/first-server.md
-      - Adicionar servidor: cluster/add-server.md
-      - Adicionar agente: cluster/add-agent.md
-  - Rede e segurança:
-      - Gateway API e Traefik: networking/gateway-api-and-traefik.md
-      - NetworkPolicy: networking/network-policies.md
-      - Acesso remoto: security/remote-access.md
-      - Identidade e RBAC: security/identity-and-rbac.md
-  - Serviços:
-      - cert-manager: services/cert-manager.md
-      - Longhorn: services/longhorn.md
-  - GitOps e segredos:
-      - Argo CD: gitops/argo-cd.md
-      - Bootstrap GitOps: gitops/bootstrap.md
-      - Infisical: gitops/infisical.md
-  - Operação:
-      - Backup, atualização e remoção: operations/cluster-maintenance.md
-      - Checklist operacional: operations/checklist.md
-  - Referência:
-      - Ferramentas de linha de comando: reference/command-line-tools.md
-      - Templates copiáveis: reference/templates.md
+  - Segurança dos hosts:
+      - Firewall: security/hosts/firewall.md
+      - Portas publicadas pelo Docker: security/hosts/docker-published-ports.md
+      - Hardening do SSH: security/hosts/ssh.md
+      - Fail2Ban: security/hosts/fail2ban.md
+  - Kubernetes:
+      - Conceitos: k8s/concepts.md
+      - Ferramentas de linha de comando: k8s/tools.md
+      - K3s:
+          - Arquitetura: k8s/k3s/architecture.md
+          - Planejamento e segredos: k8s/k3s/planning.md
+          - Criação do cluster:
+              - Nó único / primeiro servidor: k8s/k3s/cluster/first-server.md
+              - Adicionar servidor: k8s/k3s/cluster/add-server.md
+              - Adicionar agente: k8s/k3s/cluster/add-agent.md
+          - Rede e segurança:
+              - Gateway API e Traefik: k8s/k3s/networking/gateway-api-and-traefik.md
+              - NetworkPolicy: k8s/k3s/networking/network-policies.md
+              - Acesso remoto: k8s/k3s/security/remote-access.md
+              - Identidade e RBAC: k8s/k3s/security/identity-and-rbac.md
+          - Serviços:
+              - cert-manager: k8s/k3s/services/cert-manager.md
+              - Longhorn: k8s/k3s/services/longhorn.md
+          - Operação:
+              - Backup, atualização e remoção: k8s/k3s/operations/cluster-maintenance.md
+              - Checklist operacional: k8s/k3s/operations/checklist.md
+  - Estratégias de deploy:
+      - Argo CD: strategies/deployment/argo-cd.md
+      - Bootstrap GitOps: strategies/deployment/gitops-bootstrap.md
+      - Templates copiáveis: strategies/deployment/templates.md
+  - Estratégias de secrets:
+      - Infisical: strategies/secrets/infisical.md
 
 copyright: Conteúdo disponibilizado pelo projeto cluster-management-notes.

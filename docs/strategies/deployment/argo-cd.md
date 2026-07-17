@@ -97,4 +97,4 @@ Depois de trocar a senha, remova o secret inicial caso ele ainda exista:
 kubectl --namespace argocd delete secret argocd-initial-admin-secret
 ```
 
-Depois da instalação e da troca da senha inicial, continue em [Bootstrap GitOps com Argo CD](bootstrap.md).
+Depois da instalação e da troca da senha inicial, continue em [Bootstrap GitOps com Argo CD](gitops-bootstrap.md).
