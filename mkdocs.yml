@@ -66,11 +66,34 @@ markdown_extensions:
 
 nav:
   - Início: index.md
-  - Configuração dos hosts: hosts.md
-  - Gestão dos nós K3s: k3s.md
-  - Ferramentas de linha de comando: command-line-tools.md
-  - Serviços básicos: core-services.md
-  - Templates copiáveis: templates.md
-  - Checklist operacional: operational-checklist.md
+  - Fundamentos:
+      - Kubernetes e K3s: concepts/kubernetes-and-k3s.md
+      - Planejamento e segredos: concepts/planning.md
+  - Preparação dos hosts:
+      - Firewall: preparation/firewall.md
+      - Hardening do SSH: preparation/ssh.md
+      - Fail2Ban: preparation/fail2ban.md
+  - Criação do cluster:
+      - Nó único / primeiro servidor: cluster/first-server.md
+      - Adicionar servidor: cluster/add-server.md
+      - Adicionar agente: cluster/add-agent.md
+  - Rede e segurança:
+      - Gateway API e Traefik: networking/gateway-api-and-traefik.md
+      - NetworkPolicy: networking/network-policies.md
+      - Acesso remoto: security/remote-access.md
+      - Identidade e RBAC: security/identity-and-rbac.md
+  - Serviços:
+      - cert-manager: services/cert-manager.md
+      - Longhorn: services/longhorn.md
+  - GitOps e segredos:
+      - Argo CD: gitops/argo-cd.md
+      - Bootstrap GitOps: gitops/bootstrap.md
+      - Infisical: gitops/infisical.md
+  - Operação:
+      - Backup, atualização e remoção: operations/cluster-maintenance.md
+      - Checklist operacional: operations/checklist.md
+  - Referência:
+      - Ferramentas de linha de comando: reference/command-line-tools.md
+      - Templates copiáveis: reference/templates.md
 
 copyright: Conteúdo disponibilizado pelo projeto cluster-management-notes.

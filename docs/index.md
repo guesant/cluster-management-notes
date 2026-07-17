@@ -42,23 +42,58 @@ Cada bloco shell informa onde deve ser executado:
 
 ## Ordem recomendada
 
-1. Preparar o firewall do host.
-2. Validar as chaves e endurecer o SSH.
-3. Instalar e validar o Fail2Ban.
-4. Criar o primeiro servidor K3s.
-5. Instalar os CRDs da Gateway API e configurar o Traefik.
-6. Adicionar os demais servidores e agentes.
-7. Instalar cert-manager, Longhorn e Argo CD.
-8. Conectar o Argo CD ao repositório GitOps e aplicar a Application `root`.
-9. Se usar Infisical, instalar o Secrets Operator, aplicar o Secret de bootstrap e só então habilitar as sincronizações.
-10. Modelar NetworkPolicies em homologação e permitir explicitamente os fluxos necessários.
-11. Configurar backups e registrar o procedimento de atualização.
+1. Entender a [arquitetura do Kubernetes e do K3s](concepts/kubernetes-and-k3s.md) e definir o [planejamento do cluster](concepts/planning.md).
+2. Preparar os hosts com [firewall](preparation/firewall.md), [hardening do SSH](preparation/ssh.md) e [Fail2Ban](preparation/fail2ban.md).
+3. Criar o [primeiro servidor](cluster/first-server.md).
+4. Configurar [Gateway API e Traefik](networking/gateway-api-and-traefik.md).
+5. Se a topologia for multinó, adicionar os demais [servidores](cluster/add-server.md) e [agentes](cluster/add-agent.md).
+6. Configurar o [acesso remoto](security/remote-access.md) e criar identidades com as permissões necessárias em [RBAC](security/identity-and-rbac.md).
+7. Instalar os serviços necessários: [cert-manager](services/cert-manager.md), [Longhorn](services/longhorn.md) e [Argo CD](gitops/argo-cd.md).
+8. Conectar o [repositório GitOps](gitops/bootstrap.md) e, opcionalmente, configurar a sincronização de segredos com o [Infisical](gitops/infisical.md).
+9. Modelar as [NetworkPolicies](networking/network-policies.md) em homologação e permitir explicitamente os fluxos necessários.
+10. Definir os procedimentos de [backup, atualização e remoção de nós](operations/cluster-maintenance.md).
+11. Concluir com o [checklist operacional](operations/checklist.md).
 
-## Sumário
+## Conteúdo por categoria
 
-- [Configuração dos hosts](hosts.md): firewall, hardening do SSH e Fail2Ban.
-- [Gestão dos nós K3s](k3s.md): arquitetura, instalação, Gateway API, NetworkPolicy, acesso, backup e atualização.
-- [Ferramentas de linha de comando](command-line-tools.md): kubectl, Helm, Argo CD CLI e longhornctl.
-- [Serviços básicos](core-services.md): cert-manager, Longhorn, Argo CD e Infisical.
-- [Templates copiáveis](templates.md): estrutura GitOps e componentes opcionais.
-- [Checklist operacional](operational-checklist.md): verificações antes de concluir a instalação.
+### Fundamentos
+
+- [Kubernetes e K3s](concepts/kubernetes-and-k3s.md): estado desejado, reconciliação, recursos principais e papéis dos nós.
+- [Planejamento e segredos](concepts/planning.md): topologia, endpoint da API, quorum, token e requisitos de rede.
+
+### Preparação dos hosts
+
+- [Firewall](preparation/firewall.md): exposição de portas, UFW e observações sobre Docker.
+- [Hardening do SSH](preparation/ssh.md): preparação, configuração segura e validação do acesso.
+- [Fail2Ban](preparation/fail2ban.md): bloqueio progressivo e validação da jail do SSH.
+
+### Criação do cluster
+
+- [Primeiro servidor](cluster/first-server.md): bootstrap de um cluster de nó único ou do primeiro manager.
+- [Adicionar servidor](cluster/add-server.md): expansão do control plane e quorum do etcd.
+- [Adicionar agente](cluster/add-agent.md): inclusão de nós destinados aos workloads.
+
+### Rede e segurança
+
+- [Gateway API e Traefik](networking/gateway-api-and-traefik.md): entrada e roteamento de tráfego.
+- [NetworkPolicy](networking/network-policies.md): isolamento e liberação explícita dos fluxos entre workloads.
+- [Acesso remoto](security/remote-access.md): kubeconfig administrativo e conexão da estação à API.
+- [Identidade, autenticação e RBAC](security/identity-and-rbac.md): credenciais individuais, permissões e revogação.
+
+### Serviços
+
+- [cert-manager](services/cert-manager.md): emissão e renovação de certificados.
+- [Longhorn](services/longhorn.md): armazenamento persistente distribuído.
+
+### GitOps e segredos
+
+- [Argo CD](gitops/argo-cd.md): instalação e acesso inicial ao controlador GitOps.
+- [Bootstrap GitOps](gitops/bootstrap.md): conexão do repositório e Application raiz.
+- [Infisical](gitops/infisical.md): sincronização de segredos para o Kubernetes.
+
+### Operação e referência
+
+- [Backup, atualização e remoção](operations/cluster-maintenance.md): manutenção do ciclo de vida do cluster.
+- [Checklist operacional](operations/checklist.md): verificações antes de concluir a implantação.
+- [Ferramentas de linha de comando](reference/command-line-tools.md): kubectl, Helm, Argo CD CLI e longhornctl.
+- [Templates copiáveis](reference/templates.md): estrutura GitOps e componentes opcionais.

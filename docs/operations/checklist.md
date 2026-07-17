@@ -1,6 +1,5 @@
 # Checklist operacional
 
-[Voltar ao início](index.md)
 
 Antes de considerar a instalação concluída:
 

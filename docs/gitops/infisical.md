@@ -1,0 +1,41 @@
+# Segredos GitOps com Infisical
+
+Os comandos desta página devem ser executados em um servidor ou em uma estação administrativa que tenha `kubectl`, Helm, acesso à API e um kubeconfig válido.
+
+Um Secret Kubernetes codificado em base64 não está criptografado e não deve ser commitado em claro. Neste modelo, os valores ficam no Infisical; o Git contém apenas recursos declarativos que indicam qual projeto, ambiente e caminho devem ser sincronizados. O Infisical Secrets Operator autentica uma Machine Identity, busca os valores e mantém um Secret Kubernetes atualizado.
+
+```mermaid
+flowchart LR
+    Git["Git: Connection, Auth e StaticSecret"] --> Argo["Argo CD"]
+    Argo --> API["API Kubernetes"]
+    Bootstrap["Secret Universal Auth<br/>apply manual"] --> Operator["Infisical Secrets Operator"]
+    API --> Operator
+    Infisical["Infisical<br/>fonte dos valores"] -->|"HTTPS autenticado"| Operator
+    Operator --> Managed["Secret Kubernetes gerenciado"]
+    Managed --> Workload["Pod autorizado"]
+```
+
+O template [`templates/gitops/apps/security/infisical-secrets`](https://github.com/guesant/cluster-management-notes/tree/main/templates/gitops/apps/security/infisical-secrets) usa a API recomendada `v1beta1`, com `InfisicalConnection`, `InfisicalAuth` e `InfisicalStaticSecret`. O único objeto Kubernetes sensível criado manualmente é um Secret de bootstrap com o `clientId` e o `clientSecret` de uma Machine Identity Universal Auth. Esse Secret não entra no Git nem é administrado pelo Argo CD.
+
+O fluxo recomendado é:
+
+1. Criar no Infisical uma Machine Identity Universal Auth com leitura limitada ao projeto, ambiente e caminho necessários.
+2. Manter inicialmente somente `applications/infisical-secrets-operator.yaml` no diretório observado pelo `root` e aguardar o operator e seus CRDs.
+3. Executar o script de bootstrap para aplicar manualmente `infisical-operator-system/universal-auth-credentials`.
+4. Personalizar conexão, autenticação, origem e destino dos segredos.
+5. Adicionar `applications/infisical-secrets-example.yaml` e verificar o estado dos CRDs sem imprimir os valores do Secret.
+
+> **Executar em:** qualquer máquina com `KUBECONFIG` administrativo e acesso à API, no diretório `gitops/apps/security/infisical-secrets` do repositório de destino.
+
+```bash
+./bootstrap-secret.sh
+```
+
+O operator do exemplo é instalado em modo cluster-wide porque precisa sincronizar Secrets em namespaces de aplicações. Em ambientes multi-tenant, avalie `scopedNamespaces` e `scopedRBAC`, restrinja o RBAC e use uma Machine Identity diferente por fronteira de acesso. Universal Auth minimiza o bootstrap, mas mantém uma credencial estática no cluster; rotacione-a e revogue a anterior depois de validar a nova. O Infisical recomenda Kubernetes Auth com tokens curtos quando a configuração adicional do TokenReview é aceitável.
+
+Os valores sincronizados continuam existindo como Secrets na API Kubernetes. As instalações novas deste guia habilitam `secrets-encryption: true`; em clusters existentes, confirme `k3s secrets-encrypt status`, limite leitura de Secrets por RBAC e nunca imprima `data`, `stringData` ou credenciais em logs. Com NetworkPolicy default-deny, permita explicitamente o egress HTTPS do operator até a API Infisical e o acesso necessário à API Kubernetes.
+
+!!! warning
+    A documentação atual do Infisical lista Kubernetes 1.29 a 1.33 como suportados pelo operator. O K3s 1.36 sugerido neste guia está fora dessa matriz declarada; valide a combinação em homologação ou use versões oficialmente compatíveis antes de produção.
+
+Referências: [visão geral do Infisical Secrets Operator](https://infisical.com/docs/integrations/platforms/kubernetes/overview), [InfisicalAuth](https://infisical.com/docs/integrations/platforms/kubernetes/infisical-auth-crd), [InfisicalStaticSecret](https://infisical.com/docs/integrations/platforms/kubernetes/infisical-static-secret-crd) e [criptografia de Secrets no K3s](https://docs.k3s.io/cli/secrets-encrypt).

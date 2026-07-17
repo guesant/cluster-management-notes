@@ -1,6 +1,5 @@
 # Templates copiáveis
 
-[Voltar ao início](index.md)
 
 O diretório [`templates/gitops`](https://github.com/guesant/cluster-management-notes/tree/main/templates/gitops) contém uma estrutura GitOps completa para ser copiada para outro repositório. Os arquivos usam valores genéricos e não incluem referências a ambientes específicos, segredos versionados nem charts `.tgz` gerados.
 
