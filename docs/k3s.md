@@ -1,6 +1,6 @@
 # Gestão dos nós K3s
 
-[Voltar ao guia principal](../README.md)
+[Voltar ao início](index.md)
 
 ## O que é e como o cluster se organiza
 
@@ -292,7 +292,7 @@ O fluxo GitOps usa um AppProject dedicado que autoriza somente o repositório co
 
 NetworkPolicy não é uma fronteira absoluta contra tráfego do nó ou Pods `hostNetwork`, não oferece controle L7 ou por FQDN, não cifra conexões e não registra obrigatoriamente decisões de allow/deny. Use firewall do host, RBAC, TLS/mTLS, Gateway ou service mesh e controles da aplicação conforme o risco. A documentação oficial também ressalta que o tráfego entre Pods é aberto e não cifrado por padrão em cenários multi-tenant.
 
-O template [`templates/gitops/apps/security/network-policies`](../templates/gitops/apps/security/network-policies/) oferece manifests independentes e um script que gera três tipos de configuração sem aplicar nada no cluster:
+O template [`templates/gitops/apps/security/network-policies`](https://github.com/guesant/cluster-management-notes/tree/main/templates/gitops/apps/security/network-policies) oferece manifests independentes e um script que gera três tipos de configuração sem aplicar nada no cluster:
 
 - `baseline`: deny de ingress/egress e liberação de DNS para um namespace;
 - `flow`: egress na origem e ingress no destino para comunicação entre workloads isolados;
@@ -323,7 +323,7 @@ read -r -p "Namespace que será auditado: " NETWORK_POLICY_NAMESPACE
 ./audit.sh "${NETWORK_POLICY_NAMESPACE}"
 ```
 
-NetworkPolicy não seleciona Services por nome e não interpreta hostnames, URLs HTTP ou identidades de usuário. Ela também não substitui TLS, autenticação, RBAC ou backups. Consulte o [guia completo do template](../templates/gitops/apps/security/network-policies/README.md), a [documentação de NetworkPolicy do Kubernetes](https://kubernetes.io/docs/concepts/services-networking/network-policies/), as [recomendações de isolamento multi-tenant](https://kubernetes.io/docs/concepts/security/multi-tenancy/) e a [documentação de rede do K3s](https://docs.k3s.io/networking/networking-services#network-policy-controller).
+NetworkPolicy não seleciona Services por nome e não interpreta hostnames, URLs HTTP ou identidades de usuário. Ela também não substitui TLS, autenticação, RBAC ou backups. Consulte o [guia completo do template](https://github.com/guesant/cluster-management-notes/blob/main/templates/gitops/apps/security/network-policies/README.md), a [documentação de NetworkPolicy do Kubernetes](https://kubernetes.io/docs/concepts/services-networking/network-policies/), as [recomendações de isolamento multi-tenant](https://kubernetes.io/docs/concepts/security/multi-tenancy/) e a [documentação de rede do K3s](https://docs.k3s.io/networking/networking-services#network-policy-controller).
 
 ## Servidor adicional
 
@@ -385,8 +385,8 @@ kubectl get nodes -o wide
 EOF
 ```
 
-> [!NOTE]
-> Um cluster de dois servidores com etcd embarcado não oferece o quorum esperado para HA. Prefira três servidores.
+!!! note
+    Um cluster de dois servidores com etcd embarcado não oferece o quorum esperado para HA. Prefira três servidores.
 
 ## Agente
 
@@ -462,8 +462,8 @@ kubectl cluster-info
 kubectl auth can-i '*' '*' --all-namespaces
 ```
 
-> [!WARNING]
-> Esse kubeconfig é administrativo. Não o compartilhe com aplicações nem com usuários que não devam ter acesso total ao cluster.
+!!! warning
+    Esse kubeconfig é administrativo. Não o compartilhe com aplicações nem com usuários que não devam ter acesso total ao cluster.
 
 ### Identidade, autenticação e autorização
 
@@ -485,7 +485,7 @@ Não emita certificados individuais com grupo `system:masters`. O kubeconfig adm
 
 ### Criar um kubeconfig individual
 
-O script [`scripts/kubernetes/create-client-kubeconfig.sh`](../scripts/kubernetes/create-client-kubeconfig.sh) usa o contexto administrativo atual para:
+O script [`scripts/kubernetes/create-client-kubeconfig.sh`](https://github.com/guesant/cluster-management-notes/blob/main/scripts/kubernetes/create-client-kubeconfig.sh) usa o contexto administrativo atual para:
 
 1. gerar uma chave privada local;
 2. criar uma CSR com o nome individual no `CN`;
@@ -800,8 +800,8 @@ kubectl drain "${K3S_NODE_NAME}" \
   --delete-emptydir-data
 ```
 
-> [!CAUTION]
-> Confirme a réplica dos dados e o quorum do etcd antes de remover um servidor. Não execute o desinstalador no último servidor a menos que deseje apagar o cluster.
+!!! danger
+    Confirme a réplica dos dados e o quorum do etcd antes de remover um servidor. Não execute o desinstalador no último servidor a menos que deseje apagar o cluster.
 
 No nó removido, execute o desinstalador correspondente:
 

@@ -1,8 +1,8 @@
 # Templates copiáveis
 
-[Voltar ao guia principal](../README.md)
+[Voltar ao início](index.md)
 
-O diretório [`templates/gitops`](../templates/gitops/) contém uma estrutura GitOps completa para ser copiada para outro repositório. Os arquivos usam valores genéricos e não incluem referências a ambientes específicos, segredos versionados nem charts `.tgz` gerados.
+O diretório [`templates/gitops`](https://github.com/guesant/cluster-management-notes/tree/main/templates/gitops) contém uma estrutura GitOps completa para ser copiada para outro repositório. Os arquivos usam valores genéricos e não incluem referências a ambientes específicos, segredos versionados nem charts `.tgz` gerados.
 
 Os exemplos são opcionais e independentes: estar disponível em `templates/` não significa que um componente seja requisito do cluster. Escolha somente o que atende ao ambiente e revise capacidade, segurança, persistência e política de atualização antes de habilitar a respectiva Application.
 
@@ -46,4 +46,4 @@ docker run --rm \
 
 O `degit` baixa um snapshot do subdiretório solicitado sem o histórico `.git` deste projeto. O `--user` evita que os arquivos sejam criados como `root`, enquanto `HOME=/tmp` fornece ao npm um diretório temporário gravável. Por segurança, não foi usado `--force`: se o destino já contiver arquivos, revise ou mova o diretório antes de repetir o comando. Os manifests do template usam caminhos relativos iniciados por `gitops/`; se escolher outro destino, atualize esses campos `spec.source.path`. As referências `node:lts-alpine` e `degit@latest` acompanham novas versões; em automações reproduzíveis, fixe versões ou digests após validá-los.
 
-Leia [`templates/gitops/README.md`](../templates/gitops/README.md) antes do bootstrap. Os domínios `example.com`, a URL `example/cluster-config`, as versões das dependências e os nomes dos Services são exemplos e devem ser revisados no repositório de destino.
+Leia [`templates/gitops/README.md`](https://github.com/guesant/cluster-management-notes/blob/main/templates/gitops/README.md) antes do bootstrap. Os domínios `example.com`, a URL `example/cluster-config`, as versões das dependências e os nomes dos Services são exemplos e devem ser revisados no repositório de destino.

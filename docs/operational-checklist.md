@@ -1,6 +1,6 @@
 # Checklist operacional
 
-[Voltar ao guia principal](../README.md)
+[Voltar ao início](index.md)
 
 Antes de considerar a instalação concluída:
 

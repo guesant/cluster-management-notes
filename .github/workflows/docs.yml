@@ -1,0 +1,79 @@
+name: Documentação
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/docker/mkdocs/Dockerfile
+      - docs/**
+      - mkdocs.yml
+      - .github/workflows/docs.yml
+  pull_request:
+    paths:
+      - .github/docker/mkdocs/Dockerfile
+      - docs/**
+      - mkdocs.yml
+      - .github/workflows/docs.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Validar e gerar site
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v6
+
+      - name: Preparar Material for MkDocs
+        run: >-
+          docker build
+          --file .github/docker/mkdocs/Dockerfile
+          --tag cluster-management-notes-docs:ci
+          .github/docker/mkdocs
+
+      - name: Gerar site com MkDocs
+        run: >-
+          docker run --rm
+          --user "$(id -u):$(id -g)"
+          --env HOME=/tmp
+          --volume "${GITHUB_WORKSPACE}:/docs"
+          cluster-management-notes-docs:ci
+          build --strict
+
+      - name: Enviar artefato do GitHub Pages
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+  deploy:
+    name: Publicar no GitHub Pages
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publicar site
+        id: deployment
+        uses: actions/deploy-pages@v5

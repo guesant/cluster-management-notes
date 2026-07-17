@@ -1,6 +1,6 @@
 # Serviços básicos
 
-[Voltar ao guia principal](../README.md)
+[Voltar ao início](index.md)
 
 Os comandos desta seção podem ser executados em um servidor ou em uma estação administrativa que tenha `kubectl`, Helm, acesso à API e um kubeconfig válido.
 
@@ -234,8 +234,8 @@ ssh -N \
 
 O túnel depende de encaminhamento SSH; ele não funcionará se `DisableForwarding yes` estiver ativo no servidor.
 
-> [!CAUTION]
-> Antes de atualizar ou remover o Longhorn, confirme a saúde das réplicas, o destino de backup e o procedimento específico da versão. A remoção incorreta pode causar perda de dados.
+!!! danger
+    Antes de atualizar ou remover o Longhorn, confirme a saúde das réplicas, o destino de backup e o procedimento específico da versão. A remoção incorreta pode causar perda de dados.
 
 ## Argo CD
 
@@ -373,7 +373,7 @@ O termo `root` não indica um tipo especial de repositório no Argo CD. Ele é a
 Siga esta sequência:
 
 1. Crie um repositório Git para a configuração do cluster ou escolha um repositório existente.
-2. Copie [`templates/gitops`](../templates/gitops/) para o diretório `gitops/` desse repositório.
+2. Copie [`templates/gitops`](https://github.com/guesant/cluster-management-notes/tree/main/templates/gitops) para o diretório `gitops/` desse repositório.
 3. Remova de `gitops/applications/` as Applications que não deseja instalar e remova também os respectivos diretórios em `gitops/apps/`.
 4. Substitua `https://github.com/example/cluster-config.git` em `gitops/root/application.yaml` e nas Applications mantidas pela URL real do repositório. Revise também os domínios, versões, namespaces e valores dos charts.
 5. Valide, faça commit e envie a estrutura para a branch indicada por `targetRevision`, que nos exemplos é `main`.
@@ -435,7 +435,7 @@ flowchart LR
     Managed --> Workload["Pod autorizado"]
 ```
 
-O template [`templates/gitops/apps/security/infisical-secrets`](../templates/gitops/apps/security/infisical-secrets/) usa a API recomendada `v1beta1`, com `InfisicalConnection`, `InfisicalAuth` e `InfisicalStaticSecret`. O único objeto Kubernetes sensível criado manualmente é um Secret de bootstrap com o `clientId` e o `clientSecret` de uma Machine Identity Universal Auth. Esse Secret não entra no Git nem é administrado pelo Argo CD.
+O template [`templates/gitops/apps/security/infisical-secrets`](https://github.com/guesant/cluster-management-notes/tree/main/templates/gitops/apps/security/infisical-secrets) usa a API recomendada `v1beta1`, com `InfisicalConnection`, `InfisicalAuth` e `InfisicalStaticSecret`. O único objeto Kubernetes sensível criado manualmente é um Secret de bootstrap com o `clientId` e o `clientSecret` de uma Machine Identity Universal Auth. Esse Secret não entra no Git nem é administrado pelo Argo CD.
 
 O fluxo recomendado é:
 
@@ -455,7 +455,7 @@ O operator do exemplo é instalado em modo cluster-wide porque precisa sincroniz
 
 Os valores sincronizados continuam existindo como Secrets na API Kubernetes. As instalações novas deste guia habilitam `secrets-encryption: true`; em clusters existentes, confirme `k3s secrets-encrypt status`, limite leitura de Secrets por RBAC e nunca imprima `data`, `stringData` ou credenciais em logs. Com NetworkPolicy default-deny, permita explicitamente o egress HTTPS do operator até a API Infisical e o acesso necessário à API Kubernetes.
 
-> [!WARNING]
-> A documentação atual do Infisical lista Kubernetes 1.29 a 1.33 como suportados pelo operator. O K3s 1.36 sugerido neste guia está fora dessa matriz declarada; valide a combinação em homologação ou use versões oficialmente compatíveis antes de produção.
+!!! warning
+    A documentação atual do Infisical lista Kubernetes 1.29 a 1.33 como suportados pelo operator. O K3s 1.36 sugerido neste guia está fora dessa matriz declarada; valide a combinação em homologação ou use versões oficialmente compatíveis antes de produção.
 
 Referências: [visão geral do Infisical Secrets Operator](https://infisical.com/docs/integrations/platforms/kubernetes/overview), [InfisicalAuth](https://infisical.com/docs/integrations/platforms/kubernetes/infisical-auth-crd), [InfisicalStaticSecret](https://infisical.com/docs/integrations/platforms/kubernetes/infisical-static-secret-crd) e [criptografia de Secrets no K3s](https://docs.k3s.io/cli/secrets-encrypt).

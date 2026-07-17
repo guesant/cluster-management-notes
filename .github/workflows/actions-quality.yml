@@ -1,0 +1,64 @@
+name: Qualidade dos workflows
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/**
+  pull_request:
+    paths:
+      - .github/**
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  actionlint:
+    name: actionlint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Preparar actionlint
+        run: >-
+          docker build
+          --file .github/docker/actionlint/Dockerfile
+          --tag actionlint:ci
+          .github/docker/actionlint
+
+      - name: Validar workflows
+        run: >-
+          docker run --rm
+          --volume "${GITHUB_WORKSPACE}:/repo"
+          --workdir /repo
+          actionlint:ci
+          -color
+
+  zizmor:
+    name: zizmor
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Auditar GitHub Actions
+        uses: zizmorcore/zizmor-action@6599ee8b7a49aef6a770f63d261d214911a7ce02 # v0.6.0
+        with:
+          advanced-security: false
+          annotations: true
+          config: .github/zizmor.yml
+          min-severity: low
+          persona: auditor
+          version: 1.27.0

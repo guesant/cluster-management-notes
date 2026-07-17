@@ -1,6 +1,6 @@
 # Ferramentas de linha de comando
 
-[Voltar ao guia principal](../README.md)
+[Voltar ao início](index.md)
 
 As ferramentas desta seção são clientes administrativos. Elas podem ser instaladas em um manager ou em uma estação externa; pertencer ao cluster não é requisito. Para operar recursos remotamente, a máquina precisa alcançar a API correspondente e possuir credenciais com as permissões necessárias.
 

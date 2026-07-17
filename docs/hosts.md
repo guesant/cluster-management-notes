@@ -1,6 +1,6 @@
 # Configuração dos hosts
 
-[Voltar ao guia principal](../README.md)
+[Voltar ao início](index.md)
 
 ## Firewall
 
@@ -8,8 +8,8 @@ O firewall do host controla quais conexões de rede podem chegar aos serviços d
 
 ### Portas publicadas pelo Docker
 
-> [!WARNING]
-> Uma porta publicada pelo Docker pode não ser filtrada da maneira esperada pelo UFW ou pelo firewalld.
+!!! warning
+    Uma porta publicada pelo Docker pode não ser filtrada da maneira esperada pelo UFW ou pelo firewalld.
 
 Com UFW, o Docker pode encaminhar o tráfego publicado antes que ele passe pelas chains normalmente gerenciadas pelo UFW. Com firewalld, o Docker cria uma zona chamada `docker`, cujo target padrão é `ACCEPT`.
 
@@ -234,8 +234,8 @@ ssh "${SSH_USER}@${SSH_HOST}"
 
 Mantenha essa sessão aberta enquanto altera a configuração. Corrija também as permissões da chave autorizada com o bloco acima.
 
-> [!IMPORTANT]
-> A nova associação ao grupo só estará presente em novas sessões da conta.
+!!! info "Importante"
+    A nova associação ao grupo só estará presente em novas sessões da conta.
 
 ### Configuração
 
