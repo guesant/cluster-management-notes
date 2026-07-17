@@ -4,19 +4,13 @@
 #   - CI                    (target: ci   — .devcontainer/ci)
 #   - VS Code devcontainer  (target: code — .devcontainer/code)
 #
-# - Bun: gerenciador de pacotes (bun install / bun.lock).
-# - Node: runtime de build (astro build) — o runtime do Bun ainda tem
-#   incompatibilidades de interop ESM com dependências do Astro; `bun run`
-#   usa o node da imagem automaticamente via shebang dos bins.
+# Bun é gerenciador de pacotes e runtime. O symlink node -> bun faz os bins
+# com shebang `#!/usr/bin/env node` (astro etc.) rodarem no runtime do Bun.
 
 ARG BUN_VERSION=1.3.14
-ARG NODE_VERSION=22.17.0
 
-FROM docker.io/oven/bun:${BUN_VERSION}-slim AS bun
-
-FROM docker.io/library/node:${NODE_VERSION}-bookworm-slim AS jail
-COPY --from=bun /usr/local/bin/bun /usr/local/bin/bun
-RUN ln -sf /usr/local/bin/bun /usr/local/bin/bunx
+FROM docker.io/oven/bun:${BUN_VERSION}-slim AS jail
+RUN ln -sf /usr/local/bin/bun /usr/local/bin/node
 WORKDIR /workspace
 
 FROM jail AS ci
@@ -31,4 +25,4 @@ RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
 		openssh-client \
 	&& rm -rf /var/lib/apt/lists/*
-USER node
+USER bun
