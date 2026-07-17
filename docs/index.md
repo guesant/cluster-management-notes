@@ -40,21 +40,12 @@ Cada bloco shell informa onde deve ser executado:
 - **máquina com KUBECONFIG:** qualquer manager ou estação administrativa que tenha `kubectl`, acesso à API e um kubeconfig com as permissões necessárias;
 - **estação administrativa:** máquina de origem usada para SSH, túneis ou instalação de CLIs; não precisa pertencer ao cluster.
 
-## Ordem recomendada
+## Ensaios
 
-1. Entender os [conceitos do Kubernetes](k8s/concepts.md), a [arquitetura do K3s](k8s/k3s/architecture.md) e definir o [planejamento do cluster](k8s/k3s/planning.md).
-2. Preparar os hosts com [firewall](security/hosts/firewall.md), [hardening do SSH](security/hosts/ssh.md) e [Fail2Ban](security/hosts/fail2ban.md).
-3. Criar o [primeiro servidor](k8s/k3s/cluster/first-server.md).
-4. Configurar [Gateway API e Traefik](k8s/k3s/networking/gateway-api-and-traefik.md).
-5. Se a topologia for multinó, adicionar os demais [servidores](k8s/k3s/cluster/add-server.md) e [agentes](k8s/k3s/cluster/add-agent.md).
-6. Configurar o [acesso remoto](k8s/k3s/security/remote-access.md) e criar identidades com as permissões necessárias em [RBAC](k8s/k3s/security/identity-and-rbac.md).
-7. Instalar os serviços necessários: [cert-manager](k8s/k3s/services/cert-manager.md), [Longhorn](k8s/k3s/services/longhorn.md) e [Argo CD](strategies/deployment/argo-cd.md).
-8. Conectar o [repositório GitOps](strategies/deployment/gitops-bootstrap.md) e, opcionalmente, configurar a sincronização de segredos com o [Infisical](strategies/secrets/infisical.md).
-9. Modelar as [NetworkPolicies](k8s/k3s/networking/network-policies.md) em homologação e permitir explicitamente os fluxos necessários.
-10. Definir os procedimentos de [backup, atualização e remoção de nós](k8s/k3s/operations/cluster-maintenance.md).
-11. Concluir com o [checklist operacional](k8s/k3s/operations/checklist.md).
+- [Cluster K3s de nó único](guides/k3s-single-node.md): percurso completo que direciona para as páginas e scripts de cada etapa.
+- [Cluster K3s multinó](guides/k3s-multi-node.md): percurso completo que inclui a adição de servidores e agentes.
 
-## Conteúdo por categoria
+## Ferramentas e estratégias
 
 ### Segurança dos hosts
 
