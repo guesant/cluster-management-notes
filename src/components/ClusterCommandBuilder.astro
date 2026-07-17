@@ -1,0 +1,164 @@
+---
+// Prova de conceito de componente interativo: monta o comando de instalação do K3s
+// a partir de campos preenchidos pelo leitor. Roda inteiramente no navegador, sem
+// enviar nada para nenhum serviço externo — o comando gerado deve ser lido antes de
+// ser executado, como qualquer outro comando desta documentação.
+---
+
+<div class="cluster-command-builder" data-cluster-command-builder>
+	<div class="field">
+		<label for="ccb-role">Papel do nó</label>
+		<select id="ccb-role" data-role>
+			<option value="init" selected>Primeiro servidor do cluster (cluster-init)</option>
+			<option value="server">Servidor adicional</option>
+			<option value="agent">Agente</option>
+		</select>
+	</div>
+
+	<div class="field" data-field="server-address">
+		<label for="ccb-server-address">IP ou hostname do primeiro servidor</label>
+		<input
+			id="ccb-server-address"
+			type="text"
+			data-server-address
+			placeholder="ex.: 10.0.0.10 ou k3s-server-1.exemplo.local"
+		/>
+	</div>
+
+	<div class="field" data-field="token">
+		<label for="ccb-token">Token do cluster (K3S_TOKEN)</label>
+		<input id="ccb-token" type="text" data-token placeholder="ex.: SEU_TOKEN_AQUI" />
+	</div>
+
+	<div class="field" data-field="tls-san">
+		<label for="ccb-tls-san">
+			Nome ou IP adicional para o certificado TLS <span class="optional">(opcional)</span>
+		</label>
+		<input
+			id="ccb-tls-san"
+			type="text"
+			data-tls-san
+			placeholder="ex.: cluster.exemplo.local"
+		/>
+	</div>
+
+	<p class="hint">
+		Os valores preenchidos ficam só no seu navegador — nada é enviado para fora desta página.
+		Leia o comando gerado por completo antes de executá-lo.
+	</p>
+
+	<pre><code data-output>curl -sfL https://get.k3s.io | sh -s - server --cluster-init</code></pre>
+</div>
+
+<noscript>
+	<p>
+		Com JavaScript desativado, use um dos modelos abaixo e substitua os valores entre
+		<code>&lt;&gt;</code> manualmente:
+	</p>
+	<ul>
+		<li>
+			<strong>Primeiro servidor:</strong>
+			<code>curl -sfL https://get.k3s.io | sh -s - server --cluster-init</code>
+		</li>
+		<li>
+			<strong>Servidor adicional:</strong>
+			<code
+				>curl -sfL https://get.k3s.io | sh -s - server --server https://&lt;IP-OU-HOSTNAME&gt;:6443 --token &lt;TOKEN&gt;</code
+			>
+		</li>
+		<li>
+			<strong>Agente:</strong>
+			<code
+				>curl -sfL https://get.k3s.io | K3S_URL=https://&lt;IP-OU-HOSTNAME&gt;:6443 K3S_TOKEN=&lt;TOKEN&gt; sh -s -</code
+			>
+		</li>
+	</ul>
+</noscript>
+
+<style>
+	.cluster-command-builder {
+		display: grid;
+		gap: 0.75rem;
+		padding: 1rem;
+		border: 1px solid var(--sl-color-gray-5);
+		border-radius: 0.5rem;
+		background: var(--sl-color-gray-7);
+	}
+	.field {
+		display: grid;
+		gap: 0.25rem;
+	}
+	.field label {
+		font-size: var(--sl-text-sm);
+		color: var(--sl-color-gray-2);
+	}
+	.optional {
+		color: var(--sl-color-gray-3);
+		font-weight: normal;
+	}
+	.field input,
+	.field select {
+		font: inherit;
+		padding: 0.4rem 0.6rem;
+		border-radius: 0.25rem;
+		border: 1px solid var(--sl-color-gray-5);
+		background: var(--sl-color-black);
+		color: var(--sl-color-white);
+	}
+	.hint {
+		margin: 0;
+		font-size: var(--sl-text-xs);
+		color: var(--sl-color-gray-3);
+	}
+	pre {
+		margin: 0;
+		overflow-x: auto;
+	}
+</style>
+
+<script>
+	function initClusterCommandBuilder(root: HTMLElement) {
+		const roleSelect = root.querySelector<HTMLSelectElement>('[data-role]')!;
+		const serverAddressInput = root.querySelector<HTMLInputElement>('[data-server-address]')!;
+		const tokenInput = root.querySelector<HTMLInputElement>('[data-token]')!;
+		const tlsSanInput = root.querySelector<HTMLInputElement>('[data-tls-san]')!;
+		const output = root.querySelector<HTMLElement>('[data-output]')!;
+		const serverAddressField = root.querySelector<HTMLElement>('[data-field="server-address"]')!;
+		const tokenField = root.querySelector<HTMLElement>('[data-field="token"]')!;
+		const tlsSanField = root.querySelector<HTMLElement>('[data-field="tls-san"]')!;
+
+		function update() {
+			const role = roleSelect.value;
+			const serverAddress = serverAddressInput.value.trim() || '<IP-OU-HOSTNAME>';
+			const token = tokenInput.value.trim() || '<TOKEN>';
+			const tlsSan = tlsSanInput.value.trim();
+
+			serverAddressField.hidden = role === 'init';
+			tokenField.hidden = role === 'init';
+			tlsSanField.hidden = role === 'agent';
+
+			let command: string;
+			if (role === 'init') {
+				command = 'curl -sfL https://get.k3s.io | sh -s - server --cluster-init';
+				if (tlsSan) command += ` --tls-san ${tlsSan}`;
+			} else if (role === 'server') {
+				command = `curl -sfL https://get.k3s.io | sh -s - server --server https://${serverAddress}:6443 --token ${token}`;
+				if (tlsSan) command += ` --tls-san ${tlsSan}`;
+			} else {
+				command = `curl -sfL https://get.k3s.io | K3S_URL=https://${serverAddress}:6443 K3S_TOKEN=${token} sh -s -`;
+			}
+
+			output.textContent = command;
+		}
+
+		for (const el of [roleSelect, serverAddressInput, tokenInput, tlsSanInput]) {
+			el.addEventListener('input', update);
+			el.addEventListener('change', update);
+		}
+		update();
+	}
+
+	for (const root of document.querySelectorAll<HTMLElement>('[data-cluster-command-builder]')) {
+		initClusterCommandBuilder(root);
+	}
+</script>

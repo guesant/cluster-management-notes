@@ -4,4 +4,6 @@ scripts/**/* @guesant
 
 LICENSE @guesant
 
-mkdocs.yml @guesant
+astro.config.mjs @guesant
+
+package.json @guesant

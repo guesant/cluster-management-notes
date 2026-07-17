@@ -5,15 +5,25 @@ on:
     branches:
       - main
     paths:
-      - .github/docker/mkdocs/Dockerfile
-      - docs/**
-      - mkdocs.yml
+      - package.json
+      - package-lock.json
+      - astro.config.mjs
+      - tsconfig.json
+      - src/**
+      - public/**
+      - .markdownlint-cli2.jsonc
+      - eslint.config.mjs
       - .github/workflows/docs.yml
   pull_request:
     paths:
-      - .github/docker/mkdocs/Dockerfile
-      - docs/**
-      - mkdocs.yml
+      - package.json
+      - package-lock.json
+      - astro.config.mjs
+      - tsconfig.json
+      - src/**
+      - public/**
+      - .markdownlint-cli2.jsonc
+      - eslint.config.mjs
       - .github/workflows/docs.yml
   workflow_dispatch:
 
@@ -38,27 +48,35 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/configure-pages@v6
 
-      - name: Preparar Material for MkDocs
-        run: >-
-          docker build
-          --file .github/docker/mkdocs/Dockerfile
-          --tag cluster-management-notes-docs:ci
-          .github/docker/mkdocs
+      - name: Preparar Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: npm
 
-      - name: Gerar site com MkDocs
-        run: >-
-          docker run --rm
-          --user "$(id -u):$(id -g)"
-          --env HOME=/tmp
-          --volume "${GITHUB_WORKSPACE}:/docs"
-          cluster-management-notes-docs:ci
-          build --strict
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Validar Markdown e MDX
+        run: npm run lint
+
+      - name: Gerar site com Astro Starlight
+        run: npm run build
+
+      - name: Verificar links do site gerado
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: >-
+            --no-progress
+            --max-concurrency 8
+            dist
+          fail: true
 
       - name: Enviar artefato do GitHub Pages
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v5
         with:
-          path: site
+          path: dist
 
   deploy:
     name: Publicar no GitHub Pages

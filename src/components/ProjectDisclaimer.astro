@@ -1,0 +1,19 @@
+---
+const disclaimerHref = `${import.meta.env.BASE_URL}project/disclaimer/`;
+---
+
+<p class="project-disclaimer">
+	Parte deste conteúdo foi elaborada ou revisada com apoio de ferramentas de inteligência
+	artificial. Valide comandos, versões e decisões de segurança antes de utilizá-los.
+	<a href={disclaimerHref}>Leia o aviso completo</a>.
+</p>
+
+<style>
+	.project-disclaimer {
+		margin: 0;
+		padding-top: 0.75rem;
+		border-top: 1px solid var(--sl-color-gray-6);
+		font-size: var(--sl-text-xs);
+		color: var(--sl-color-gray-3);
+	}
+</style>

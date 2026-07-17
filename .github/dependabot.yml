@@ -18,8 +18,8 @@ updates:
       prefix: chore(actions)
     open-pull-requests-limit: 5
 
-  - package-ecosystem: docker
-    directory: /.github/docker/mkdocs
+  - package-ecosystem: npm
+    directory: /
     schedule:
       interval: weekly
       day: monday
@@ -27,6 +27,10 @@ updates:
       timezone: America/Sao_Paulo
     cooldown:
       default-days: 7
+    groups:
+      npm:
+        patterns:
+          - "*"
     commit-message:
-      prefix: chore(mkdocs)
-    open-pull-requests-limit: 2
+      prefix: chore(deps)
+    open-pull-requests-limit: 5

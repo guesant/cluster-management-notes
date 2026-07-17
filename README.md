@@ -7,44 +7,25 @@ Minhas anotações sobre como criar e operar clusters K3s de nó único (*single
 
 ## Documentação
 
-- [Site publicado](https://guesant.github.io/cluster-management-notes/)
-- [Início do guia](docs/index.md)
-- [Ensaio: cluster K3s](docs/guides/k3s.md)
-- [Guia de operação contínua](docs/guides/operations.md)
-- [Prontidão de workloads](docs/k8s/workloads/production-readiness.md)
-- [Observabilidade e alertas](docs/operations/observability-and-alerting.md)
-- [Backup e recuperação](docs/operations/backup-and-recovery.md)
-- [Runbook de manutenção e mudanças](docs/operations/maintenance-runbook.md)
-- [Fundamentos](docs/k8s/concepts.md)
-- [Segurança dos hosts](docs/security/hosts/firewall.md)
-- [Rede Kubernetes](docs/k8s/networking/gateway-api-and-traefik.md)
-- [Segurança e acesso](docs/k8s/security/remote-access.md)
-- [Extensões](docs/k8s/extensions/cert-manager.md)
-- [GitOps com Argo CD](docs/strategies/deployment/argo-cd.md)
-- [Gestão de segredos](docs/strategies/secrets/infisical.md)
-- [Referência](docs/reference/conventions.md)
-- [Ferramentas e catálogos do ecossistema](docs/reference/tools-and-resources.md)
+O guia completo está publicado em **[guesant.github.io/cluster-management-notes](https://guesant.github.io/cluster-management-notes/)**, com busca e navegação por assunto: primeiros passos, fundamentos, segurança dos hosts, Kubernetes/K3s, guias de implantação e operação, e referência.
 
-## Validar a documentação com Docker
+O escopo do projeto e o [aviso sobre uso de IA na elaboração do conteúdo](https://guesant.github.io/cluster-management-notes/project/disclaimer/) estão descritos no próprio site, na seção "Projeto".
 
-O build usa a imagem definida em [`.github/docker/mkdocs/Dockerfile`](.github/docker/mkdocs/Dockerfile) e não instala dependências na máquina. Para validar e gerar o site em `site/`:
+## Executar localmente
+
+O site é gerado com [Astro Starlight](https://starlight.astro.build/) e roda inteiramente via Docker, sem exigir Node.js instalado na máquina:
 
 ```bash
-just docs-build
+just docs-install   # instala as dependências
+just docs-dev        # sobe o servidor de desenvolvimento em http://localhost:4321
 ```
 
-Para visualizar o site em `http://localhost:8000`:
-
-```bash
-just docs-serve
-```
-
-O deploy ocorre pelo workflow [`.github/workflows/docs.yml`](.github/workflows/docs.yml) após alterações na documentação entrarem na branch `main`.
-
-Antes da primeira publicação, selecione **GitHub Actions** em **Settings → Pages → Build and deployment → Source**. O workflow não usa uma branch `gh-pages`: ele envia e publica o artefato estático pela API do GitHub Pages.
+Detalhes, recipes adicionais (`docs-build`, `docs-preview`) e a alternativa via Dev Container estão em [Executar a documentação localmente](https://guesant.github.io/cluster-management-notes/contributing/running-locally/).
 
 ## Qualidade e atualizações da automação
 
-O workflow [`.github/workflows/actions-quality.yml`](.github/workflows/actions-quality.yml) executa o `actionlint` para validar a sintaxe e as expressões dos workflows e o `zizmor` para auditar problemas de segurança. Actions oficiais da organização `actions` usam a tag da versão principal mais recente; actions de terceiros são fixadas por SHA completo. Os checkouts não persistem credenciais.
+O workflow [`docs.yml`](.github/workflows/docs.yml) valida Markdown/MDX, verifica links e gera o site a cada alteração; a publicação ocorre após o merge na branch `main` pela API do GitHub Pages (sem branch `gh-pages`).
 
-O [Dependabot](.github/dependabot.yml) verifica semanalmente as actions e a imagem Docker usada pelo MkDocs. Um cooldown de sete dias evita adotar imediatamente versões recém-publicadas.
+O workflow [`actions-quality.yml`](.github/workflows/actions-quality.yml) executa o `actionlint` para validar a sintaxe e as expressões dos workflows e o `zizmor` para auditar problemas de segurança. Actions oficiais da organização `actions` usam a tag da versão principal mais recente; actions de terceiros são fixadas por SHA completo. Os checkouts não persistem credenciais.
+
+O [Dependabot](.github/dependabot.yml) verifica semanalmente as actions e as dependências npm. Um cooldown de sete dias evita adotar imediatamente versões recém-publicadas.

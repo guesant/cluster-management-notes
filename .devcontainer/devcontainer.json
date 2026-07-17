@@ -1,0 +1,17 @@
+{
+	"name": "cluster-management-notes",
+	"image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+	"postCreateCommand": "npm ci",
+	"forwardPorts": [4321],
+	"portsAttributes": {
+		"4321": {
+			"label": "Astro dev server",
+			"onAutoForward": "notify"
+		}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": ["astro-build.astro-vscode"]
+		}
+	}
+}
