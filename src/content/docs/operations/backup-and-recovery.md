@@ -4,7 +4,7 @@ sidebar:
   order: 2
 ---
 
-Este guia organiza a proteção e a recuperação de um cluster sem depender de uma única ferramenta. Ele detalha os itens do [guia de operação contínua](../guides/operations-overview.md) e deve ser adaptado à criticidade, aos dados e às dependências de cada ambiente.
+Este guia organiza a proteção e a recuperação de um cluster sem depender de uma única ferramenta. Ele detalha os itens do [guia de operação contínua](../guides/operations-overview/) e deve ser adaptado à criticidade, aos dados e às dependências de cada ambiente.
 
 Um backup só está comprovado quando uma restauração isolada recupera o serviço dentro dos objetivos definidos. A existência de um arquivo, snapshot ou Job com status de sucesso não demonstra isso sozinha.
 
@@ -161,7 +161,7 @@ O token original do servidor K3s deve ser protegido junto à estratégia de data
 
 Snapshots locais continuam sujeitos à perda do nó. O K3s pode enviar snapshots para storage compatível com S3, mas credenciais mantidas apenas em um Secret Kubernetes não ficam disponíveis quando a API ainda não foi restaurada. Mantenha fora do cluster os meios de acesso necessários ao modo de recuperação.
 
-Use o [procedimento de backup, atualização e remoção do K3s](k3s-cluster-maintenance.md) para criação e recuperação do datastore. Registre a versão instalada, o token correspondente, o local do snapshot e a topologia original. Faça a restauração destrutiva somente no ambiente isolado ou durante um incidente aprovado.
+Use o [procedimento de backup, atualização e remoção do K3s](k3s-cluster-maintenance/) para criação e recuperação do datastore. Registre a versão instalada, o token correspondente, o local do snapshot e a topologia original. Faça a restauração destrutiva somente no ambiente isolado ou durante um incidente aprovado.
 
 ## Limites do Longhorn
 
@@ -176,7 +176,7 @@ Um backup Longhorn usa um snapshot como origem e copia os blocos para um backups
 - não presuma que o backup de volume inclui Deployment, CRDs, Secrets ou dependências externas;
 - trate o system backup do Longhorn como proteção dos recursos operados pelo Longhorn, não como backup universal do cluster.
 
-Snapshots CSI também podem permanecer no mesmo backend do PV original. Durabilidade e portabilidade dependem do driver, da `VolumeSnapshotClass` e do provedor. Consulte o [guia do Longhorn](../kubernetes/extensions/longhorn.md) e teste a combinação exata adotada.
+Snapshots CSI também podem permanecer no mesmo backend do PV original. Durabilidade e portabilidade dependem do driver, da `VolumeSnapshotClass` e do provedor. Consulte o [guia do Longhorn](../kubernetes/extensions/longhorn/) e teste a combinação exata adotada.
 
 ## Bancos e consistência da aplicação
 
@@ -196,7 +196,7 @@ Faça a validação na camada da aplicação: abra o banco restaurado, verifique
 
 ## Credenciais, configuração e fonte de segredos
 
-Recuperar objetos Secret do etcd não garante que a fonte externa, as identidades e as credenciais de bootstrap ainda funcionem. Para soluções como o [Infisical](../guides/secrets/infisical.md), documente:
+Recuperar objetos Secret do etcd não garante que a fonte externa, as identidades e as credenciais de bootstrap ainda funcionem. Para soluções como o [Infisical](../guides/secrets/infisical/), documente:
 
 - backup e recuperação suportados pela plataforma que armazena os valores;
 - projeto, ambiente, caminhos e políticas necessários;
@@ -306,7 +306,7 @@ Copie este roteiro para uma issue ou runbook executável:
 - [ ] Confirmar saúde de nós, controllers, volumes, Pods e Jobs.
 - [ ] Medir o ponto de dados efetivamente recuperado e calcular a perda observada.
 - [ ] Validar schema, integridade, contagens/checksums e uma transação funcional.
-- [ ] Executar os fluxos críticos definidos na [prontidão de workloads](../kubernetes/workloads/production-readiness.md).
+- [ ] Executar os fluxos críticos definidos na [prontidão de workloads](../kubernetes/workloads/production-readiness/).
 - [ ] Confirmar identidades, RBAC, certificados, NetworkPolicies e ausência de Secrets em logs.
 - [ ] Validar métricas, logs, alertas e um teste externo do serviço.
 - [ ] Parar o cronômetro somente quando o serviço estiver funcional, não quando a cópia terminar.
@@ -338,11 +338,11 @@ Um screenshot isolado de “Completed” não comprova integridade, destino, pon
 
 ## Conteúdo relacionado
 
-- [Guia de operação contínua](../guides/operations-overview.md)
-- [Backup, atualização e remoção no K3s](k3s-cluster-maintenance.md)
-- [Longhorn](../kubernetes/extensions/longhorn.md)
-- [Segredos GitOps com Infisical](../guides/secrets/infisical.md)
-- [Prontidão de workloads](../kubernetes/workloads/production-readiness.md)
+- [Guia de operação contínua](../guides/operations-overview/)
+- [Backup, atualização e remoção no K3s](k3s-cluster-maintenance/)
+- [Longhorn](../kubernetes/extensions/longhorn/)
+- [Segredos GitOps com Infisical](../guides/secrets/infisical/)
+- [Prontidão de workloads](../kubernetes/workloads/production-readiness/)
 
 ## Fontes e leitura adicional
 

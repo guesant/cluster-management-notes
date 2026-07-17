@@ -4,7 +4,7 @@ sidebar:
   order: 3
 ---
 
-Estas regras complementam o [firewall básico dos hosts](../../hosts/firewall.md). Nos hosts K3s, libere também a comunicação interna do cluster. Restrinja `K3S_NODE_CIDR` à rede que contém somente os nós; nunca exponha VXLAN/UDP 8472 à Internet.
+Estas regras complementam o [firewall básico dos hosts](../../hosts/firewall/). Nos hosts K3s, libere também a comunicação interna do cluster. Restrinja `K3S_NODE_CIDR` à rede que contém somente os nós; nunca exponha VXLAN/UDP 8472 à Internet.
 
 Nos managers e agents:
 

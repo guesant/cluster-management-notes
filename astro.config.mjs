@@ -6,7 +6,7 @@ import mermaid from 'astro-mermaid';
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://guesant.github.io',
-	base: '/cluster-management-notes',
+	base: '/infrastructure-and-cluster-notebook',
 	integrations: [
 		// astro-mermaid deve vir antes do starlight para interceptar os blocos ```mermaid.
 		mermaid({
@@ -14,7 +14,7 @@ export default defineConfig({
 			autoTheme: true,
 		}),
 		starlight({
-			title: 'cluster-management-notes',
+			title: 'infrastructure-and-cluster-notebook',
 			description:
 				'Anotações sobre clusters K3s de nó único ou multinó, com conceitos, melhores práticas, guias passo a passo e scripts.',
 			locales: {
@@ -24,11 +24,11 @@ export default defineConfig({
 				{
 					icon: 'github',
 					label: 'GitHub',
-					href: 'https://github.com/guesant/cluster-management-notes',
+					href: 'https://github.com/guesant/infrastructure-and-cluster-notebook',
 				},
 			],
 			editLink: {
-				baseUrl: 'https://github.com/guesant/cluster-management-notes/edit/main/',
+				baseUrl: 'https://github.com/guesant/infrastructure-and-cluster-notebook/edit/main/',
 			},
 			components: {
 				Footer: './src/components/overrides/Footer.astro',

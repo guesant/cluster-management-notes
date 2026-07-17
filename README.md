@@ -1,15 +1,15 @@
-# cluster-management-notes
+# infrastructure-and-cluster-notebook
 
-[![Documentação](https://github.com/guesant/cluster-management-notes/actions/workflows/docs.yml/badge.svg)](https://github.com/guesant/cluster-management-notes/actions/workflows/docs.yml)
-[![Qualidade dos workflows](https://github.com/guesant/cluster-management-notes/actions/workflows/actions-quality.yml/badge.svg)](https://github.com/guesant/cluster-management-notes/actions/workflows/actions-quality.yml)
+[![Documentação](https://github.com/guesant/infrastructure-and-cluster-notebook/actions/workflows/docs.yml/badge.svg)](https://github.com/guesant/infrastructure-and-cluster-notebook/actions/workflows/docs.yml)
+[![Qualidade dos workflows](https://github.com/guesant/infrastructure-and-cluster-notebook/actions/workflows/actions-quality.yml/badge.svg)](https://github.com/guesant/infrastructure-and-cluster-notebook/actions/workflows/actions-quality.yml)
 
 Minhas anotações sobre como criar e operar clusters K3s de nó único (*single-node*) ou multinó (*multi-node*), reunindo conceitos, melhores práticas, guias passo a passo e scripts reutilizáveis.
 
 ## Documentação
 
-O guia completo está publicado em **[guesant.github.io/cluster-management-notes](https://guesant.github.io/cluster-management-notes/)**, com busca e navegação por assunto: primeiros passos, fundamentos, segurança dos hosts, Kubernetes/K3s, guias de implantação e operação, e referência.
+O guia completo está publicado em **[guesant.github.io/infrastructure-and-cluster-notebook](https://guesant.github.io/infrastructure-and-cluster-notebook/)**, com busca e navegação por assunto: primeiros passos, fundamentos, segurança dos hosts, Kubernetes/K3s, guias de implantação e operação, e referência.
 
-O escopo do projeto e o [aviso sobre uso de IA na elaboração do conteúdo](https://guesant.github.io/cluster-management-notes/project/disclaimer/) estão descritos no próprio site, na seção "Projeto".
+O escopo do projeto e o [aviso sobre uso de IA na elaboração do conteúdo](https://guesant.github.io/infrastructure-and-cluster-notebook/project/disclaimer/) estão descritos no próprio site, na seção "Projeto".
 
 ## Executar localmente
 
@@ -20,7 +20,7 @@ just docs-install   # instala as dependências
 just docs-dev        # sobe o servidor de desenvolvimento em http://localhost:4321
 ```
 
-Detalhes, recipes adicionais (`docs-build`, `docs-preview`) e a alternativa via Dev Container estão em [Executar a documentação localmente](https://guesant.github.io/cluster-management-notes/contributing/running-locally/).
+Detalhes, recipes adicionais (`docs-build`, `docs-preview`) e a alternativa via Dev Container estão em [Executar a documentação localmente](https://guesant.github.io/infrastructure-and-cluster-notebook/contributing/running-locally/).
 
 ## Qualidade e atualizações da automação
 

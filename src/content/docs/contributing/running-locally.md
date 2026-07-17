@@ -11,7 +11,7 @@ comandos abaixo rodam tudo dentro de um container.
 
 ## Via `just`
 
-O [`justfile`](https://github.com/guesant/cluster-management-notes/blob/main/justfile) na raiz do
+O [`justfile`](https://github.com/guesant/infrastructure-and-cluster-notebook/blob/main/justfile) na raiz do
 repositório expõe as recipes usadas no dia a dia:
 
 ```bash
@@ -35,7 +35,7 @@ repositório no container — nenhuma dependência é instalada na máquina host
 
 Para quem prefere abrir o projeto num ambiente já pronto (VS Code Dev Containers ou GitHub
 Codespaces), o repositório inclui um
-[`.devcontainer/devcontainer.json`](https://github.com/guesant/cluster-management-notes/blob/main/.devcontainer/devcontainer.json).
+[`.devcontainer/devcontainer.json`](https://github.com/guesant/infrastructure-and-cluster-notebook/blob/main/.devcontainer/devcontainer.json).
 Ao abrir o repositório no Dev Container, as dependências são instaladas automaticamente
 (`npm ci`) e a porta `4321` já fica encaminhada — basta rodar `npm run dev` dentro do container.
 
@@ -51,6 +51,6 @@ Ao abrir o repositório no Dev Container, as dependências são instaladas autom
 ## Antes de abrir um PR
 
 Rode o build (`just docs-build`) e, se aplicável, o lint e a verificação de links descritos no
-workflow [`Documentação`](https://github.com/guesant/cluster-management-notes/blob/main/.github/workflows/docs.yml) —
+workflow [`Documentação`](https://github.com/guesant/infrastructure-and-cluster-notebook/blob/main/.github/workflows/docs.yml) —
 os mesmos passos rodam automaticamente no CI a cada push ou pull request que altere a
 documentação.

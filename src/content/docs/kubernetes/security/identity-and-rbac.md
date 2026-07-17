@@ -22,7 +22,7 @@ Não emita certificados individuais com grupo `system:masters`. O kubeconfig adm
 
 ## Criar um kubeconfig individual
 
-O script [`scripts/kubernetes/create-client-kubeconfig.sh`](https://github.com/guesant/cluster-management-notes/blob/main/scripts/kubernetes/create-client-kubeconfig.sh) usa o contexto administrativo atual para:
+O script [`scripts/kubernetes/create-client-kubeconfig.sh`](https://github.com/guesant/infrastructure-and-cluster-notebook/blob/main/scripts/kubernetes/create-client-kubeconfig.sh) usa o contexto administrativo atual para:
 
 1. gerar uma chave privada local;
 2. criar uma CSR com o nome individual no `CN`;
@@ -37,7 +37,7 @@ Ele não cria nenhum binding. Uma identidade recém-emitida autentica como membr
 
 ```bash
 curl -sfL \
-  https://raw.githubusercontent.com/guesant/cluster-management-notes/refs/heads/main/scripts/kubernetes/create-client-kubeconfig.sh \
+  https://raw.githubusercontent.com/guesant/infrastructure-and-cluster-notebook/refs/heads/main/scripts/kubernetes/create-client-kubeconfig.sh \
   | bash -
 ```
 

@@ -4,9 +4,9 @@ sidebar:
   order: 1
 ---
 
-Este guia transforma os itens de observabilidade do [guia de operação contínua](../guides/operations-overview.md) em um desenho operacional verificável. A escolha de produtos é secundária: primeiro defina quais perguntas precisam ser respondidas, quem age quando algo falha e quais evidências demonstram que o caminho completo funciona.
+Este guia transforma os itens de observabilidade do [guia de operação contínua](../guides/operations-overview/) em um desenho operacional verificável. A escolha de produtos é secundária: primeiro defina quais perguntas precisam ser respondidas, quem age quando algo falha e quais evidências demonstram que o caminho completo funciona.
 
-Para cada serviço crítico, registre pelo menos o responsável, os objetivos de disponibilidade, as dependências, os sinais coletados, os dashboards, os alertas e os runbooks. A instrumentação da aplicação deve acompanhar sua [prontidão para produção](../kubernetes/workloads/production-readiness.md), em vez de ser acrescentada somente depois de um incidente.
+Para cada serviço crítico, registre pelo menos o responsável, os objetivos de disponibilidade, as dependências, os sinais coletados, os dashboards, os alertas e os runbooks. A instrumentação da aplicação deve acompanhar sua [prontidão para produção](../kubernetes/workloads/production-readiness/), em vez de ser acrescentada somente depois de um incidente.
 
 ## Sinais e seus usos
 
@@ -31,8 +31,8 @@ O inventário precisa cobrir o serviço e as camadas das quais ele depende. Uma 
 | K3s e control plane | API, scheduler, controllers, certificados e datastore usado pela topologia | API indisponível ou lenta, falha de reconciliação, perda de quorum quando houver etcd, crescimento ou erro do datastore |
 | Nós e serviços do cluster | Estado `Ready`, kubelet, runtime, CNI, DNS, capacidade alocável e pressão | Nó `NotReady`, runtime indisponível, erro de rede, DNS degradado ou Pods acima da capacidade segura |
 | Workloads | Réplicas, probes, reinícios, scheduling, Jobs e sinais da aplicação | `CrashLoopBackOff`, `OOMKilled`, Pods pendentes, falha de readiness, Job atrasado ou taxa de erro elevada |
-| Armazenamento | PVCs, capacidade, latência, erros, saúde de réplicas e backups | Volume cheio, PVC pendente, réplica degradada, I/O lento ou backup ausente; veja [Longhorn](../kubernetes/extensions/longhorn.md) |
-| Dependências | DNS, registry, banco, fila, identidade, APIs externas e certificados | Resolução ou autenticação falha, dependência lenta, limite externo atingido ou certificado próximo do vencimento; veja [cert-manager](../kubernetes/extensions/cert-manager.md) |
+| Armazenamento | PVCs, capacidade, latência, erros, saúde de réplicas e backups | Volume cheio, PVC pendente, réplica degradada, I/O lento ou backup ausente; veja [Longhorn](../kubernetes/extensions/longhorn/) |
+| Dependências | DNS, registry, banco, fila, identidade, APIs externas e certificados | Resolução ou autenticação falha, dependência lenta, limite externo atingido ou certificado próximo do vencimento; veja [cert-manager](../kubernetes/extensions/cert-manager/) |
 
 Em um cluster single-node, a perda do host também remove control plane, workloads e monitoramento local. Em um cluster multinode, acompanhe quorum, distribuição de réplicas e domínios de falha; a mera existência de várias réplicas não prova disponibilidade.
 
@@ -76,7 +76,7 @@ Retenção não é backup, réplica não é backup e a TSDB local do Prometheus 
 
 ## Template opcional do kube-prometheus-stack
 
-O repositório apresenta um template opcional de `kube-prometheus-stack` nos [templates de deploy](../guides/deployment/templates.md). Ele reúne Prometheus Operator, Prometheus, Alertmanager, Grafana e exporters, servindo como ponto de partida para métricas, dashboards e alertas.
+O repositório apresenta um template opcional de `kube-prometheus-stack` nos [templates de deploy](../guides/deployment/templates/). Ele reúne Prometheus Operator, Prometheus, Alertmanager, Grafana e exporters, servindo como ponto de partida para métricas, dashboards e alertas.
 
 Adotar o template não conclui o desenho operacional. Antes de produção, revise versões, recursos, retenção, volumes persistentes, seleção de monitores e regras, acesso às interfaces, receptores reais e políticas de rede. O template não fornece, por si só, pipeline de logs, backend de traces, backup nem monitoramento externo.
 

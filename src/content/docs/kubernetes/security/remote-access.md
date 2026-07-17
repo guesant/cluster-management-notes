@@ -22,7 +22,7 @@ kubectl auth can-i '*' '*' --all-namespaces
 Esse kubeconfig é administrativo. Não o compartilhe com aplicações nem com usuários que não devam ter acesso total ao cluster.
 :::
 
-Para criar credenciais menos privilegiadas, continue em [Identidade, autenticação e RBAC](identity-and-rbac.md).
+Para criar credenciais menos privilegiadas, continue em [Identidade, autenticação e RBAC](identity-and-rbac/).
 
 ## Fontes e leitura adicional
 

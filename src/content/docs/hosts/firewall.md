@@ -6,7 +6,7 @@ sidebar:
 
 O firewall do host controla quais conexões de rede podem chegar aos serviços da máquina. Ele é a primeira barreira contra portas expostas desnecessariamente, mas não substitui autenticação, atualização dos serviços nem políticas de acesso dentro do Kubernetes. Por padrão, bloqueie conexões de entrada e permita apenas o que for necessário.
 
-As liberações específicas do cluster ficam em [Firewall dos nós K3s](../kubernetes/k3s/host-firewall.md). Se o host executar Docker, revise também [Portas publicadas pelo Docker](docker-published-ports.md).
+As liberações específicas do cluster ficam em [Firewall dos nós K3s](../kubernetes/k3s/host-firewall/). Se o host executar Docker, revise também [Portas publicadas pelo Docker](docker-published-ports/).
 
 ## UFW
 

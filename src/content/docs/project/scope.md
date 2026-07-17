@@ -1,11 +1,11 @@
 ---
 title: Escopo do projeto
-description: O que o cluster-management-notes cobre, para quem é útil e o que fica fora do escopo.
+description: O que o infrastructure-and-cluster-notebook cobre, para quem é útil e o que fica fora do escopo.
 sidebar:
   order: 1
 ---
 
-O `cluster-management-notes` reúne anotações pessoais sobre como criar e operar clusters K3s de
+O `infrastructure-and-cluster-notebook` reúne anotações pessoais sobre como criar e operar clusters K3s de
 nó único (*single-node*) ou multinó (*multi-node*), com conceitos, boas práticas, guias passo a
 passo e scripts reutilizáveis.
 
@@ -19,7 +19,7 @@ passo e scripts reutilizáveis.
 - Rotinas operacionais: observabilidade, backup e recuperação, manutenção.
 
 As premissas técnicas detalhadas (usuário assumido, formato dos blocos de comando, versões de
-referência) estão em [Escopo, convenções e versões](../reference/conventions.md).
+referência) estão em [Escopo, convenções e versões](../reference/conventions/).
 
 ## Para quem é
 
@@ -38,4 +38,4 @@ comando.
 - Conteúdo sobre Docker e Docker Swarm está planejado, mas ainda não foi escrito — a seção
   correspondente aparecerá na navegação assim que existir.
 
-Veja também o [aviso sobre uso de IA na elaboração deste conteúdo](./disclaimer.md).
+Veja também o [aviso sobre uso de IA na elaboração deste conteúdo](./disclaimer/).

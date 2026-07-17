@@ -36,7 +36,7 @@ O fluxo GitOps usa um AppProject dedicado que autoriza somente o repositório co
 
 NetworkPolicy não é uma fronteira absoluta contra tráfego do nó ou Pods `hostNetwork`, não oferece controle L7 ou por FQDN, não cifra conexões e não registra obrigatoriamente decisões de allow/deny. Use firewall do host, RBAC, TLS/mTLS, Gateway ou service mesh e controles da aplicação conforme o risco. A documentação oficial também ressalta que o tráfego entre Pods é aberto e não cifrado por padrão em cenários multi-tenant.
 
-O template [`templates/gitops/apps/security/network-policies`](https://github.com/guesant/cluster-management-notes/tree/main/templates/gitops/apps/security/network-policies) oferece manifests independentes e um script que gera três tipos de configuração sem aplicar nada no cluster:
+O template [`templates/gitops/apps/security/network-policies`](https://github.com/guesant/infrastructure-and-cluster-notebook/tree/main/templates/gitops/apps/security/network-policies) oferece manifests independentes e um script que gera três tipos de configuração sem aplicar nada no cluster:
 
 - `baseline`: deny de ingress/egress e liberação de DNS para um namespace;
 - `flow`: egress na origem e ingress no destino para comunicação entre workloads isolados;
@@ -67,7 +67,7 @@ read -r -p "Namespace que será auditado: " NETWORK_POLICY_NAMESPACE
 ./audit.sh "${NETWORK_POLICY_NAMESPACE}"
 ```
 
-NetworkPolicy não seleciona Services por nome e não interpreta hostnames, URLs HTTP ou identidades de usuário. Ela também não substitui TLS, autenticação, RBAC ou backups. Consulte também o [guia completo do template](https://github.com/guesant/cluster-management-notes/blob/main/templates/gitops/apps/security/network-policies/README.md).
+NetworkPolicy não seleciona Services por nome e não interpreta hostnames, URLs HTTP ou identidades de usuário. Ela também não substitui TLS, autenticação, RBAC ou backups. Consulte também o [guia completo do template](https://github.com/guesant/infrastructure-and-cluster-notebook/blob/main/templates/gitops/apps/security/network-policies/README.md).
 
 ## Fontes e leitura adicional
 

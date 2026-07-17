@@ -19,7 +19,7 @@ flowchart LR
     Managed --> Workload["Pod autorizado"]
 ```
 
-O template [`templates/gitops/apps/security/infisical-secrets`](https://github.com/guesant/cluster-management-notes/tree/main/templates/gitops/apps/security/infisical-secrets) usa a API recomendada `v1beta1`, com `InfisicalConnection`, `InfisicalAuth` e `InfisicalStaticSecret`. O único objeto Kubernetes sensível criado manualmente é um Secret de bootstrap com o `clientId` e o `clientSecret` de uma Machine Identity Universal Auth. Esse Secret não entra no Git nem é administrado pelo Argo CD.
+O template [`templates/gitops/apps/security/infisical-secrets`](https://github.com/guesant/infrastructure-and-cluster-notebook/tree/main/templates/gitops/apps/security/infisical-secrets) usa a API recomendada `v1beta1`, com `InfisicalConnection`, `InfisicalAuth` e `InfisicalStaticSecret`. O único objeto Kubernetes sensível criado manualmente é um Secret de bootstrap com o `clientId` e o `clientSecret` de uma Machine Identity Universal Auth. Esse Secret não entra no Git nem é administrado pelo Argo CD.
 
 O fluxo recomendado é:
 

@@ -1,5 +1,5 @@
 {
-	"name": "cluster-management-notes",
+	"name": "infrastructure-and-cluster-notebook",
 	"image": "mcr.microsoft.com/devcontainers/javascript-node:22",
 	"postCreateCommand": "npm ci",
 	"forwardPorts": [4321],

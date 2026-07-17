@@ -18,7 +18,7 @@ O instalador baixa a versão estável indicada por `dl.k8s.io` e valida o SHA-25
 
 ```bash
 curl -sfL \
-  https://raw.githubusercontent.com/guesant/cluster-management-notes/refs/heads/main/scripts/install/kubectl.sh \
+  https://raw.githubusercontent.com/guesant/infrastructure-and-cluster-notebook/refs/heads/main/scripts/install/kubectl.sh \
   | bash -
 ```
 
@@ -34,7 +34,7 @@ O instalador usa o script oficial da linha Helm 3:
 
 ```bash
 curl -sfL \
-  https://raw.githubusercontent.com/guesant/cluster-management-notes/refs/heads/main/scripts/install/helm.sh \
+  https://raw.githubusercontent.com/guesant/infrastructure-and-cluster-notebook/refs/heads/main/scripts/install/helm.sh \
   | bash -
 ```
 
@@ -48,7 +48,7 @@ O instalador baixa a versão do canal `stable` para `amd64` ou `arm64`:
 
 ```bash
 curl -sfL \
-  https://raw.githubusercontent.com/guesant/cluster-management-notes/refs/heads/main/scripts/install/argocd.sh \
+  https://raw.githubusercontent.com/guesant/infrastructure-and-cluster-notebook/refs/heads/main/scripts/install/argocd.sh \
   | bash -
 ```
 
@@ -60,7 +60,7 @@ A partir da versão 2, `cmctl` possui ciclo de releases independente do cert-man
 
 Não use a antiga imagem `cert-manager-ctl` como alternativa atual em Docker: o cert-manager 1.14 foi a última versão que a publicou. Este guia usa o binário standalone `cmctl`; o upstream também documenta o [modo de plugin `kubectl cert-manager`](https://cert-manager.io/docs/reference/cmctl/#kubectl-plugin), instalado com o mesmo binário sob o nome esperado pelo `kubectl`.
 
-Os procedimentos de `check api`, diagnóstico e renovação ficam na página do [cert-manager](../kubernetes/extensions/cert-manager.md).
+Os procedimentos de `check api`, diagnóstico e renovação ficam na página do [cert-manager](../kubernetes/extensions/cert-manager/).
 
 ## longhornctl
 
@@ -75,7 +75,7 @@ read -r -p "Versão do longhornctl [v1.12.0]: " LONGHORNCTL_VERSION
 LONGHORNCTL_VERSION="${LONGHORNCTL_VERSION:-v1.12.0}"
 
 curl -sfL \
-  https://raw.githubusercontent.com/guesant/cluster-management-notes/refs/heads/main/scripts/install/longhornctl.sh \
+  https://raw.githubusercontent.com/guesant/infrastructure-and-cluster-notebook/refs/heads/main/scripts/install/longhornctl.sh \
   | LONGHORNCTL_VERSION="${LONGHORNCTL_VERSION}" bash -
 ```
 

@@ -28,7 +28,7 @@ apoio, e que o processo de revisão humana não substitui a validação técnica
 - Links para documentação oficial de terceiros (Kubernetes, K3s, Argo CD, cert-manager, etc.):
   esse conteúdo é de responsabilidade dos respectivos projetos, não deste repositório.
 - Versões e números específicos citados como referência: consulte sempre a fonte upstream listada
-  em [Escopo, convenções e versões](../reference/conventions.md) antes de aplicar em produção.
+  em [Escopo, convenções e versões](../reference/conventions/) antes de aplicar em produção.
 
 ## Responsabilidade de validação
 
@@ -41,4 +41,4 @@ Antes de executar qualquer comando ou aplicar qualquer configuração deste site
   forma: eles facilitam a montagem do comando, mas não substituem a leitura antes da execução.
 
 Dúvidas, imprecisões ou sugestões de correção podem ser reportadas abrindo uma issue no
-[repositório no GitHub](https://github.com/guesant/cluster-management-notes).
+[repositório no GitHub](https://github.com/guesant/infrastructure-and-cluster-notebook).

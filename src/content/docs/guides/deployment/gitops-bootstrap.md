@@ -41,7 +41,7 @@ O termo `root` não indica um tipo especial de repositório no Argo CD. Ele é a
 Siga esta sequência:
 
 1. Crie um repositório Git para a configuração do cluster ou escolha um repositório existente.
-2. Copie [`templates/gitops`](https://github.com/guesant/cluster-management-notes/tree/main/templates/gitops) para o diretório `gitops/` desse repositório.
+2. Copie [`templates/gitops`](https://github.com/guesant/infrastructure-and-cluster-notebook/tree/main/templates/gitops) para o diretório `gitops/` desse repositório.
 3. Remova de `gitops/applications/` as Applications que não deseja instalar e remova também os respectivos diretórios em `gitops/apps/`.
 4. Substitua `https://github.com/example/cluster-config.git` em `gitops/root/application.yaml` e nas Applications mantidas pela URL real do repositório. Revise também os domínios, versões, namespaces e valores dos charts.
 5. Valide, faça commit e envie a estrutura para a branch indicada por `targetRevision`, que nos exemplos é `main`.
