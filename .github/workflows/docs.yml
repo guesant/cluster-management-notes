@@ -6,7 +6,8 @@ on:
       - main
     paths:
       - package.json
-      - package-lock.json
+      - bun.lock
+      - .container/**
       - astro.config.mjs
       - tsconfig.json
       - src/**
@@ -20,7 +21,8 @@ on:
   pull_request:
     paths:
       - package.json
-      - package-lock.json
+      - bun.lock
+      - .container/**
       - astro.config.mjs
       - tsconfig.json
       - src/**
@@ -64,9 +66,9 @@ jobs:
           runCmd: |
             set -euo pipefail
 
-            npm ci
-            npm run lint
-            npm run build
+            bun install --frozen-lockfile
+            bun run lint
+            bun run build
 
       # TODO: Reabilitar lychee-action após corrigir links
       # root-relative e falsos positivos.

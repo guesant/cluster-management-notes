@@ -1,11 +1,11 @@
 {
 	"name": "infrastructure-and-cluster-notebook",
 	"build": {
-		"dockerfile": "../Dockerfile",
-		"context": "..",
+		"dockerfile": "../../.container/Dockerfile",
+		"context": "../../.container",
 		"target": "code"
 	},
-	"postCreateCommand": "npm ci",
+	"postCreateCommand": "bun install --frozen-lockfile",
 	"forwardPorts": [4321],
 	"portsAttributes": {
 		"4321": {

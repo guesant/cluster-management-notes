@@ -54,17 +54,19 @@ Use o runner do repositório para qualquer comando:
 
 ```bash
 # comando padrão (sem rede, mínimo privilégio)
-./jail-exec.sh npm run build
+./jail-exec.sh bun run build
 
-# rede é opt-in (necessária para npm install, npm audit etc.)
-JAIL_NETWORK=1 ./jail-exec.sh npm install
+# rede é opt-in (necessária para bun install, bun audit etc.)
+JAIL_NETWORK=1 ./jail-exec.sh bun install
 
 # servidor de desenvolvimento com porta publicada em 127.0.0.1
-JAIL_PUBLISH=4321 ./jail-exec.sh npm run dev -- --host 0.0.0.0
+JAIL_PUBLISH=4321 ./jail-exec.sh bun run dev -- --host 0.0.0.0
 
 # trocar a imagem quando a tarefa exigir outra ferramenta
 JAIL_IMAGE=docker.io/koalaman/shellcheck:v0.10.0 ./jail-exec.sh shellcheck /workspace/jail-exec.sh
 ```
+
+A imagem padrão é construída do target `jail` de `.container/Dockerfile` (único Dockerfile do projeto, compartilhado com o devcontainer e a CI): Bun como gerenciador de pacotes (`bun install`/`bun.lock`) e Node como runtime de build (`bun run build` usa o Node da imagem pelos shebangs dos bins).
 
 Comportamento do runner:
 

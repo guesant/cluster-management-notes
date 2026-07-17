@@ -1,9 +1,9 @@
 {
 	"name": "infrastructure-and-cluster-notebook-ci",
 	"build": {
-		"dockerfile": "../Dockerfile",
-		"context": "..",
+		"dockerfile": "../../.container/Dockerfile",
+		"context": "../../.container",
 		"target": "ci"
 	},
-	"postCreateCommand": "npm ci"
+	"postCreateCommand": "bun install --frozen-lockfile"
 }

@@ -9,15 +9,16 @@
 # limites de recursos. Rede é opt-in.
 #
 # Uso:
-#   JAIL_NETWORK=1 ./jail-exec.sh npm install
-#   ./jail-exec.sh npm run build
-#   JAIL_PUBLISH=4321 ./jail-exec.sh npm run dev -- --host 0.0.0.0
-#   JAIL_MODE=docker ./jail-exec.sh npm run lint
-#   ALLOW_RUN_COMMANDS_IN_HOST=1 ./jail-exec.sh npm run lint
+#   JAIL_NETWORK=1 ./jail-exec.sh bun install
+#   ./jail-exec.sh bun run build
+#   JAIL_PUBLISH=4321 ./jail-exec.sh bun run dev -- --host 0.0.0.0
+#   JAIL_MODE=docker ./jail-exec.sh bun run lint
+#   ALLOW_RUN_COMMANDS_IN_HOST=1 ./jail-exec.sh bun run lint
 #
 # Variáveis:
 #   JAIL_MODE     auto (padrão) | bare | podman | docker | bwrap — força o modo
-#   JAIL_IMAGE    imagem a usar em podman/docker (padrão: node:22.17.0-bookworm-slim)
+#   JAIL_IMAGE    imagem a usar em podman/docker; por padrão constrói o target
+#                 "jail" de .container/Dockerfile (cacheado; JAIL_REBUILD=1 força)
 #   JAIL_NETWORK  vazio/none = sem rede (padrão); qualquer outro valor habilita
 #   JAIL_PUBLISH  porta publicada em 127.0.0.1 (ex.: 4321); implica rede
 #   ALLOW_RUN_COMMANDS_IN_HOST  não vazio = atalho para JAIL_MODE=bare
@@ -29,8 +30,28 @@
 
 set -euo pipefail
 
-IMAGE="${JAIL_IMAGE:-docker.io/library/node:22.17.0-bookworm-slim}"
+IMAGE="${JAIL_IMAGE:-}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONTAINERFILE="${SCRIPT_DIR}/.container/Dockerfile"
+LOCAL_IMAGE_TAG="localhost/cluster-management-notes-jail:latest"
+
+# Garante a imagem padrão (target "jail" do Dockerfile único do projeto),
+# construindo-a apenas quando ainda não existe ou quando JAIL_REBUILD=1.
+ensure_image() {
+  # $@: comando do runtime (ex.: docker, sudo docker, podman)
+  if [[ -n "$IMAGE" ]]; then
+    return
+  fi
+  IMAGE="$LOCAL_IMAGE_TAG"
+  if [[ -z "${JAIL_REBUILD:-}" ]] && "$@" image inspect "$IMAGE" >/dev/null 2>&1; then
+    return
+  fi
+  "$@" build \
+    --file "$CONTAINERFILE" \
+    --target jail \
+    --tag "$IMAGE" \
+    "${SCRIPT_DIR}/.container" >&2
+}
 
 if [[ $# -eq 0 ]]; then
   printf 'Uso: %s COMANDO [ARGS...]\n' "$0" >&2
@@ -96,6 +117,7 @@ if [[ "$mode" == "bwrap" ]]; then
     --clearenv
     --setenv HOME /tmp
     --setenv PATH /usr/local/bin:/usr/bin:/bin
+    --setenv BUN_INSTALL_CACHE_DIR /tmp/.bun-cache
     --setenv npm_config_cache /tmp/.npm
     --setenv TERM "${TERM:-xterm}"
   )
@@ -123,6 +145,7 @@ run_args=(
   --pids-limit=1024
   --memory=4g
   -e HOME=/tmp
+  -e BUN_INSTALL_CACHE_DIR=/tmp/.bun-cache
   -e npm_config_cache=/tmp/.npm
   --workdir /workspace
 )
@@ -138,6 +161,7 @@ if [[ -t 0 && -t 1 ]]; then
 fi
 
 if [[ "$mode" == "podman" ]]; then
+  ensure_image podman
   exec podman "${run_args[@]}" \
     --userns=keep-id \
     --mount "type=bind,src=${SCRIPT_DIR},dst=/workspace" \
@@ -149,6 +173,7 @@ if ! docker info >/dev/null 2>&1; then
   printf 'Aviso: sem acesso ao socket do Docker; tentando com sudo.\n' >&2
   docker_cmd=(sudo docker)
 fi
+ensure_image "${docker_cmd[@]}"
 exec "${docker_cmd[@]}" "${run_args[@]}" \
   --user "$(id -u):$(id -g)" \
   --mount "type=bind,src=${SCRIPT_DIR},dst=/workspace" \

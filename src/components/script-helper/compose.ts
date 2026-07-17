@@ -102,12 +102,21 @@ function pickHeredocDelimiter(inner: string): string {
 	return `SCRIPT_EOF_${n}`;
 }
 
+/** Aspas simples do fish: dentro delas escapam-se apenas `\` e `'`. */
+function fishSingleQuote(value: string): string {
+	return `'${value.replaceAll('\\', '\\\\').replaceAll("'", "\\'")}'`;
+}
+
 /**
  * Monta o script final. Ordem, de fora para dentro:
- * `set +o history` (opcional) → `bash <<'EOF'` (opcional) →
+ * `set +o history` (opcional, só bash) → encapsulamento por shell →
  * `set -euo pipefail` (opcional) → prólogo por campo → corpo.
- * O `set +o history` fica no shell interativo externo para que o comando
- * colado (uma única entrada de histórico) não seja registrado.
+ *
+ * Encapsulamento: em bash/zsh usa `bash <<'EOF' … EOF` (opcional); o fish não
+ * tem heredoc, então o script vai sempre por `printf '%s\n' '…' | bash`. O
+ * script em si roda sempre em bash — só o shell interativo de colagem muda.
+ * O `set +o history` fica no shell externo para que o comando colado (uma
+ * única entrada de histórico) não seja registrado; só existe em bash.
  */
 export function composeScript(body: string, states: FieldState[], opts: ComposeOptions): string {
 	const blocks: string[] = [];
@@ -118,11 +127,13 @@ export function composeScript(body: string, states: FieldState[], opts: ComposeO
 	const inner = blocks.join('\n\n');
 
 	let out = inner;
-	if (opts.heredoc) {
+	if (opts.shell === 'fish') {
+		out = `printf '%s\\n' ${fishSingleQuote(inner)} | bash`;
+	} else if (opts.heredoc) {
 		const delimiter = pickHeredocDelimiter(inner);
 		out = `bash <<'${delimiter}'\n${inner}\n${delimiter}`;
 	}
-	if (opts.historyOff) {
+	if (opts.historyOff && opts.shell === 'bash') {
 		out = `set +o history\n${out}\nset -o history`;
 	}
 	return `${out}\n`;

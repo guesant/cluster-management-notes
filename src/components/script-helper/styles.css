@@ -1,0 +1,30 @@
+/* Tailwind v4 sem o preflight: o reset global quebraria os estilos do
+   Starlight, então importamos apenas theme + utilities em camadas próprias.
+   Os tokens semânticos (shadcn) mapeiam a paleta do Starlight, que já troca
+   os valores conforme [data-theme] — claro/escuro resolve só com CSS. */
+@layer theme, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+@theme inline {
+	--color-background: var(--sl-color-black);
+	--color-foreground: var(--sl-color-white);
+	--color-card: var(--sl-color-gray-7);
+	--color-card-foreground: var(--sl-color-white);
+	--color-popover: var(--sl-color-gray-6);
+	--color-popover-foreground: var(--sl-color-white);
+	--color-primary: var(--sl-color-text-accent);
+	--color-primary-foreground: var(--sl-color-black);
+	--color-secondary: var(--sl-color-gray-5);
+	--color-secondary-foreground: var(--sl-color-white);
+	--color-muted: var(--sl-color-gray-6);
+	--color-muted-foreground: var(--sl-color-gray-3);
+	--color-accent: var(--sl-color-gray-6);
+	--color-accent-foreground: var(--sl-color-white);
+	--color-destructive: var(--sl-color-red, #e5484d);
+	--color-warning: var(--sl-color-orange-high, #f5a623);
+	--color-success: var(--sl-color-green-high, #3dd68c);
+	--color-border: var(--sl-color-gray-5);
+	--color-input: var(--sl-color-gray-5);
+	--color-ring: var(--sl-color-accent);
+}

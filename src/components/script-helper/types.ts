@@ -1,5 +1,8 @@
 export type FieldMode = 'read' | 'inline' | 'encrypted';
 
+/** Shell interativo onde o comando será colado; o script sempre roda em bash. */
+export type TargetShell = 'bash' | 'zsh' | 'fish';
+
 export interface ScriptField {
 	/** Nome da variável bash referenciada pelo corpo do script (ex.: K3S_TOKEN). */
 	var: string;
@@ -24,6 +27,8 @@ export interface FieldState {
 }
 
 export interface ComposeOptions {
+	/** Shell onde o comando será colado; muda apenas o encapsulamento externo. */
+	shell: TargetShell;
 	heredoc: boolean;
 	historyOff: boolean;
 	strict: boolean;
