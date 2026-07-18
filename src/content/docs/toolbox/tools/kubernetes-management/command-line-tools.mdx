@@ -1,0 +1,101 @@
+---
+title: Ferramentas de linha de comando
+sidebar:
+  order: 2
+---
+
+import ScriptHelper from '../../../../../components/ScriptHelper.astro';
+import installLonghornctlScript from '../../../../../scripts/install-longhornctl.sh?raw';
+
+As ferramentas desta seção são clientes administrativos. Elas podem ser instaladas em um manager ou em uma estação externa; pertencer ao cluster não é requisito. Para operar recursos remotamente, a máquina precisa alcançar a API correspondente e possuir credenciais com as permissões necessárias.
+
+Os scripts deste repositório instalam binários em `/usr/local/bin` e usam `sudo` quando necessário. Revise o conteúdo antes de executar um script remoto. Para maior controle, clone o repositório e execute o arquivo localmente.
+
+## kubectl
+
+`kubectl` é o cliente principal da API Kubernetes. Ele cria, consulta, altera e remove objetos, acompanha logs e eventos e auxilia no diagnóstico de workloads. O comando lê o kubeconfig para decidir com qual cluster e identidade trabalhar; portanto, confira o contexto antes de qualquer alteração. O `kubectl` não acessa diretamente o banco do K3s nem os containers: suas operações passam pela API e pelas regras de autorização do Kubernetes. Referência: [introdução ao kubectl](https://kubernetes.io/docs/reference/kubectl/introduction/).
+
+O instalador baixa a versão estável indicada por `dl.k8s.io` e valida o SHA-256:
+
+> **Executar em:** máquina onde a CLI será instalada.
+
+```
+curl -sfL \
+  https://raw.githubusercontent.com/guesant/infrastructure-and-cluster-notebook/refs/heads/main/scripts/install/kubectl.sh \
+  | bash -
+```
+
+## Helm
+
+Helm é um gerenciador de pacotes para Kubernetes. Um **chart** reúne templates de manifests, valores padrão e metadados; um arquivo `values.yaml` ou opções `--set` personalizam esses templates; uma **release** é uma instalação identificada desse chart em um cluster. `helm upgrade --install` cria a release quando ela não existe ou gera uma nova revisão quando existe, permitindo consultar o histórico e realizar rollback.
+
+Helm renderiza manifests e os envia à API Kubernetes usando o kubeconfig, mas não mantém um controller próprio reconciliando continuamente a release. Depois da instalação, uma alteração manual no cluster não é corrigida por Helm até uma nova operação; essa é uma diferença importante em relação ao Argo CD. Referência: [introdução ao Helm](https://helm.sh/docs/intro/introduction/).
+
+O instalador usa o script oficial da linha Helm 3:
+
+> **Executar em:** máquina onde a CLI será instalada.
+
+```
+curl -sfL \
+  https://raw.githubusercontent.com/guesant/infrastructure-and-cluster-notebook/refs/heads/main/scripts/install/helm.sh \
+  | bash -
+```
+
+## Argo CD CLI
+
+`argocd` é o cliente da API do Argo CD. Ele permite autenticar no servidor Argo CD, cadastrar repositórios, consultar diferenças e controlar sincronizações. Não substitui `kubectl`: a CLI `argocd` opera os conceitos do Argo CD, enquanto `kubectl` opera qualquer recurso exposto pela API Kubernetes, inclusive os CRDs `Application`.
+
+O instalador baixa a versão do canal `stable` para `amd64` ou `arm64`:
+
+> **Executar em:** máquina onde a CLI será instalada.
+
+```
+curl -sfL \
+  https://raw.githubusercontent.com/guesant/infrastructure-and-cluster-notebook/refs/heads/main/scripts/install/argocd.sh \
+  | bash -
+```
+
+## cmctl
+
+`cmctl` é o cliente administrativo do cert-manager. Ele verifica a disponibilidade da API e do webhook, reúne o estado dos recursos envolvidos na emissão de um certificado e permite solicitar uma reemissão manual controlada. A ferramenta usa o mesmo kubeconfig e contexto de `kubectl`; portanto, suas operações ficam limitadas pelas permissões da identidade ativa.
+
+A partir da versão 2, `cmctl` possui ciclo de releases independente do cert-manager. Não presuma que as duas versões precisam ser iguais. A versão de referência deste guia é `v2.5.0`; instale-a por um dos [métodos oficiais](https://cert-manager.io/docs/reference/cmctl/#installation), fixe a versão quando usar o binário de release e valide o arquivo com o `checksums.txt` publicado na mesma release.
+
+Não use a antiga imagem `cert-manager-ctl` como alternativa atual em Docker: o cert-manager 1.14 foi a última versão que a publicou. Este guia usa o binário standalone `cmctl`; o upstream também documenta o [modo de plugin `kubectl cert-manager`](https://cert-manager.io/docs/reference/cmctl/#kubectl-plugin), instalado com o mesmo binário sob o nome esperado pelo `kubectl`.
+
+Os procedimentos de `check api`, diagnóstico e renovação ficam na página do [cert-manager](../../../../guides/tasks/certificates/install-cert-manager/).
+
+## longhornctl
+
+`longhornctl` auxilia na preparação e no diagnóstico do Longhorn, principalmente por meio dos testes de preflight usados neste guia. Ele não monta volumes para as aplicações e não substitui a interface CSI; os Pods continuam solicitando armazenamento por PVCs Kubernetes.
+
+Fixe a CLI na mesma versão do chart Longhorn:
+
+<ScriptHelper
+  runWhere="máquina onde a CLI será instalada; não precisa ser um nó do cluster"
+  script={installLonghornctlScript}
+  fields={[
+    { var: 'LONGHORNCTL_VERSION', label: 'Versão do longhornctl', defaultValue: 'v1.12.0' },
+  ]}
+/>
+
+Depois de instalar as ferramentas, valide as versões:
+
+> **Executar em:** máquina onde as CLIs foram instaladas.
+
+```
+kubectl version --client
+helm version
+argocd version --client
+cmctl version --client
+longhornctl version
+```
+
+## Fontes e leitura adicional
+
+- [Introdução ao kubectl — Kubernetes](https://kubernetes.io/docs/reference/kubectl/introduction/): descreve o cliente, sua configuração e a comunicação com a API Kubernetes.
+- [Introdução ao Helm](https://helm.sh/docs/intro/introduction/): apresenta charts, releases, repositórios e o fluxo de instalação e atualização.
+- [Argo CD CLI](https://argo-cd.readthedocs.io/en/stable/user-guide/commands/argocd/): referência oficial dos comandos e opções do cliente Argo CD.
+- [`cmctl` — cert-manager](https://cert-manager.io/docs/reference/cmctl/): documenta instalação, versionamento independente e operações sobre certificados.
+- [`longhornctl` — Longhorn](https://longhorn.io/docs/1.12.0/advanced-resources/longhornctl/): explica instalação, preflight e comandos de diagnóstico da CLI.
+- [Boas práticas para kubeconfig — Kubernetes](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/): orienta sobre contextos, arquivos confiáveis e seleção de credenciais pelos clientes.

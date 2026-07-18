@@ -1,0 +1,238 @@
+---
+title: Balancear e expor a API Kubernetes
+sidebar:
+  order: 7
+---
+
+> **Para quem é:** quem tem 2+ servidores e quer um endpoint único/estável para acessar a API.
+> **Contexto:** sem balanceamento, clientes apontam para um servidor único (SPOF); com balanceamento, o endpoint não muda mesmo se um servidor falhar.
+
+Em um cluster com 3 servidores K3s, cada servidor tem a API rodando na porta 6443. Um balanceador de carga distribui requisições entre eles e oferece um endpoint único. Este guia cobre as opções.
+
+## Opção 1: DNS round-robin (simples)
+
+Crie um registro DNS apontando para **todos os IPs dos servidores**:
+
+```
+api.seu-cluster.local.  A   10.0.0.10  ; servidor-0
+api.seu-cluster.local.  A   10.0.0.11  ; servidor-1
+api.seu-cluster.local.  A   10.0.0.12  ; servidor-2
+```
+
+**Vantagens:**
+- Sem infraestrutura extra
+- Fácil de configurar
+
+**Desvantagens:**
+- Sem health check (se um servidor cair, DNS ainda retorna seu IP)
+- Cliente talvez erre na primeira tentativa
+
+## Opção 2: Load balancer dedicado (robusto)
+
+Coloque um load balancer (Nginx, HAProxy, ou managed LB em nuvem) na frente dos servidores:
+
+```
+Clientes (admin, workload, apps)
+       ↓
+┌─────────────────────────────────────┐
+│ Load Balancer (10.0.0.5:6443)       │
+│ - Health checks aos servidores      │
+│ - Round-robin ou least-conn         │
+│ - Backend: 10.0.0.10/11/12:6443     │
+└─────────────────────────────────────┘
+       ↓↓↓
+   [Servidor 0]  [Servidor 1]  [Servidor 2]
+    :6443         :6443         :6443
+```
+
+**Vantagens:**
+- Health checks (remove servidores falhos automaticamente)
+- Balanceamento inteligente
+- TLS termination opcional
+
+**Desvantagens:**
+- Mais um componente para manter
+- Pode ficar SPOF se não tiver HA própria
+
+### Exemplo: HAProxy simples
+
+Em um host dedicado (ou em um dos servidores, se suportar):
+
+```
+# /etc/haproxy/haproxy.cfg
+
+global
+    maxconn 4096
+    log stdout local0
+
+defaults
+    mode tcp
+    timeout connect 5000
+    timeout client 50000
+    timeout server 50000
+
+listen api_k3s
+    bind *:6443
+    mode tcp
+    balance roundrobin
+    default_backend servers
+
+backend servers
+    mode tcp
+    server server0 10.0.0.10:6443 check
+    server server1 10.0.0.11:6443 check
+    server server2 10.0.0.12:6443 check
+```
+
+Depois, restart HAProxy:
+
+```
+sudo systemctl restart haproxy
+```
+
+Clientes agora apontam para `10.0.0.5:6443` (ou DNS alias `api.seu-cluster.local:6443`).
+
+### Exemplo: Nginx simples
+
+```
+# /etc/nginx/sites-available/k3s-api
+
+upstream k3s_servers {
+    server 10.0.0.10:6443 max_fails=2 fail_timeout=10s;
+    server 10.0.0.11:6443 max_fails=2 fail_timeout=10s;
+    server 10.0.0.12:6443 max_fails=2 fail_timeout=10s;
+}
+
+server {
+    listen 6443 ssl;
+    server_name api.seu-cluster.local;
+
+    ssl_certificate     /etc/ssl/certs/api-cert.crt;
+    ssl_certificate_key /etc/ssl/private/api-key.key;
+
+    location / {
+        proxy_pass https://k3s_servers;
+        proxy_ssl_verify off;  # K3s usa certs auto-assinados
+    }
+}
+```
+
+## Opção 3: Traefik (se já está usando Traefik)
+
+Se você já tem Traefik como ingress controller no cluster, pode usá-lo para balancear a API:
+
+```
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: k3s-api
+  namespace: kube-system
+spec:
+  entryPoints:
+    - kubesecure  # HTTPS
+  routes:
+    - match: "Host(`api.seu-cluster.local`)"
+      kind: Rule
+      services:
+        - name: kubernetes
+          port: 443
+          scheme: https
+```
+
+**Cuidado:** Traefik precisa estar **fora do etcd** para evitar deadlock (ex.: em um agente dedicado).
+
+## Certificados TLS
+
+A API K3s vem com certificados auto-assinados para `localhost` e o nome do nó. Para múltiplos nós, você precisa de certificados que cubram:
+
+```
+api.seu-cluster.local
+10.0.0.5  (IP do LB)
+10.0.0.10, 10.0.0.11, 10.0.0.12  (IPs dos servidores)
+```
+
+### Opção A: Usar cert-manager (certificados Let's Encrypt)
+
+Se tem cert-manager instalado e `api.seu-cluster.local` é um domínio público:
+
+```
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: api-cert
+spec:
+  secretName: api-tls
+  issuerRef:
+    name: letsencrypt-prod
+  dnsNames:
+    - api.seu-cluster.local
+```
+
+### Opção B: Auto-assinado
+
+Para labs/teste, gerar um certificado auto-assinado que cubra todos os IPs:
+
+```
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout api-key.key -out api-cert.crt \
+  -subj "/CN=api.seu-cluster.local" \
+  -addext "subjectAltName=DNS:api.seu-cluster.local,IP:10.0.0.5,IP:10.0.0.10,IP:10.0.0.11,IP:10.0.0.12"
+
+sudo cp api-cert.crt /etc/ssl/certs/
+sudo cp api-key.key /etc/ssl/private/
+```
+
+Depois copiar o certificado para os clientes que acessam a API.
+
+## Configurar clientes para usar o novo endpoint
+
+Depois que LB/DNS está pronto, os clientes apontam para o novo endpoint. Exemplo:
+
+```
+# ~/.kube/config
+apiVersion: v1
+clusters:
+  - cluster:
+      server: https://api.seu-cluster.local:6443
+      certificate-authority-data: <base64-ca-cert>
+    name: seu-cluster
+contexts:
+  - context:
+      cluster: seu-cluster
+      user: seu-usuario
+    name: seu-cluster
+current-context: seu-cluster
+users:
+  - name: seu-usuario
+    user:
+      token: <seu-token>
+```
+
+## Verificação
+
+Testar que o LB funciona:
+
+```
+# Do cliente
+curl -k https://api.seu-cluster.local:6443/healthz
+
+# Esperado: "ok"
+```
+
+Testar que kubectl funciona:
+
+```
+kubectl cluster-info
+
+# Esperado: "Kubernetes master is running at https://api.seu-cluster.local:6443"
+```
+
+## Próximo passo
+
+- [Validar o cluster](../validation/) — checklist pós-implantação.
+- [Operação nó a nó](../node-maintenance/) — manutenção sem downtime.
+
+## Fontes e leitura adicional
+
+- [K3s — API Configuration](https://docs.k3s.io/cli/server): configuração de endpoint na instalação.
+- [HAProxy Documentation](http://www.haproxy.org/): referência completa de HAProxy.

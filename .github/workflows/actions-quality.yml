@@ -1,0 +1,67 @@
+name: Qualidade dos workflows
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/**
+  pull_request:
+    paths:
+      - .github/**
+  workflow_dispatch:
+
+permissions: {} # padrão sem permissões; cada job eleva apenas o necessário
+
+concurrency:
+  group: actions-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  actionlint:
+    name: actionlint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      checks: write # reviewdog/action-actionlint publica anotações via GitHub Checks
+      contents: read # actions/checkout só precisa ler o repositório
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Validar workflows
+        uses: reviewdog/action-actionlint@6fb7acc99f4a1008869fa8a0f09cfca740837d9d # v1.72.0
+        with:
+          fail_level: any
+          filter_mode: nofilter
+          reporter: github-check
+
+  zizmor:
+    name: zizmor
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      security-events: write # necessário para publicar resultados no GitHub Advanced Security
+      contents: read # actions/checkout só precisa ler o repositório
+      actions: read # zizmor audita a configuração das próprias Actions do repositório
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Auditar GitHub Actions
+        uses: zizmorcore/zizmor-action@6599ee8b7a49aef6a770f63d261d214911a7ce02 # v0.6.0
+        with:
+          advanced-security: true
+          annotations: false
+
+          min-severity: informational
+          min-confidence: low
+
+          config: .github/zizmor.yml
+
+          persona: auditor
+          version: 1.27.0

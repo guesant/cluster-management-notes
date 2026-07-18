@@ -1,0 +1,65 @@
+---
+title: Restaurar o etcd do K3s
+sidebar:
+  order: 1
+---
+
+> **Pré-requisitos:** um snapshot do etcd válido e acessível, ambiente isolado de teste (para drills) ou incidente aprovado (para recuperação real).
+> **Versões testadas:** K3s v1.36.1+k3s1.
+
+Esta página é o procedimento de restauração referenciado pelo [roteiro de restore drill](../../backups/backup-and-recovery/#roteiro-de-restore-drill) e pela [reconstrução de um cluster single-node](../rebuild-single-node-cluster/). O procedimento de criação do snapshot está em [backup do etcd](../../backups/backup-k3s-etcd/); esta página cobre só a restauração.
+
+:::danger
+Restaurar um snapshot substitui o estado atual do datastore inteiro. Nunca execute este procedimento em um cluster de produção como teste — use um ambiente isolado, conforme [ambiente isolado de restauração](../../backups/backup-and-recovery/#ambiente-isolado-de-restauração).
+:::
+
+## Preparar
+
+1. Confirme o snapshot correto pelo nome/timestamp — não assuma que o mais recente é o desejado quando o objetivo é restaurar um ponto anterior a um incidente.
+2. Copie o snapshot e o token do servidor original para o host de destino.
+3. Confirme que o host de destino está isolado da rede de produção, se for um drill.
+
+## Restaurar
+
+> **Executar em:** o host de destino, como `root`.
+
+```
+systemctl stop k3s 2>/dev/null || true
+
+k3s server \
+  --cluster-reset \
+  --cluster-reset-restore-path=/caminho/para/o/snapshot
+
+systemctl start k3s
+```
+
+Se o host de destino é uma máquina nova (reconstrução completa), instale o K3s primeiro sem iniciar o serviço normalmente — siga [instalar o primeiro servidor K3s](../../../guides/tasks/kubernetes/install-first-k3s-server/) até o ponto de gerar o `config.yaml`, depois execute o comando acima em vez do fluxo de inicialização padrão.
+
+## Validação
+
+> **Executar em:** o host restaurado.
+
+```
+systemctl status k3s
+k3s kubectl get nodes
+k3s kubectl get pods --all-namespaces
+k3s kubectl get applications.argoproj.io --namespace argocd
+```
+
+Os recursos da API devem reaparecer conforme o ponto do snapshot. Componentes que dependem de estado externo ao etcd (volumes, imagens, endpoints externos) podem não estar automaticamente funcionais — siga a [ordem de recuperação completa](../../backups/backup-and-recovery/#ordem-de-recuperação) para reconciliar o restante.
+
+## Troubleshooting
+
+Se o comando falhar com erro de diretório de dados já existente, confirme que o K3s foi parado (`systemctl stop k3s`) e que nenhum processo `etcd` residual está usando o diretório de dados antes de repetir.
+
+## Rollback
+
+Não há rollback de uma restauração — se for um drill, descarte o ambiente isolado; se for uma recuperação real, a única forma de reverter é restaurar um snapshot ainda mais antigo.
+
+## Próximo passo
+
+Prossiga com a [ordem de recuperação completa](../../backups/backup-and-recovery/#ordem-de-recuperação) para reconciliar volumes, segredos e workloads.
+
+## Fontes e leitura adicional
+
+- [K3s — Backup and Restore](https://docs.k3s.io/datastore/backup-restore): referência oficial de `--cluster-reset` e restauração do datastore.

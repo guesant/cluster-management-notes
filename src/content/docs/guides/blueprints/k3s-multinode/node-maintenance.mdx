@@ -1,0 +1,241 @@
+---
+title: Manutenção nó a nó sem downtime
+sidebar:
+  order: 9
+---
+
+> **Para quem é:** quem precisa atualizar K3s, aplicar patches de segurança ou fazer manutenção em um nó sem derrubar o cluster.
+> **Contexto:** em multinode com quorum, você pode tirar 1 nó de cada vez enquanto os outros continuam rodando.
+
+A técnica chama-se **drain**: move workloads de um nó para outros, depois você reinicia/atualiza/desliga o nó. Isso garante que as aplicações não sofram downtime.
+
+## Fluxo geral
+
+```mermaid
+flowchart TD
+    accTitle: Fluxo de manutenção nó a nó
+    accDescr: Drenar, manter, uncordon em ciclo.
+
+    Start["Escolher nó<br/>para manutenção"]
+    Start --> Drain["Drenar o nó<br/>(move pods)"]
+    Drain --> Wait["Aguardar<br/>evacuação"]
+    Wait --> Maintain["Executar manutenção<br/>(update K3s, patches)"]
+    Maintain --> Uncordon["Uncordon o nó<br/>(permite agendamento)"]
+    Uncordon --> Monitor["Monitorar<br/>retorno à saúde"]
+    Monitor --> Next["Próximo nó<br/>(se há mais)"]
+    Next --> Done["Terminado"]
+    Start -.-> Done
+```
+
+## Passo 1: Drenar um nó
+
+Escolha um nó (ex.: agente-1) e draine-o:
+
+```
+kubectl drain agente-1 \
+  --ignore-daemonsets \
+  --delete-emptydir-data \
+  --grace-period=30
+```
+
+**Flags:**
+- `--ignore-daemonsets`: DaemonSets (ex.: Flannel, Longhorn agent) não são drenáveis — ignore-os
+- `--delete-emptydir-data`: pods que usam emptyDir (dados temporários) são deletados sem aviso
+- `--grace-period=30`: aguarda 30 segundos para pods terminarem gracefully antes de forcibly kill
+
+**Saída esperada:**
+
+```
+node/agente-1 already cordoned
+pod/nginx-abc123 evicted
+pod/my-app-def456 evicted
+node/agente-1 evicted
+```
+
+Se `drain` falhar, veja a seção "Problemas comuns" abaixo.
+
+## Passo 2: Executar manutenção
+
+Agora o nó está `CordonSchedulingDisabled` — nenhum novo pod é agendado nele. Você pode:
+
+### Atualizar K3s
+
+```
+# SSH para o nó
+ssh admin@agente-1
+
+# Parar K3s
+sudo systemctl stop k3s-agent
+
+# Executar instalador (refaz a instalação, mesmo arquivo de config)
+curl -sfL https://get.k3s.io | sh -
+
+# K3s reinicia automaticamente
+sudo systemctl status k3s-agent
+```
+
+Ou, se estiver usando um servidor:
+
+```
+sudo systemctl stop k3s
+
+curl -sfL https://get.k3s.io | INSTALL_K3S_SKIP_START=true sh -
+
+sudo systemctl start k3s
+```
+
+### Aplicar patches do SO
+
+```
+sudo apt update && sudo apt upgrade -y
+sudo reboot
+```
+
+K3s reinicia automaticamente após o reboot.
+
+### Substituir hardware
+
+Se o nó está danificado, você pode desligá-lo sem impactar o cluster:
+
+```
+# Remover o nó do cluster (não apenas drenar, mas remover)
+kubectl delete node agente-1
+
+# Desligar o nó
+ssh admin@agente-1 'sudo shutdown -h now'
+```
+
+## Passo 3: Uncordon o nó
+
+Depois que manutenção termina e o nó está saudável, libere-o para receber workloads novamente:
+
+```
+kubectl uncordon agente-1
+```
+
+**Saída esperada:**
+
+```
+node/agente-1 uncordoned
+```
+
+## Passo 4: Monitorar retorno
+
+Aguarde ~10 segundos e verifique:
+
+```
+kubectl get nodes
+
+# Esperado: agente-1 volta a "Ready"
+# NAME         STATUS   ROLES    AGE     VERSION
+# agente-1     Ready    <none>   10m     v1.36.0+k3s1
+```
+
+Se o nó fica `NotReady`, confira logs:
+
+```
+kubectl describe node agente-1
+kubectl logs -n kube-system <kubelet-log-pod>
+```
+
+## Operações em servidores (controle plane)
+
+Drenar um servidor é similar, mas com mais impacto:
+
+```
+# Drenar servidor-0
+kubectl drain servidor-0 \
+  --ignore-daemonsets \
+  --delete-emptydir-data
+
+# Executar manutenção
+# (update, patches, reboot)
+
+# Uncordon
+kubectl uncordon servidor-0
+```
+
+**Cuidado:** enquanto um servidor está down, quorum pode ficar comprometido. Com 3 servidores:
+
+- Draining servidor-0: quorum = servidor-1 + servidor-2 ✅
+- Draining servidor-1 também: quorum quebrado ❌ (só 1 vivo)
+
+**Regra:** drene apenas 1 servidor por vez em um cluster 3-servidor. Se tem 5 servidores, pode drener 2 simultaneamente (quorum = 3).
+
+## Problemas comuns
+
+### "cannot evict pod — it doesn't have a replication controller"
+
+Pod não é gerenciado por Deployment/StatefulSet/DaemonSet — é um pod solo. Solução:
+
+```
+# Opção A: deletar o pod (é solo, recreável)
+kubectl delete pod <nome-pod> -n <namespace>
+
+# Opção B: drenar com --force (pode interromper o pod)
+kubectl drain <nó> --force --ignore-daemonsets --delete-emptydir-data
+```
+
+### "Drain timed out"
+
+Pods não terminam em tempo. Aumentar `--grace-period` ou investigar por quê:
+
+```
+# Checar status de pods em drain
+kubectl get pods --all-namespaces | grep <nó>
+
+# Forçar timeout menor (mata pods)
+kubectl drain <nó> --grace-period=5 --force --ignore-daemonsets
+```
+
+### Nó fica `NotReady` após uncordon
+
+Logs indicam falha ao reiniciar K3s. Conferir:
+
+```
+# No nó
+sudo journalctl -u k3s-agent -n 50
+
+# Causa comum: disco cheio, permissões, rede
+# Consertar manualmente e tentar novamente
+sudo systemctl restart k3s-agent
+```
+
+## Rolling update de cluster completo
+
+Para atualizar o cluster inteiro (ex.: K3s 1.35 → 1.36):
+
+1. Atualizar os 3 servidores um por um (drain → update → uncordon)
+2. Depois atualizar os agentes um por um
+3. Verificar que cluster está `Ready` após cada nó
+
+```
+# Script para atualizar todos os servidores
+for server in servidor-0 servidor-1 servidor-2; do
+  echo "Updating $server..."
+  kubectl drain $server --ignore-daemonsets --delete-emptydir-data
+  ssh admin@$server 'sudo systemctl stop k3s && curl -sfL https://get.k3s.io | sh - && sudo systemctl status k3s'
+  kubectl uncordon $server
+  sleep 30  # Aguardar retorno à saúde
+done
+
+# Idem para agentes
+for agent in agente-1 agente-2; do
+  echo "Updating $agent..."
+  kubectl drain $agent --ignore-daemonsets --delete-emptydir-data
+  ssh admin@$agent 'sudo systemctl stop k3s-agent && curl -sfL https://get.k3s.io | K3S_URL=... K3S_TOKEN=... sh -'
+  kubectl uncordon $agent
+  sleep 30
+done
+
+echo "Cluster updated successfully"
+```
+
+## Próximo passo
+
+- [Falha e recuperação](../failure-and-recovery/) — runbooks para cenários inesperados.
+
+## Fontes e leitura adicional
+
+- [Kubernetes — Safely Drain a Node](https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/): guia oficial.
+- [K3s — Upgrades](https://docs.k3s.io/upgrades): informações de versão e procedimento.

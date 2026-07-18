@@ -1,0 +1,9 @@
+.github/**/* @guesant
+
+scripts/**/* @guesant
+
+LICENSE @guesant
+
+astro.config.mjs @guesant
+
+package.json @guesant

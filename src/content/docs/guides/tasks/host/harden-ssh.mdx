@@ -1,0 +1,129 @@
+---
+title: Hardening do SSH
+sidebar:
+  order: 7
+---
+
+import ScriptHelper from '../../../../../components/ScriptHelper.astro';
+import FileWriter from '../../../../../components/FileWriter.astro';
+import sshUserSetupScript from '../../../../../scripts/ssh-user-setup.sh?raw';
+import sshHardeningBefore from '../../../../../scripts/ssh-hardening-before.sh?raw';
+import sshHardeningConfig from '../../../../../scripts/ssh-hardening-config.conf?raw';
+import sshHardeningWriteConfig from '../../../../../scripts/ssh-hardening-write-config.sh?raw';
+import sshHardeningAfter from '../../../../../scripts/ssh-hardening-after.sh?raw';
+
+Hardening é a redução deliberada da superfície de ataque de um serviço. Nesta seção, o SSH continuará aceitando administração remota por chave pública, mas recusará senhas, login direto de `root`, usuários fora do grupo autorizado e funcionalidades que não forem necessárias. Essa configuração reduz as formas de entrada; ela não substitui o firewall nem a proteção da chave privada usada pelo administrador.
+
+## Preparação
+
+Escolha explicitamente a conta que continuará autorizada a entrar. Não use `$USER` em um shell de `root`, pois isso pode configurar a conta errada.
+
+<ScriptHelper
+  runUser="root"
+  runWhere="nó alvo que terá o SSH endurecido"
+  script={sshUserSetupScript}
+  fields={[
+    { var: 'SSH_USER', label: 'Usuário que poderá acessar por SSH' },
+  ]}
+/>
+
+Confirme, antes de alterar o servidor, que a conta entra usando uma chave e sem pedir a senha da conta:
+
+> **Executar em:** estação administrativa com acesso SSH ao nó alvo.
+
+```
+read -r -p "Usuário SSH: " SSH_USER
+read -r -p "Host ou IP do servidor: " SSH_HOST
+ssh "${SSH_USER}@${SSH_HOST}"
+```
+
+Mantenha essa sessão aberta enquanto altera a configuração. Corrija também as permissões da chave autorizada com o bloco acima.
+
+:::note[Importante]
+A nova associação ao grupo só estará presente em novas sessões da conta.
+:::
+
+## Configuração
+
+### Preparar o diretório
+
+<ScriptHelper
+  runUser="root"
+  runWhere="nó alvo que terá o SSH endurecido"
+  script={sshHardeningBefore}
+  title={"Preparar diretório"}
+/>
+
+### Criar o arquivo de hardening
+
+Use a aba **Conteúdo** para colar o arquivo manualmente com `vim`/`nvim`/`nano`, ou a aba
+**Script** para gerá-lo automaticamente (também pergunta se todos os encaminhamentos devem ser
+bloqueados).
+
+<FileWriter
+  path="/etc/ssh/sshd_config.d/00-hardening.conf"
+  runUser="root"
+  runWhere="nó alvo que terá o SSH endurecido"
+  owner="root"
+  group="root"
+  content={sshHardeningConfig}
+  script={sshHardeningWriteConfig}
+  fields={[
+    { var: 'DISABLE_FORWARDING', label: 'Desabilitar encaminhamentos SSH? [s/N]', defaultValue: 'N' },
+  ]}
+/>
+
+Não habilite `DisableForwarding` em servidores acessados por VS Code Remote SSH, túneis com `ssh -L`/`ssh -R`, bastion hosts ou conexões que usam `ProxyJump`. Se colar o arquivo manualmente e quiser esse bloqueio, adicione a linha `DisableForwarding yes` ao final antes de salvar.
+
+### Validar e aplicar
+
+O bloco abaixo assume que `/etc/ssh/sshd_config.d/00-hardening.conf` já existe (por qualquer um dos dois caminhos acima): valida a sintaxe com `sshd -t`, mostra a configuração efetiva e só então oferece o reload do serviço.
+
+<ScriptHelper
+  runUser="root"
+  runWhere="nó alvo que terá o SSH endurecido"
+  script={sshHardeningAfter}
+  fields={[
+    { var: 'RELOAD_SSH', label: 'Recarregar SSH agora? [s/N]', defaultValue: 'N' },
+  ]}
+/>
+
+## Validação
+
+O bloco anterior já valida a sintaxe antes de permitir o reload. Abra outro terminal e teste uma nova conexão:
+
+> **Executar em:** estação administrativa, em outro terminal.
+
+```
+read -r -p "Usuário SSH: " SSH_USER
+read -r -p "Host ou IP do servidor: " SSH_HOST
+ssh "${SSH_USER}@${SSH_HOST}"
+```
+
+Confirme também que senha e keyboard-interactive não são aceitos:
+
+> **Executar em:** estação administrativa.
+
+```
+read -r -p "Usuário SSH: " SSH_USER
+read -r -p "Host ou IP do servidor: " SSH_HOST
+
+ssh \
+  -o PubkeyAuthentication=no \
+  -o PreferredAuthentications=password,keyboard-interactive \
+  "${SSH_USER}@${SSH_HOST}"
+```
+
+A tentativa deve terminar com uma mensagem semelhante a:
+
+```
+Permission denied (publickey).
+```
+
+Somente encerre a sessão SSH original depois que a nova conexão por chave funcionar.
+
+## Fontes e leitura adicional
+
+- [`sshd_config(5)` — OpenSSH/OpenBSD manual pages](https://man.openbsd.org/sshd_config): referência primária das diretivas de autenticação, acesso, encaminhamento, auditoria e validação usadas no hardening.
+- [`sshd(8)` — OpenSSH/OpenBSD manual pages](https://man.openbsd.org/sshd): documenta o formato de `authorized_keys`, as permissões esperadas e o fluxo de autenticação do servidor.
+- [OpenSSH server — Ubuntu Server documentation](https://ubuntu.com/server/docs/openssh-server/): orientações oficiais do Ubuntu para snippets em `sshd_config.d`, autenticação por chaves, validação com `sshd -t` e diagnóstico pelo journal.

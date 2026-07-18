@@ -1,0 +1,40 @@
+---
+title: Arquitetura do K3s
+sidebar:
+  order: 2
+---
+
+O K3s é uma distribuição Kubernetes que empacota o control plane, o runtime de containers e componentes de rede e operação em uma instalação simplificada. Os recursos e as APIs continuam sendo Kubernetes; ferramentas como `kubectl`, Helm e Argo CD não precisam de um modo especial para trabalhar com K3s.
+
+Um nó **server**, chamado de **manager** neste guia, executa a API Kubernetes, scheduler, controllers e o datastore, além dos componentes de agent. Por isso, um manager também pode executar Pods, salvo quando forem aplicados taints ou outras restrições de agendamento. Um nó **agent** executa kubelet, runtime de containers e componentes de rede, mas não hospeda o control plane nem o datastore.
+
+O primeiro servidor deste guia usa `cluster-init: true`, portanto inicializa etcd embarcado. Os servidores adicionais participam do mesmo control plane e do quorum do etcd; os agents registram-se pelo endpoint estável da API e executam os workloads atribuídos pelo Kubernetes.
+
+```mermaid
+flowchart TB
+    Admin["Estação administrativa<br/>kubectl, Helm e Argo CD CLI"]
+    Endpoint["Endpoint estável da API<br/>TCP 6443"]
+
+    subgraph Managers["Nós manager / server"]
+        ControlPlane["API, scheduler e controllers"]
+        Etcd[("etcd embarcado")]
+        ManagerRuntime["kubelet, containerd e Pods"]
+        ControlPlane <--> Etcd
+        ControlPlane <--> ManagerRuntime
+    end
+
+    subgraph Agents["Nós agent"]
+        AgentRuntime["kubelet, containerd e Pods"]
+    end
+
+    Admin --> Endpoint
+    Endpoint --> ControlPlane
+    ControlPlane <--> AgentRuntime
+```
+
+## Fontes e leitura adicional
+
+- [K3s — Architecture](https://docs.k3s.io/architecture) — Define os papéis de server e agent, as topologias de nó único e HA e o processo de registro dos nós.
+- [K3s — Cluster Datastore](https://docs.k3s.io/datastore) — Compara SQLite, etcd embarcado e datastores externos usados pelo control plane.
+- [Kubernetes — Kubernetes Components](https://kubernetes.io/docs/concepts/overview/components/) — Apresenta os componentes do control plane e dos nós de trabalho em um cluster Kubernetes.
+- [Kubernetes — Nodes](https://kubernetes.io/docs/concepts/architecture/nodes/) — Detalha o modelo de nós, seu registro e as informações mantidas pelo control plane.

@@ -1,0 +1,10 @@
+services:
+  app:
+    build:
+      target: ci
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID

@@ -1,0 +1,68 @@
+---
+import type { ScriptField } from "./script-helper/types";
+import { prepareScriptHelper } from "./script-helper/prepare";
+import ScriptHelperApp from "./script-helper/ScriptHelperApp";
+
+interface Props {
+    script: string;
+    fields?: ScriptField[];
+    title?: string;
+    heredoc?: boolean;
+    historyToggle?: boolean;
+    encryption?: boolean;
+    strict?: boolean;
+    runUser?: string;
+    runWhere?: string;
+}
+
+const {
+    script,
+    fields = [],
+    title,
+    heredoc = true,
+    historyToggle = true,
+    encryption = false,
+    strict = true,
+    runUser,
+    runWhere,
+} = Astro.props;
+
+const { initialOutput, initialDisplay } = prepareScriptHelper(script, fields, {
+    heredoc,
+    strict,
+});
+---
+
+<div class="script-helper not-content">
+    <ScriptHelperApp
+        client:load
+        script={script}
+        fields={fields}
+        title={title}
+        heredoc={heredoc}
+        historyToggle={historyToggle}
+        encryption={encryption}
+        strict={strict}
+        runUser={runUser}
+        runWhere={runWhere}
+        initialOutput={initialOutput}
+        initialDisplay={initialDisplay}
+    />
+</div>
+
+<noscript>
+    <p>
+        Com JavaScript desativado, a personalização não funciona; use o script
+        exibido acima, que pergunta cada valor no terminal via <code>read</code
+        >.
+    </p>
+</noscript>
+
+<style>
+    .script-helper {
+        padding: 1rem;
+        border: 1px solid var(--sl-color-gray-5);
+        border-radius: 0.5rem;
+        background: var(--sl-color-gray-7, var(--sl-color-gray-6));
+    }
+</style>

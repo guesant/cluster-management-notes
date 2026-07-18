@@ -1,0 +1,36 @@
+---
+title: Restaurar um volume Longhorn (cenário de disaster recovery)
+sidebar:
+  order: 3
+---
+
+> **Pré-requisitos:** [backup de volume configurado](../../guides/tasks/storage/configure-volume-backup/) e um backup existente.
+> **Contexto:** esta página cobre quando usar a restauração durante um incidente real; o procedimento técnico completo está em [restaurar backup de um volume Longhorn](../../guides/tasks/storage/restore-volume-backup/).
+
+Use esta página para decidir **quando** restaurar um volume a partir de backup, como parte de uma resposta a incidente maior — não repete os comandos, já documentados na página procedural.
+
+## Quando restaurar a partir de backup
+
+- Corrupção lógica detectada nos dados do volume (não apenas falha de disco, que o Longhorn já tolera via réplicas).
+- Perda de todas as réplicas simultaneamente (perda do host, em cluster de nó único).
+- Necessidade de recuperar um ponto anterior a uma mudança destrutiva na aplicação.
+
+## Quando NÃO restaurar a partir de backup
+
+Se apenas uma réplica falhou e outras réplicas saudáveis existem, o Longhorn já reconstrói automaticamente — restaurar de um backup externo nesse caso é desnecessário e reintroduz um ponto mais antigo dos dados sem motivo.
+
+## Procedimento
+
+Siga [restaurar backup de um volume Longhorn](../../guides/tasks/storage/restore-volume-backup/) — o procedimento cria um novo volume a partir do backup, permitindo validar antes de substituir o original.
+
+## Validação
+
+Depois de restaurar, siga a validação funcional descrita na página procedural — não considere a restauração completa apenas porque o volume aparece `attached`.
+
+## Próximo passo
+
+Se este volume for parte de uma reconstrução maior do cluster, retome [reconstruir um cluster single-node](../rebuild-single-node-cluster/).
+
+## Fontes e leitura adicional
+
+- [Longhorn — Restore from a Backup](https://longhorn.io/docs/1.12.0/snapshots-and-backups/backup-and-restore/restore-from-a-backup/): referência oficial do processo de restauração.

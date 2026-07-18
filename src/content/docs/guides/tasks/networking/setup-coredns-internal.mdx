@@ -1,0 +1,262 @@
+---
+title: Configurar CoreDNS para resolução interna
+sidebar:
+  order: 4
+---
+
+> **Para quem é:** operadores que querem resolver domínios `.cluster.local` internamente.
+> **Pré-requisito:** K3s multinode (Fase 5) ou cluster com CoreDNS disponível.
+
+CoreDNS já vem instalado no K3s. Este guia configura-o para responder a queries de `.cluster.local` com IPs internos.
+
+## Passo 1: Verificar CoreDNS
+
+CoreDNS em K3s roda como deployment em `kube-system`:
+
+```
+kubectl get deployment -n kube-system coredns
+
+# Esperado:
+# NAME      READY   UP-TO-DATE   AVAILABLE   AGE
+# coredns   1/1     1            1           10d
+```
+
+## Passo 2: Obter IP do serviço CoreDNS
+
+```
+kubectl get svc -n kube-system coredns
+
+# Esperado:
+# NAME      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)     AGE
+# coredns   ClusterIP   10.43.0.10      <none>        53/UDP,53/TCP  10d
+
+# Guardar CLUSTER-IP: 10.43.0.10
+```
+
+## Passo 3: Editar ConfigMap de CoreDNS
+
+CoreDNS lê configuração de um ConfigMap. Editar:
+
+```
+kubectl edit configmap coredns -n kube-system
+```
+
+Procurar pela seção `Corefile`. Ela deve estar assim:
+
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns
+  namespace: kube-system
+data:
+  Corefile: |
+    .:53 {
+        errors
+        health {
+           lameduck 5s
+        }
+        ready
+        kubernetes cluster.local in-addr.arpa ip6.arpa {
+           pods insecure
+           fallthrough in-addr.arpa ip6.arpa
+        }
+        prometheus :9153
+        forward . /etc/resolv.conf {
+           max_concurrent 1000
+        }
+        cache 30
+        loop
+        reload
+        loadbalance
+    }
+```
+
+## Passo 4: Adicionar zona local
+
+Adicionar um bloco para `.local`:
+
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns
+  namespace: kube-system
+data:
+  Corefile: |
+    .:53 {
+        errors
+        health {
+           lameduck 5s
+        }
+        ready
+        kubernetes cluster.local in-addr.arpa ip6.arpa {
+           pods insecure
+           fallthrough in-addr.arpa ip6.arpa
+        }
+        
+        # Adicionado: zona local
+        local:53 {
+          file /etc/coredns/local.db local
+          reload 6s
+        }
+        
+        prometheus :9153
+        forward . /etc/resolv.conf {
+           max_concurrent 1000
+        }
+        cache 30
+        loop
+        reload
+        loadbalance
+    }
+```
+
+Salvar (`ESC` + `:wq` no vi).
+
+## Passo 5: Criar arquivo de zona local
+
+Criar ConfigMap com zona DNS:
+
+```
+cat > /tmp/local-zone.yaml <<'EOF'
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns-local
+  namespace: kube-system
+data:
+  local.db: |
+    $ORIGIN local.
+    $TTL 60
+    ; Domínios internos apontam para localhost (127.0.0.1)
+    ; ou para IP do reverse proxy (se em bastion)
+    
+    @           IN  SOA ns1.local. admin.local. (
+                    2024011801  ; serial
+                    3600        ; refresh
+                    1800        ; retry
+                    604800      ; expire
+                    60)         ; minimum
+    
+    @           IN  NS  ns1.local.
+    ns1         IN  A   10.0.0.1     ; IP do CoreDNS ou bastion
+    
+    ; Serviços internos (adaptar a seu cluster)
+    grafana     IN  A   127.0.0.1
+    prometheus  IN  A   127.0.0.1
+    argocd      IN  A   127.0.0.1
+    api         IN  A   10.0.0.10    ; IP do API server K3s (se público)
+EOF
+
+kubectl apply -f /tmp/local-zone.yaml
+```
+
+## Passo 6: Recarregar CoreDNS
+
+Forçar recarregamento do deployment:
+
+```
+kubectl rollout restart deployment coredns -n kube-system
+
+# Aguardar ~10 segundos
+kubectl rollout status deployment coredns -n kube-system
+```
+
+## Passo 7: Testar resolução
+
+De dentro de um pod:
+
+```
+# Criar pod teste
+kubectl run -it --rm testdns --image=alpine --restart=Never -- sh
+
+# Dentro do pod:
+nslookup grafana.local
+
+# Esperado:
+# Name:      grafana.local
+# Address:   127.0.0.1
+
+# Ou com dig (mais verboso)
+dig grafana.local
+
+# Sair
+exit
+```
+
+De fora (bastion/laptop):
+
+```
+# Se pode alcançar CoreDNS (10.43.0.10)
+nslookup grafana.local 10.43.0.10
+
+# Esperado: 127.0.0.1
+```
+
+## Passo 8: Configurar cliente para usar CoreDNS
+
+Se o reverse proxy está fora do cluster (bastion/laptop), configurar para usar CoreDNS:
+
+### Em Linux/Mac:
+
+```
+# Adicionar CoreDNS ao /etc/resolv.conf
+sudo bash -c 'echo "nameserver 10.0.0.X  # IP do CoreDNS" >> /etc/resolv.conf'
+
+# Ou via systemd-resolved
+sudo tee /etc/systemd/resolved.conf.d/cluster-local.conf <<'EOF'
+[Resolve]
+DNS=10.0.0.X
+Domains=~local
+EOF
+
+sudo systemctl restart systemd-resolved
+```
+
+### Em Kubernetes (pods automaticamente usam CoreDNS):
+
+```
+# Já resolvem .local automaticamente
+# (CoreDNS é o resolver padrão de K3s)
+```
+
+## Problemas comuns
+
+### "NXDOMAIN" (domínio não encontrado)
+
+**Causa:** zona não está carregada ou arquivo tem erro de sintaxe.
+
+**Solução:**
+```
+# Verificar logs de CoreDNS
+kubectl logs -n kube-system -l k8s-app=kube-dns | grep -i error
+
+# Se há erro de sintaxe, revisar arquivo de zona (Passo 5)
+# Validar arquivo com named-checkzone (se tiver)
+named-checkzone local /tmp/local-zone.yaml
+```
+
+### "Connection refused"
+
+**Causa:** CoreDNS não está respondendo na porta 53.
+
+**Solução:**
+```
+# Verificar que CoreDNS está rodando
+kubectl get pods -n kube-system -l k8s-app=kube-dns
+
+# Testar conectividade ao pod
+kubectl port-forward -n kube-system svc/coredns 53:53 &
+nslookup test.local localhost
+```
+
+## Próximo passo
+
+- [Setup reverse proxy localhost](../setup-reverse-proxy-localhost/) — rotear requests aos serviços.
+
+## Fontes e leitura adicional
+
+- [CoreDNS — File Plugin](https://coredns.io/plugins/file/): documentação de zona file.
+- [DNS Zone File Format](https://en.wikipedia.org/wiki/Zone_file): especificação de zona.
+- [K3s — CoreDNS](https://docs.k3s.io/networking#coredns): integração com K3s.

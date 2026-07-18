@@ -1,0 +1,123 @@
+---
+title: cert-manager
+sidebar:
+  order: 1
+---
+
+import ScriptHelper from '../../../../../components/ScriptHelper.astro';
+import installCertManagerScript from '../../../../../scripts/install-cert-manager.sh?raw';
+
+Os comandos desta página devem ser executados em um servidor ou em uma estação administrativa que tenha `kubectl`, Helm, acesso à API e um kubeconfig válido.
+
+## Como o cert-manager trabalha
+
+O cert-manager é um controller que automatiza solicitação, emissão e renovação de certificados. Um `Issuer` representa uma autoridade ou um método de emissão limitado a um namespace; um `ClusterIssuer` oferece essa capacidade ao cluster inteiro. Um recurso `Certificate` declara nomes DNS, validade desejada, Secret de destino e qual Issuer deve ser usado. Quando a emissão termina, o cert-manager grava o certificado e a chave privada em um Secret e tenta renová-los antes do vencimento.
+
+Com ACME e desafio DNS-01, o cert-manager comprova o controle de um domínio criando temporariamente um registro DNS TXT pelo provedor configurado. Esse método também pode emitir certificados wildcard e não exige que o serviço solicitado já esteja publicamente acessível. A credencial do provedor DNS pode alterar registros e deve permanecer em um Secret ou em um gerenciador de segredos, nunca no repositório Git.
+
+Instalar o cert-manager não emite certificados por si só. Depois da instalação ainda é necessário criar um `Issuer` ou `ClusterIssuer` e recursos `Certificate`, como nos templates GitOps deste repositório. O Secret TLS resultante pode ser referenciado por um listener HTTPS do Gateway, conforme o [guia de Gateway API e Traefik](../../networking/configure-traefik-gateway-api/). Referências: [configuração de Issuers](https://cert-manager.io/docs/configuration/) e [recurso Certificate](https://cert-manager.io/docs/usage/certificate/).
+
+Os CRDs da Gateway API devem existir antes da instalação. Se forem instalados depois, reinicie o deployment do cert-manager para que a integração seja detectada.
+
+A linha cert-manager 1.21 declara suporte e testes para Kubernetes 1.33 a 1.36. Ao atualizar uma instalação existente, leia as [notas da v1.21.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.21.0): a release inclui mudanças de RBAC e de valores de métricas do chart que podem exigir ajuste antes do upgrade.
+
+<ScriptHelper
+  runWhere="qualquer máquina com `KUBECONFIG` e acesso administrativo à API"
+  script={installCertManagerScript}
+  fields={[
+    { var: 'CERT_MANAGER_VERSION', label: 'Versão do cert-manager', defaultValue: 'v1.21.0' },
+    { var: 'DNS01_RECURSIVE_NAMESERVERS', label: 'Resolvers para DNS-01', defaultValue: '1.1.1.1:53,8.8.8.8:53' },
+  ]}
+/>
+
+Valide a instalação:
+
+> **Executar em:** qualquer máquina com `KUBECONFIG` e acesso à API.
+
+```
+kubectl --namespace cert-manager rollout status deployment/cert-manager --timeout=180s
+kubectl --namespace cert-manager get pods
+kubectl get crd certificates.cert-manager.io clusterissuers.cert-manager.io
+helm --namespace cert-manager status cert-manager
+```
+
+Quando o `cmctl` estiver disponível, confirme também que os CRDs e o webhook aceitam uma requisição de teste:
+
+> **Executar em:** estação administrativa com `cmctl`, `KUBECONFIG` e acesso à API.
+
+```
+cmctl version
+cmctl check api --wait=2m
+```
+
+`check api` usa uma criação em modo dry-run para verificar a API e o webhook. Ele não confirma que um Issuer real, a credencial DNS-01, a propagação DNS ou o fluxo ACME completo funcionam. Para uma validação ponta a ponta, emita um certificado de teste usando o mesmo tipo de Issuer que será usado em produção e remova os recursos de teste depois de registrar o resultado.
+
+Se os CRDs da Gateway API tiverem sido instalados depois do cert-manager:
+
+> **Executar em:** qualquer máquina com `KUBECONFIG` e acesso administrativo à API.
+
+```
+kubectl --namespace cert-manager rollout restart deployment/cert-manager
+kubectl --namespace cert-manager rollout status deployment/cert-manager --timeout=180s
+```
+
+## Diagnosticar uma emissão
+
+Comece pelo `Certificate` nominal e pelo namespace correto. O comando abaixo reúne condições, eventos, Secret, Issuer, `CertificateRequest` e, em emissões ACME, `Order` e `Challenge` relacionados:
+
+> **Executar em:** estação administrativa com `cmctl`, `KUBECONFIG` e acesso de leitura aos recursos envolvidos.
+
+```
+read -r -p "Namespace do Certificate: " CERTIFICATE_NAMESPACE
+read -r -p "Nome do Certificate: " CERTIFICATE_NAME
+
+cmctl status certificate \
+  "${CERTIFICATE_NAME}" \
+  --namespace "${CERTIFICATE_NAMESPACE}"
+```
+
+Se o estado agregado não for suficiente, inspecione os recursos e eventos sem imprimir o conteúdo do Secret TLS:
+
+```
+kubectl --namespace "${CERTIFICATE_NAMESPACE}" \
+  get certificates,certificaterequests,orders.acme.cert-manager.io,challenges.acme.cert-manager.io
+
+kubectl --namespace "${CERTIFICATE_NAMESPACE}" \
+  describe certificate "${CERTIFICATE_NAME}"
+```
+
+Em DNS-01, confirme também credencial, permissões no provedor, zona selecionada, criação do registro TXT e propagação pelos resolvers configurados. Não exponha o valor da credencial em tickets ou saídas de diagnóstico.
+
+## Reemissão manual controlada
+
+O cert-manager renova certificados automaticamente. Use a reemissão manual somente quando houver motivo registrado, como validar uma correção ou responder à rotação de uma credencial, e acompanhe a emissão até o novo Secret ficar pronto:
+
+> **Executar em:** estação administrativa com `cmctl`, `KUBECONFIG` e permissão para alterar o `Certificate` nominal.
+
+```
+read -r -p "Namespace do Certificate: " CERTIFICATE_NAMESPACE
+read -r -p "Nome do Certificate: " CERTIFICATE_NAME
+
+cmctl renew \
+  "${CERTIFICATE_NAME}" \
+  --namespace "${CERTIFICATE_NAMESPACE}"
+
+cmctl status certificate \
+  "${CERTIFICATE_NAME}" \
+  --namespace "${CERTIFICATE_NAMESPACE}"
+```
+
+Não use `--all` ou `--all-namespaces` como procedimento padrão e não apague o Secret para forçar a renovação. A exclusão pode causar indisponibilidade e perde o fluxo explícito oferecido por `cmctl renew`. Para monitoramento recorrente, use métricas e alertas de expiração; a CLI é uma ferramenta de validação e diagnóstico, não um monitor contínuo.
+
+## Fontes e leitura adicional
+
+- [Conceitos do cert-manager](https://cert-manager.io/docs/concepts/): descreve os componentes, recursos e o fluxo de emissão de certificados.
+- [Instalação com Helm](https://cert-manager.io/docs/installation/helm/): referência oficial para instalar o chart e seus CRDs.
+- [Configuração de Issuers](https://cert-manager.io/docs/configuration/): apresenta `Issuer`, `ClusterIssuer` e os métodos de emissão disponíveis.
+- [Recurso Certificate](https://cert-manager.io/docs/usage/certificate/): detalha a solicitação, renovação e gravação de certificados em Secrets.
+- [Desafio ACME DNS-01](https://cert-manager.io/docs/configuration/acme/dns01/): explica resolvers, provedores DNS e a validação usada para certificados, inclusive wildcards.
+- [cert-manager com Gateway API](https://cert-manager.io/docs/usage/gateway/): documenta a integração entre Gateways, listeners TLS e certificados gerenciados.
+- [`cmctl`](https://cert-manager.io/docs/reference/cmctl/): referência oficial de instalação, `check api`, diagnóstico e renovação manual.
+- [Verificação da instalação](https://cert-manager.io/docs/installation/kubectl/): diferencia o teste da API de uma emissão ponta a ponta com um certificado de teste.
+- [Troubleshooting de ACME](https://cert-manager.io/docs/troubleshooting/acme/): orienta a investigar `CertificateRequest`, `Order`, `Challenge` e eventos.
+- [Métricas do cert-manager](https://cert-manager.io/docs/devops-tips/prometheus-metrics/): apresenta métricas úteis para monitorar expiração e funcionamento do controller.

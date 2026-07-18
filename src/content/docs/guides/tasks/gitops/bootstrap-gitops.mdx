@@ -1,0 +1,26 @@
+---
+title: Bootstrap GitOps
+sidebar:
+  order: 7
+---
+
+Esta página funciona como roteiro para colocar o Argo CD gerenciando o cluster a partir do Git. Ela não repete os comandos das páginas específicas — segue cada uma na ordem abaixo.
+
+O modelo usa o padrão App-of-Apps: uma `Application` chamada `root` observa um diretório do repositório, e cada aplicação encontrada nele passa a ser reconciliada automaticamente pelo Argo CD. Veja o diagrama completo e a explicação em [estruturar o repositório GitOps](../structure-gitops-repository/).
+
+| Etapa | Página | Por quê |
+| --- | --- | --- |
+| 1 | [Instalar o Argo CD](../install-argocd/) | Requisito para qualquer um dos passos seguintes. |
+| 2 | [Acessar o Argo CD](../access-argocd/) | Trocar a senha inicial antes de prosseguir. |
+| 3 | [Estruturar o repositório GitOps](../structure-gitops-repository/) | Preparar `gitops/` com os templates e a URL real do repositório. |
+| 4 | [Conectar o repositório Git](../connect-git-repository/) | Somente para repositórios privados. |
+| 5 | [Criar a Application raiz](../create-root-application/) | Único passo manual do bootstrap; a partir dele o Argo CD descobre o restante. |
+
+## Checkpoint
+
+A Application `root` e as Applications escolhidas aparecem `Synced`/`Healthy` em `kubectl --namespace argocd get applications.argoproj.io`. Depois disso, siga escolhendo os [templates copiáveis](../../../blueprints/k3s-single-node-gitops/templates/) que correspondem aos módulos desejados.
+
+## Fontes e leitura adicional
+
+- [Cluster bootstrapping — Argo CD](https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/): apresenta o padrão App-of-Apps, suas alternativas e cuidados de administração.
+- [Princípios do OpenGitOps](https://opengitops.dev/): descreve os princípios declarativo, versionado, aplicado automaticamente e continuamente reconciliado.

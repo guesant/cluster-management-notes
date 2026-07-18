@@ -1,0 +1,248 @@
+---
+title: Falha e recuperação
+sidebar:
+  order: 10
+---
+
+> **Para quem é:** operadores que precisam entender como o cluster se comporta quando um nó falha e como recuperar.
+
+Cenários de falha em um cluster multinode K3s com etcd embarcado e como recuperar. Este guia cobre as situações mais comuns.
+
+## Cenário 1: Perda de 1 agente
+
+**Situação:** agente-1 fica inacessível ou falha (hardware, kernel panic, network partition).
+
+**O que acontece:**
+
+```
+[Servidor 0]  [Servidor 1]  [Servidor 2]  (quorum OK: 3, precisa de 2)
+                   ✅            ✅
+[Agente 1]    [Agente 2]    [Agente 3]
+    ❌              ✅            ✅
+```
+
+- Cluster continua operacional (quorum de servidores intacto)
+- Pods em agente-1 são `Terminated`
+- Scheduler move workloads para agente-2 e agente-3
+- **Downtime:** minutos enquanto pods são rescheduled (depende de application startup time)
+
+**Recuperação:**
+
+```
+# 1. Aguardar ~5-10 min para certeza que o nó está morto
+sleep 300
+
+# 2. Remover o nó do cluster
+kubectl delete node agente-1
+
+# 3. Opção A: Reparar o nó e readdicioná-lo
+ssh admin@agente-1  # (se conseguir alcançar)
+sudo systemctl restart k3s-agent
+kubectl get nodes  # Aguardar "Ready"
+
+# Opção B: Substituir por um nó novo
+# (Seguir [Adicionar agentes] para o novo nó)
+```
+
+## Cenário 2: Perda de 1 servidor
+
+**Situação:** servidor-0 fica inacessível (o que foi escolhido como "líder" de etcd).
+
+**O que acontece:**
+
+```
+[Servidor 0]  [Servidor 1]  [Servidor 2]  (quorum OK: 3, precisa de 2)
+    ❌              ✅            ✅
+```
+
+- Servidor-1 e servidor-2 detectam perda de servidor-0 (via heartbeat)
+- Um deles é eleito novo líder (~10-30 segundos de eleição)
+- Cluster continua operacional
+- API pode estar temporariamente indisponível durante eleição
+
+**Recuperação:**
+
+```
+# 1. Aguardar eleição de novo líder (~30 segundos)
+sleep 30
+
+# 2. Verificar que novo líder foi eleito
+sudo kubectl get nodes
+
+# Todos os servidores devem ser "Ready" exceto servidor-0
+# [Servidor 1]  ✅
+# [Servidor 2]  ✅
+
+# 3. Reparar servidor-0 e readdicioná-lo
+# (Seguir [Adicionar servidores adicionais])
+# Ou remover permanentemente:
+kubectl delete node servidor-0
+```
+
+**Durante recuperação:**
+
+Se servidor-0 estava rodando workloads, eles são movidos para servidor-1 e servidor-2. É o mesmo cenário que [Cenário 1](#cenário-1-perda-de-1-agente).
+
+## Cenário 3: Perda de quorum (2+ servidores em 3)
+
+**Situação CRÍTICA:** servidor-1 e servidor-2 falham simultaneamente; só servidor-0 está vivo.
+
+**O que acontece:**
+
+```
+[Servidor 0]  [Servidor 1]  [Servidor 2]  (quorum QUEBRADO: 1 vivo, precisa de 2)
+    ✅              ❌            ❌
+```
+
+- etcd não tem quorum (1 ≠ 2)
+- Nenhuma nova decisão pode ser tomada
+- **Cluster travado:** não é possível criar/atualizar/deletar pods
+- Pods **existentes** continuam rodando (o kubelet não precisa de etcd para isso)
+- API retorna erros de escrita
+
+**Sintomas:**
+
+```
+kubectl create pod test --image=nginx
+# Error: Unavailable (etcd não consegue confirmar)
+
+sudo kubectl get nodes
+# Pode pendurar ou retornar erro de timeout
+```
+
+**Recuperação: restaurar de backup de etcd**
+
+Este é um procedimento manual. Você precisa de um backup de etcd feito antes da falha.
+
+```
+# 1. Verificar se tem backup
+ls -la /var/lib/rancher/k3s/server/db/snapshots/
+
+# Esperado: arquivos .db (snapshots de etcd)
+# on-demand_*.db  2024-01-15T10:30:00Z.db  2024-01-15T11:00:00Z.db
+```
+
+Se tem backup:
+
+```
+# 2. Parar todos os servidores
+# (em cada servidor)
+sudo systemctl stop k3s
+
+# 3. Restaurar snapshot no servidor mais recente
+# (ex.: em servidor-0, se é o único vivo)
+sudo k3s server \
+  --cluster-reset \
+  --cluster-reset-restore-path=/var/lib/rancher/k3s/server/db/snapshots/on-demand_2024-01-15T11_30_00Z.db
+
+# K3s reinicia com etcd restaurado
+
+# 4. Aguardar ~30 segundos e reiniciar os outros servidores
+sleep 30
+ssh admin@servidor-1 'sudo systemctl start k3s'
+ssh admin@servidor-2 'sudo systemctl start k3s'
+
+# 5. Verificar quorum
+sudo kubectl get nodes
+# Todos os 3 servidores devem reaparecer como "Ready"
+```
+
+**Se não tem backup:** perda total — você precisa reconstruir o cluster do zero. Veja [Perda total de dados](#perda-total-de-dados).
+
+## Cenário 4: Recuperação de datastore externo
+
+**Contexto:** você está usando Postgres ou etcd externo como datastore (não etcd embarcado).
+
+**Situação:** o datastore externo falha ou perde dados.
+
+**Impacto:** todos os servidores K3s ficam inacessíveis (dependem do datastore).
+
+**Recuperação:**
+
+1. **Restaurar o datastore externo** — isso é responsabilidade do operador do datastore (DBA de Postgres, etc.)
+2. **Verificar que servidores K3s conseguem alcançar** o datastore restaurado
+3. **Reiniciar K3s nos servidores**
+
+```
+# Em cada servidor
+sudo systemctl restart k3s
+
+# Aguardar ~30 segundos
+sleep 30
+
+# Verificar que todos estão "Ready"
+sudo kubectl get nodes
+```
+
+## Cenário 5: Partição de rede (nós não conseguem se alcançar)
+
+**Situação:** servidor-0 fica isolado; servidor-1 e servidor-2 conseguem se comunicar.
+
+**O que acontece:**
+
+```
+[Servidor 0]  ←(partição)→  [Servidor 1]  [Servidor 2]
+    (isolado)                       ✅ quorum!
+                            (comunicação OK)
+```
+
+- Servidor-0 sente-se sozinho, não consegue falar com os outros
+- Servidor-1 e servidor-2 se comunicam e formam quorum (2)
+- **Cluster funciona** com servidor-1 e servidor-2
+- Servidor-0 fica isolado e parado
+
+**Recuperação:**
+
+```
+# 1. Reparar a partição de rede
+# (verificar cabos, firewall, roteador)
+
+# 2. Verificar conectividade
+ping servidor-0 servidor-1 servidor-2
+
+# 3. Servidores se reconectam automaticamente
+# Aguardar ~1-2 minutos
+
+# 4. Verificar quorum restaurado
+sudo kubectl get nodes
+# Todos os 3 devem aparecer como "Ready"
+```
+
+## Checklist: Antes de falhas acontecerem
+
+```
+☐ Backup de etcd configurado (snapshots automáticos)
+☐ Snapshots testados — consegue restaurar de um?
+☐ Monitoramento alertando sobre perda de nó
+☐ Runbook de recuperação documentado (este documento!)
+☐ Firewall entre nós verificado
+☐ Quorum de servidores é número ímpar e ≥ 3
+```
+
+## Tópicos relacionados
+
+- [Arquitetura de quorum](../architecture/) — entender quorum e eleição de líder
+- [Manutenção nó a nó](../node-maintenance/) — como fazer manutenção **sem** falha
+- [Operações — Backup e recuperação](../../../operations/backups/backup-and-recovery/): rotinas de backup em nível de aplicação
+
+## Perda total de dados
+
+Se o backup de etcd não existe ou está corrompido:
+
+```
+# 1. Remover todos os dados de K3s
+sudo rm -rf /var/lib/rancher/k3s/
+
+# 2. Reinstalar K3s (fresco)
+curl -sfL https://get.k3s.io | sh -s - server --cluster-init
+
+# 3. Readdicioná-lo ao cluster (mas é um cluster novo, não recuperado)
+```
+
+Isso reconstrói o cluster, mas **perde todo o estado** (ConfigMaps, Secrets, PVs, etc.). Por isso backups são críticos.
+
+## Fontes e leitura adicional
+
+- [K3s — Disaster Recovery](https://docs.k3s.io/datastore/backup-restore): backup e restore de etcd.
+- [etcd — Disaster Recovery](https://etcd.io/docs/v3.5/op-guide/recovery/): procedimentos de etcd.
+- [Kubernetes — Node Failure](https://kubernetes.io/docs/tasks/administer-cluster/): guia oficial de falhas.

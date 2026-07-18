@@ -1,0 +1,66 @@
+---
+title: Adicionar servidor
+sidebar:
+  order: 2
+---
+
+import ScriptHelper from '../../../../../components/ScriptHelper.astro';
+import FileWriter from '../../../../../components/FileWriter.astro';
+import addK3sServerBefore from '../../../../../scripts/add-k3s-server-before.sh?raw';
+import addK3sServerConfig from '../../../../../scripts/add-k3s-server-config.yaml?raw';
+import addK3sServerWriteConfig from '../../../../../scripts/add-k3s-server-write-config.sh?raw';
+import addK3sServerAfter from '../../../../../scripts/add-k3s-server-after.sh?raw';
+
+Em cada servidor adicional, preencha os campos abaixo para gerar os comandos de configuração. Nenhum valor preenchido sai do seu navegador.
+
+## Preparar o host
+
+<ScriptHelper
+  runUser="root"
+  runWhere="host que será acrescentado como nó manager"
+  script={addK3sServerBefore}
+  title={"Preparar diretório"}
+/>
+
+## Criar o arquivo de configuração
+
+Use a aba **Conteúdo** para colar o arquivo manualmente com `vim`/`nvim`/`nano`, ou a aba
+**Script** para gerá-lo automaticamente.
+
+<FileWriter
+  path="/etc/rancher/k3s/config.yaml"
+  runUser="root"
+  runWhere="host que será acrescentado como nó manager"
+  owner="root"
+  group="root"
+  content={addK3sServerConfig}
+  script={addK3sServerWriteConfig}
+  fields={[
+    { var: 'K3S_NODE_IP', label: 'IP deste nó' },
+    { var: 'K3S_NODE_NAME', label: 'Nome único deste nó' },
+    { var: 'K3S_API_HOST', label: 'Host ou IP estável da API' },
+    { var: 'K3S_TOKEN', label: 'Token do cluster', type: 'password' },
+  ]}
+/>
+
+## Instalar o K3s
+
+<ScriptHelper
+  runWhere="o mesmo host, depois que `/etc/rancher/k3s/config.yaml` já existir"
+  script={addK3sServerAfter}
+  fields={[
+    { var: 'K3S_VERSION', label: 'Versão do K3s', defaultValue: 'v1.36.1+k3s1' },
+    { var: 'K3S_NODE_NAME', label: 'Nome único deste nó' },
+  ]}
+/>
+
+:::note
+Um cluster de dois servidores com etcd embarcado não oferece o quorum esperado para HA. Prefira três servidores.
+:::
+
+## Fontes e leitura adicional
+
+- [K3s — High Availability Embedded etcd](https://docs.k3s.io/datastore/ha-embedded) — Mostra como adicionar servidores ao etcd embarcado e explica a necessidade de um número ímpar de membros.
+- [K3s — `k3s server`](https://docs.k3s.io/cli/server) — Referência dos parâmetros de associação ao cluster e dos valores críticos que devem coincidir entre servidores.
+- [K3s — Configuration Options](https://docs.k3s.io/installation/configuration) — Documenta o uso do arquivo `config.yaml` e o erro causado por configurações críticas divergentes.
+- [K3s — Token Management](https://docs.k3s.io/cli/token) — Explica a autenticação de novos servidores, o formato seguro do token e os cuidados de armazenamento.

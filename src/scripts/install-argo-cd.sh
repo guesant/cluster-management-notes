@@ -1,0 +1,12 @@
+helm upgrade --install argocd argo-cd \
+  --repo https://argoproj.github.io/argo-helm \
+  --version "${ARGO_CD_CHART_VERSION}" \
+  --namespace argocd \
+  --create-namespace \
+  --set server.ingress.enabled=false \
+  --set-string server.resources.requests.cpu="${ARGO_CD_CPU_REQUEST}" \
+  --set-string server.resources.requests.memory="${ARGO_CD_MEMORY_REQUEST}" \
+  --set-string server.resources.limits.cpu="${ARGO_CD_CPU_LIMIT}" \
+  --set-string server.resources.limits.memory="${ARGO_CD_MEMORY_LIMIT}" \
+  --wait \
+  --timeout 10m

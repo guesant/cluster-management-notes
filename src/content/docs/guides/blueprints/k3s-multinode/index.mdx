@@ -1,0 +1,51 @@
+---
+title: K3s multinode com alta disponibilidade
+sidebar:
+  order: 2
+---
+
+> **Público-alvo:** quem tem experiência com o [blueprint single-node](../k3s-single-node-gitops/) e quer escalar para múltiplos nós com alta disponibilidade.
+> **Versões testadas:** K3s 1.36, Debian 12, topologia 3 servidores + N agentes.
+
+Este blueprint estende o caminho single-node (Fase 2) para clusters K3s distribuídos em múltiplos nós. Os conceitos fundamentais — Gateway API, cert-manager, Argo CD, Longhorn — permanecem; o que muda é a topologia do control plane, a coordenação entre nós e os runbooks de operação/recuperação.
+
+## O que está aqui
+
+- [Topologias recomendadas](topologies/) — escolher entre 1 servidor + agentes, 3 servidores HA, ou datastore externo.
+- [Arquitetura de quorum](architecture/) — como o etcd coordena servidores, o que é um quorum e os riscos de falha.
+- [Requisitos de rede e portAS](network-requirements/) — comunicação entre nós, balanceamento da API, certificados TLS multi-SAN.
+- [Inicializar e adicionar nós](first-server/) — bootstrap do primeiro servidor e registro de servidores/agentes adicionais.
+- [Balancear a API](api-endpoint/) — endpoint estável para acesso administrativo e cliente.
+- [Validar o cluster](validation/) — checklist pós-implantação.
+- [Operação nó a nó](node-maintenance/) — manutenção e atualização sem downtime.
+- [Falha e recuperação](failure-and-recovery/) — cenários: perda de servidor, perda de agente, perda de quorum.
+
+## Reaproveitamento da Fase 2
+
+A maioria das páginas de task guides da Fase 2 é reutilizada — host, firewall, K3s, rede, certificados. Este blueprint aponta para elas e descreve as adaptações específicas de multinode:
+
+- [Instalar o K3s — adaptações multinode](../../../tasks/kubernetes/join-k3s-server/) (primeira parte é igual, depois diverge)
+- [Configurar firewall entre nós](../../../tasks/kubernetes/configure-k3s-firewall-rules/)
+- [Configurar cert-manager com SANs](../../../tasks/certificates/install-cert-manager/) (TLS em múltiplos nomes)
+
+## Próximo passo
+
+Comece por [topologias recomendadas](topologies/) para escolher sua topologia, depois [requisitos de rede](network-requirements/) antes de provisionar qualquer nó.
+
+## Diferenças do single-node
+
+| Aspecto | Single-node | Multinode |
+| --- | --- | --- |
+| Control plane | 1 servidor | 3+ servidores (recomendado) ou 1 com datastore externo |
+| Quorum | N/A | Número ímpar de servidores; perda de > 50% dos servidores = cluster travado |
+| API endpoint | localhost ou IP do nó único | Load balancer ou DNS com múltiplos IPs |
+| Workloads | Rodam sempre no nó único (sem redundância) | Distribuídos entre agentes; servidores podem ter workloads |
+| Armazenamento | PVs ficam locais ao nó (sem replicação automática) | PVs replicados via Longhorn entre nós (se configurado) |
+| Atualização | Reboot único | Rolling update: drain + update + uncordon nó a nó |
+| Recuperação | Perda do nó = perda total | Perda de 1 agente = workloads rescheduled; perda de 1 servidor = cluster funciona se quorum > 50% |
+
+## Fontes e leitura adicional
+
+- [K3s — Architecture](https://docs.k3s.io/architecture): referência oficial de servidores, agentes e topologias.
+- [K3s — High Availability Etcd](https://docs.k3s.io/datastore/ha-embedded): explicação de quorum e recuperação de etcd embarcado.
+- [K3s — External Datastore](https://docs.k3s.io/datastore/external-datastore): alternativas a etcd embarcado.

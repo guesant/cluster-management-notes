@@ -1,0 +1,132 @@
+---
+title: Adicionar servidores adicionais
+sidebar:
+  order: 5
+---
+
+> **Para quem é:** quem já tem 1 servidor rodando e quer adicionar servidor-1, servidor-2, etc.
+> **Pré-requisito:** primeiro servidor em [Inicializar o primeiro servidor](../first-server/).
+
+Adicionar um novo servidor a um cluster K3s multinode é similar ao single-node, mas com etapa extra: registrar o novo servidor como parte do quorum de etcd. Este guia cobre os passos específicos.
+
+## Antes de começar
+
+- Tenha o **token de join** do primeiro servidor (do arquivo `/var/lib/rancher/k3s/server/node-token` no primeiro servidor)
+- Tenha o **IP ou DNS** do primeiro servidor (ex.: `10.0.0.10`)
+- Novo servidor já tem Debian/Ubuntu + firewall configurado conforme [requisitos de rede](../network-requirements/)
+
+## Passo 1: Instalar K3s no novo servidor
+
+No novo servidor (servidor-1), execute:
+
+```
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.36.0+k3s1 sh -s - server \
+  --server https://<ip-primeiro-servidor>:6443 \
+  --token <seu-token-de-join> \
+  --write-kubeconfig-mode 644
+```
+
+Substitua:
+- `<ip-primeiro-servidor>`: IP ou DNS do servidor-0 (ex.: `10.0.0.10`)
+- `<seu-token-de-join>`: conteúdo de `/var/lib/rancher/k3s/server/node-token` do servidor-0
+
+Exemplo real:
+
+```
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.36.0+k3s1 sh -s - server \
+  --server https://10.0.0.10:6443 \
+  --token 'K102abc123::server:xyz789' \
+  --write-kubeconfig-mode 644
+```
+
+## Passo 2: Aguardar sincronização
+
+Espere ~20-30 segundos enquanto etcd sincroniza entre os dois servidores. No servidor-1, verifique:
+
+```
+sudo kubectl get nodes
+```
+
+Ambos servidores devem aparecer como `Ready`:
+
+```
+NAME         STATUS   ROLES                  AGE   VERSION
+servidor-0   Ready    control-plane,master   2m    v1.36.0+k3s1
+servidor-1   Ready    control-plane,master   30s   v1.36.0+k3s1
+```
+
+## Passo 3: Adicionar servidor-2 (se usando 3 servidores)
+
+Repita os passos 1-2 no servidor-2, apontando ainda para servidor-0 como `--server`:
+
+```
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.36.0+k3s1 sh -s - server \
+  --server https://10.0.0.10:6443 \
+  --token 'K102abc123::server:xyz789' \
+  --write-kubeconfig-mode 644
+```
+
+Quando servidor-2 estiver `Ready`, você tem quorum completo (3 servidores, quorum = 2).
+
+## Verificação de quorum
+
+Depois que 3 servidores estão `Ready`, verifique que etcd tem quorum saudável:
+
+```
+# Em qualquer servidor, listar membros de etcd
+sudo k3s secrets-encrypt status
+
+# Ou (em versões antigas) inspecionar logs de etcd
+sudo journalctl -u k3s -f | grep etcd
+```
+
+Saída esperada: nenhuma "RAFT error" — todos os membros devem estar sincronizados.
+
+## Problemas comuns
+
+### "Connection refused" ou "timeout" ao adicionar servidor
+
+**Causa:** firewall bloqueando porta 6443 entre servidores.
+
+**Solução:**
+```
+# No servidor novo, testar conectividade ao primeiro
+sudo nc -zv 10.0.0.10 6443
+```
+
+Se falhar, configure firewall conforme [requisitos de rede](../network-requirements/).
+
+### Servidor novo fica "NotReady"
+
+**Causa:** etcd não sincronizou ainda, ou há problema de disco/memória.
+
+**Solução:**
+```
+# Verificar logs
+sudo journalctl -u k3s -n 50
+
+# Aguardar 1-2 minutos e tentar novamente
+sleep 60 && sudo kubectl get nodes
+```
+
+### "token does not have correct format"
+
+**Causa:** token copiado incorretamente (espaços, quebras de linha).
+
+**Solução:** copie novamente do arquivo no servidor-0 com cuidado:
+```
+# No servidor-0
+sudo cat /var/lib/rancher/k3s/server/node-token
+# copiar sem espaços/quebras
+```
+
+## Próximo passo
+
+- [Adicionar agentes K3s](../../../tasks/kubernetes/join-k3s-agent/) — para workers sem control plane.
+- [Balancear a API](../api-endpoint/) — configurar endpoint DNS para admin/cliente.
+- [Validar o cluster](../validation/) — checklist de verificação.
+
+## Fontes e leitura adicional
+
+- [K3s — High Availability Setup](https://docs.k3s.io/datastore/ha-embedded): guia oficial.
+- [K3s — Token Format](https://docs.k3s.io/cli/token): estrutura do token de join.

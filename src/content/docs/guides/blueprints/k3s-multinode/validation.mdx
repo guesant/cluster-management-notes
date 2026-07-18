@@ -1,0 +1,203 @@
+---
+title: Validar o cluster multinode
+sidebar:
+  order: 8
+---
+
+> **Para quem é:** quem acabou de instalar servidores e agentes e quer confirmar que tudo está saudável antes de começar a usar.
+
+Um checklist rápido após a implantação de um cluster multinode K3s. Execute todos os passos abaixo em um dos servidores (com `sudo` conforme necessário).
+
+## 1. Verificar nós
+
+```
+sudo kubectl get nodes -o wide
+```
+
+**Esperado:** todos os nós aparecem com `STATUS = Ready`; `ROLES` mostram `control-plane,master` para servidores e nada para agentes.
+
+```
+NAME         STATUS   ROLES                  AGE    VERSION
+servidor-0   Ready    control-plane,master   5m     v1.36.0+k3s1
+servidor-1   Ready    control-plane,master   3m     v1.36.0+k3s1
+servidor-2   Ready    control-plane,master   2m     v1.36.0+k3s1
+agente-1     Ready    <none>                 90s    v1.36.0+k3s1
+```
+
+**Se algum nó está `NotReady`:**
+```
+kubectl describe node <nome-nó>
+# Procure por "Conditions" — mensagens de erro indicam problema
+```
+
+## 2. Verificar componentes de controle
+
+```
+sudo kubectl get pods -n kube-system
+```
+
+**Esperado:** pods como `coredns`, `local-path-provisioner`, `metrics-server` devem estar `Running` ou `Completed`.
+
+```
+NAME                           READY   STATUS    RESTARTS   AGE
+coredns-869cb4b5bc-xyz1x       1/1     Running   0          5m
+local-path-provisioner-xyz2y   1/1     Running   0          5m
+metrics-server-abc3d           1/1     Running   0          5m
+```
+
+## 3. Verificar etcd (quorum)
+
+Em qualquer servidor:
+
+```
+sudo kubectl get endpoints kubernetes -n default
+```
+
+**Esperado:** endpoint aponta para todos os servidores.
+
+Ou, mais detalhado (em versões recentes):
+
+```
+# Tentar listar membros de etcd (requer kubectl corretamente configurado)
+sudo kubectl exec -n kube-system <etcd-pod-name> -- \
+  etcdctl member list
+
+# Exemplo output:
+# 1a2b3c4d, started, servidor-0, https://10.0.0.10:2380, https://10.0.0.10:2379, false
+# 2c3d4e5f, started, servidor-1, https://10.0.0.11:2380, https://10.0.0.11:2379, false
+# 3d4e5f6g, started, servidor-2, https://10.0.0.12:2380, https://10.0.0.12:2379, false
+```
+
+## 4. Verificar conectividade entre nós
+
+Testar que cada nó consegue alcançar os outros:
+
+```
+# De servidor-0, testar conexão à API nos outros servidores
+for ip in 10.0.0.11 10.0.0.12; do
+  echo "Testing $ip..."
+  sudo nc -zv $ip 6443
+  sudo nc -zv $ip 2379
+  sudo nc -zv $ip 10250
+done
+```
+
+**Esperado:** todas as conexões bem-sucedidas.
+
+## 5. Verificar rede overlay (Flannel)
+
+```
+sudo kubectl get pods -n kube-flannel
+```
+
+**Esperado:** 1 pod flannel por nó, todos `Running`.
+
+```
+NAME                   READY   STATUS    RESTARTS   AGE
+kube-flannel-ds-abc1x  1/1     Running   0          5m
+kube-flannel-ds-def2y  1/1     Running   0          5m
+kube-flannel-ds-ghi3z  1/1     Running   0          5m
+kube-flannel-ds-jkl4w  1/1     Running   0          5m
+```
+
+## 6. Testar scheduling de pods
+
+Criar um pod de teste em cada agente:
+
+```
+# Criar 3 réplicas de Nginx
+kubectl create deployment nginx --image=nginx:latest --replicas=3
+
+# Verificar distribuição entre agentes
+kubectl get pods -o wide | grep nginx
+
+# Esperado: pods distribuídos entre diferentes nós
+# nginx-abc123-def45  1/1  Running  0  30s  10.42.2.5   agente-1  <none>  <none>
+# nginx-abc123-ghi67  1/1  Running  0  30s  10.42.1.3   servidor-2  <none>  <none>  (se servidores rodam workloads)
+```
+
+Depois limpar:
+
+```
+kubectl delete deployment nginx
+```
+
+## 7. Verificar persistência de dados
+
+Se tiver Longhorn ou outro storage instalado:
+
+```
+sudo kubectl get storageclass
+sudo kubectl get pv
+```
+
+**Esperado:** StorageClass(es) e PVs aparecem sem erros.
+
+## 8. Verificar DNS
+
+```
+# Criar um pod de teste
+kubectl run -it --rm debug --image=alpine --restart=Never -- sh
+
+# Dentro do pod:
+nslookup kubernetes.default
+nslookup google.com  # (se tem internet)
+ping -c1 10.0.0.10   # IP de um nó
+
+# Sair com Ctrl+D
+```
+
+**Esperado:** DNS resolve corretamente, ping para nós funciona.
+
+## 9. Verificar API Kubernetes
+
+```
+# Health check
+sudo curl -k https://localhost:6443/healthz
+
+# Deve retornar "ok"
+```
+
+Se usa load balancer, testar também:
+
+```
+curl -k https://api.seu-cluster.local:6443/healthz
+# (substitua pelo seu endpoint de LB)
+```
+
+## 10. Verificar logs de erros
+
+Procurar por erros recentes nos servidores:
+
+```
+# Logs do K3s
+sudo journalctl -u k3s -n 20 --no-pager | grep -i error
+
+# Logs de kubelet (em agentes)
+sudo journalctl -u k3s-agent -n 20 --no-pager | grep -i error
+```
+
+**Esperado:** nenhuma mensagem de erro recente (avisos e infos são ok).
+
+## Resumo: Checklist de conclusão
+
+- [ ] Todos os nós aparecem como `Ready`
+- [ ] Pods de sistema (coredns, metrics-server) estão `Running`
+- [ ] etcd tem quorum (3 servidores mostram como membros)
+- [ ] Conectividade entre nós funciona (nc para portas 6443, 2379, 10250)
+- [ ] Flannel está rodando em todos os nós
+- [ ] Pods são agendados e distribuídos entre nós
+- [ ] DNS funciona dentro de pods
+- [ ] API Kubernetes responde ao healthz
+- [ ] Sem erros recentes em logs do K3s
+
+Se tudo passou, seu cluster está pronto para uso! Siga para [Operação nó a nó](../node-maintenance/).
+
+## Próximo passo
+
+- [Operação nó a nó](../node-maintenance/) — atualização e manutenção sem downtime.
+- [Falha e recuperação](../failure-and-recovery/) — runbooks para cenários de falha.
+
+## Fontes e leitura adicional
+
+- [Kubernetes — Cluster Validation](https://kubernetes.io/docs/tasks/debug-application-cluster/debug-cluster/): guia oficial de debugging.

@@ -1,0 +1,70 @@
+---
+title: <Título — o objetivo único desta página, ex.: "Instalar o cert-manager">
+description: <Uma frase objetiva sobre o que este procedimento faz>
+sidebar:
+  order: <N>
+---
+
+import ScriptHelper from '../../../../components/ScriptHelper.astro';
+import exampleScript from '../../../../scripts/example.sh?raw';
+
+<!--
+  Este arquivo é .mdx, não .md — obrigatório. `<ScriptHelper>`/`<FileWriter>` e os imports acima
+  só são processados em arquivos .mdx; em .md eles viram texto literal sem erro nenhum (bug já
+  visto neste projeto, corrigido em 2026-07-18 — ver project/decisions.md). Se a página não usa
+  nenhum componente, pode ser .md e este bloco de import inteiro pode ser removido.
+
+  Ajuste a profundidade dos imports acima conforme a pasta real da página.
+-->
+
+> **Pré-requisitos:** <lista, ou link para outra página>
+> **Versões testadas:** <ferramenta e versão>
+
+<Um parágrafo: o que este procedimento muda no sistema, em uma frase.>
+
+## O que isto modifica
+
+<Componentes, arquivos ou recursos afetados. Seja explícito — isso é o que o critério "riscos
+destacados" pede.>
+
+> **Executar em:** <onde este comando deve rodar — host, estação administrativa, etc.>
+
+<ScriptHelper
+  script={exampleScript}
+  fields={[
+    { var: 'EXAMPLE_VAR', label: 'Rótulo do campo' },
+  ]}
+/>
+
+## Resultado esperado
+
+<O que deve ser observável depois de rodar o script acima.>
+
+## Validação
+
+```bash
+<comando de verificação>
+```
+
+<Resultado esperado do comando de verificação.>
+
+## Como executar novamente
+
+<É seguro rodar de novo? O que muda na segunda execução?>
+
+## Como remover ou desfazer
+
+<Procedimento de rollback, ou "não aplicável" com o motivo.>
+
+## Troubleshooting
+
+<Problemas comuns e como diagnosticá-los.>
+
+## Páginas relacionadas
+
+- <Blueprint que usa este task guide>
+- <Próximo task guide do mesmo fluxo>
+
+## Referências
+
+- [<Fonte oficial>](<url>)

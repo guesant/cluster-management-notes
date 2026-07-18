@@ -1,0 +1,268 @@
+---
+title: Atualizar K3s em cluster multinode
+sidebar:
+  order: 2
+---
+
+> **Para quem é:** quem precisa atualizar K3s em um cluster 3+ servidores sem downtime.
+> **Versões:** adaptável a K3s 1.26+.
+
+Atualizar um cluster multinode sem downtime exige coordenação: drain um nó, atualizar, uncordon, depois próximo nó. Este guia cobre o procedimento de forma segura.
+
+## Antes de começar
+
+- ✅ Cluster está saudável (todos os nós `Ready`, quorum OK)
+- ✅ Backup de etcd foi feito
+- ✅ Você leu [Manutenção nó a nó](../maintenance/node-maintenance/)
+
+## Fluxo geral
+
+```
+Servidores: servidor-0 → servidor-1 → servidor-2
+Agentes:    agente-1 → agente-2 → agente-N
+
+Para cada nó:
+1. Drenar (move workloads)
+2. Atualizar K3s
+3. Uncordon (permite agendamento novamente)
+4. Aguardar saudável
+5. Próximo nó
+```
+
+## Passo 1: Escolher versão-alvo
+
+```
+# Ver versão atual
+sudo kubectl version --short
+
+# Listar versões disponíveis de K3s
+# (verificar em https://github.com/k3s-io/k3s/releases)
+```
+
+K3s permite atualização de uma versão minor (`v1.35 → v1.36`) ou patch (`v1.36.0 → v1.36.1`), mas não versões major nãosequenciais. Atualize gradualmente: `v1.34 → v1.35 → v1.36`.
+
+## Passo 2: Atualizar servidores
+
+Atualizar servidores **primeiro** garante que o control plane fique saudável antes de mover workloads.
+
+### Para cada servidor (servidor-0, servidor-1, servidor-2):
+
+```
+# 1. Drenar o servidor (move workloads)
+kubectl drain <nome-servidor> \
+  --ignore-daemonsets \
+  --delete-emptydir-data \
+  --grace-period=30
+
+# Aguardar "evicted" aparecer para cada pod
+# (pode levar 1-2 minutos se há PVs grandes)
+
+# 2. Conectar ao servidor e parar K3s
+ssh admin@<ip-servidor>
+sudo systemctl stop k3s
+
+# 3. Executar instalador (refaz a instalação, mesmo arquivo de config)
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.36.0+k3s1 sh -
+
+# K3s reinicia automaticamente
+sudo systemctl status k3s
+
+# Desconectar
+exit
+
+# 4. No laptop, aguardar que servidor volte a "Ready"
+kubectl get nodes -w | grep <nome-servidor>
+# Apertar Ctrl+C quando status mudar para "Ready"
+
+# 5. Uncordon (permite agendamento de novos pods)
+kubectl uncordon <nome-servidor>
+
+# 6. Verificar que quorum está ok
+kubectl get nodes
+# Todos os servidores devem ser "Ready"
+
+# 7. Aguardar 1-2 minutos antes de próximo servidor
+sleep 120
+```
+
+**Exemplo completo para servidor-0:**
+
+```
+# Drenar
+kubectl drain servidor-0 --ignore-daemonsets --delete-emptydir-data
+
+# SSH e atualizar
+ssh admin@10.0.0.10
+sudo systemctl stop k3s
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.36.0+k3s1 sh -
+sudo systemctl status k3s
+exit
+
+# Aguardar retorno à saúde
+kubectl get nodes -w
+
+# Uncordon
+kubectl uncordon servidor-0
+```
+
+### Cuidado: ordem de servidores
+
+Se tem 3 servidores e está atualizando um de cada vez:
+
+```
+Antes: [Srv0 v1.35]  [Srv1 v1.35]  [Srv2 v1.35]  (quorum = 2)
+       [v1.35]       [v1.35]       [v1.35]
+
+Srv0 em manutenção (drenado):
+       ❌             [v1.35]       [v1.35]       (quorum = 2)
+
+Srv0 atualizado:
+       [v1.36]       [v1.35]       [v1.35]       (quorum = 2 misto)
+                     ^^ Sem problema, K3s aguenta mistura de versões
+
+Srv0 pronto, começar Srv1:
+       [v1.36]       ❌             [v1.35]       (quorum = 2)
+```
+
+Mistura de versões (v1.35 + v1.36) é OK por um tempo. K3s suporta até 1 versão de diferença entre componentes.
+
+## Passo 3: Atualizar agentes
+
+Depois que todos os servidores estão atualizados, atualizar agentes:
+
+```
+# Para cada agente (agente-1, agente-2, ...):
+kubectl drain <nome-agente> --ignore-daemonsets --delete-emptydir-data
+
+ssh admin@<ip-agente>
+sudo systemctl stop k3s-agent
+curl -sfL https://get.k3s.io | K3S_URL=https://<ip-servidor>:6443 K3S_TOKEN=<token> sh -
+sudo systemctl status k3s-agent
+exit
+
+kubectl get nodes -w | grep <nome-agente>
+kubectl uncordon <nome-agente>
+sleep 60
+```
+
+## Passo 4: Verificar
+
+```
+# Ver versões finais
+kubectl version --short
+
+# Todos os nós devem ser v1.36.0+k3s1 (ou sua versão-alvo)
+kubectl get nodes -o wide
+
+# Cluster saudável?
+kubectl get pods -A
+```
+
+## Script automatizado
+
+Para clusters com muitos agentes, script para automatizar:
+
+```
+#!/bin/bash
+set -euo pipefail
+
+SERVERS=("servidor-0" "servidor-1" "servidor-2")
+AGENTS=("agente-1" "agente-2" "agente-3")
+VERSION="v1.36.0+k3s1"
+K3S_SERVER="https://10.0.0.10:6443"
+K3S_TOKEN=$(ssh admin@10.0.0.10 'sudo cat /var/lib/rancher/k3s/server/node-token')
+
+update_node() {
+  local node=$1
+  local is_server=${2:-false}
+  
+  echo "Updating $node..."
+  
+  # Drenar
+  kubectl drain "$node" --ignore-daemonsets --delete-emptydir-data
+  
+  # Atualizar (SSH)
+  if [ "$is_server" = true ]; then
+    ssh "admin@$node" <<EOF
+      sudo systemctl stop k3s
+      curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=$VERSION sh -
+      sudo systemctl status k3s
+EOF
+  else
+    ssh "admin@$node" <<EOF
+      sudo systemctl stop k3s-agent
+      curl -sfL https://get.k3s.io | K3S_URL=$K3S_SERVER K3S_TOKEN=$K3S_TOKEN sh -
+      sudo systemctl status k3s-agent
+EOF
+  fi
+  
+  # Aguardar Ready
+  kubectl wait --for=condition=ready node/"$node" --timeout=300s
+  
+  # Uncordon
+  kubectl uncordon "$node"
+  
+  echo "$node updated successfully"
+  sleep 60
+}
+
+# Servidores primeiro
+for server in "${SERVERS[@]}"; do
+  update_node "$server" true
+done
+
+# Depois agentes
+for agent in "${AGENTS[@]}"; do
+  update_node "$agent" false
+done
+
+echo "Cluster upgrade complete!"
+```
+
+## Problemas comuns
+
+### "Pod eviction timeout" ao drenar
+
+Alguns pods não desligam rápido. Aumentar `--grace-period`:
+
+```
+kubectl drain <nó> --grace-period=300 --ignore-daemonsets --delete-emptydir-data
+```
+
+### Servidor fica `NotReady` após atualização
+
+Conferir logs:
+
+```
+ssh admin@<servidor>
+sudo journalctl -u k3s -n 50 --no-pager
+```
+
+Causa comum: versão de K3s não compatível, ou permissões/disco. Reinstalar manualmente se necessário:
+
+```
+sudo systemctl stop k3s
+sudo rm -rf /var/lib/rancher/k3s/
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.36.0+k3s1 sh -
+```
+
+### Quorum quebrado durante upgrade
+
+Isso **não deveria acontecer** se você seguir o procedimento (atualizar 1 nó de cada vez). Se acontecer:
+
+```
+# Parar o upgrade imediatamente
+# Deixar todos os servidores rodarem downgrade:
+ssh admin@<servidor-que-falhou>
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=<versão-anterior> sh -
+```
+
+## Próximo passo
+
+- [Manutenção nó a nó](../maintenance/node-maintenance/) — para drain/uncordon detalhado.
+- [Disaster Recovery](../disaster-recovery/): se algo der errado.
+
+## Fontes e leitura adicional
+
+- [K3s — Upgrades](https://docs.k3s.io/upgrades): guia oficial.
+- [Kubernetes — Rolling Updates](https://kubernetes.io/docs/tutorials/kubernetes-basics/update/update-intro/): conceito de rolling update.

@@ -1,0 +1,104 @@
+---
+title: Arquitetura de quorum e etcd
+sidebar:
+  order: 2
+---
+
+> **Para quem é:** operadores que precisam entender como K3s mantem consenso em múltiplos servidores, antes de começar o operacional.
+
+Em um cluster K3s multinode com etcd embarcado, os servidores se comunicam para manter um registro distribuído do estado do cluster. Essa comunicação segue o algoritmo **Raft**, que exige um **quorum** — um consenso entre a maioria dos servidores. Sem um quorum funcional, o cluster trava.
+
+## Como funciona
+
+```mermaid
+flowchart TB
+    accTitle: Fluxo de consenso em etcd com Raft
+    accDescr: Líder propõe mudanças, seguidores replicam, quorum confirma.
+
+    Client["Cliente (admin, aplicação)"] -->|"escreve estado"| Leader["Servidor 1<br/>(líder)"]
+    Leader -->|"propõe mudança"| F1["Servidor 2<br/>(seguidor)"]
+    Leader -->|"propõe mudança"| F2["Servidor 3<br/>(seguidor)"]
+    F1 -->|"confirma"| Leader
+    F2 -->|"confirma"| Leader
+    Leader -->|"confirma ao cliente"| Client
+    Leader -.->|"heartbeat periódico"| F1
+    Leader -.->|"heartbeat periódico"| F2
+```
+
+Um **servidor líder** coordena todas as escritas. Cada mudança é proposta aos **seguidores**; assim que a maioria (quorum) confirma, a mudança é commitada. Se o líder falhar, os seguidores elegem um novo líder.
+
+## Quorum
+
+O quorum é a quantidade **mínima de servidores que precisam estar saudáveis** para que o cluster funcione. Para N servidores:
+
+```
+Quorum = floor(N / 2) + 1
+```
+
+| Servidores | Quorum | Tolerância de falha |
+| --- | --- | --- |
+| 1 | 1 | 0 (qualquer falha = travado) |
+| 2 | 2 | 0 (qualquer falha = travado) |
+| 3 | 2 | 1 (pode perder 1) |
+| 5 | 3 | 2 (pode perder 2) |
+| 7 | 4 | 3 (pode perder 3) |
+
+**Em 3 servidores**, o quorum é 2 — você pode perder 1 servidor e o cluster continua operacional. Se perder 2, o cluster fica travado: nenhuma nova decisão pode ser tomada.
+
+## Cenários de falha
+
+### Perda de 1 servidor em 3 (quorum OK)
+
+```
+[Servidor 1 — OK]   [Servidor 2 — FALHA]   [Servidor 3 — OK]
+        └─────────────────────┬─────────────────────┘
+              Quorum = 2 ✅ (continua funcional)
+```
+
+- Workloads continuam rodando.
+- O cluster elege um novo líder entre os 2 vivos.
+- Você pode atualizar ou reparar o servidor falho.
+
+### Perda de 2 servidores em 3 (quorum QUEBRADO)
+
+```
+[Servidor 1 — OK]   [Servidor 2 — FALHA]   [Servidor 3 — FALHA]
+        └─────────────────────┬─────────────────────┘
+              Quorum = 1 ❌ (cluster travado)
+```
+
+- Nenhuma nova mudança pode ser commitada (API retorna erro).
+- Pods existentes continuam rodando, mas não podem ser criados/atualizados/deletados.
+- O cluster está efetivamente indisponível.
+
+## Recuperação de perda de quorum
+
+Se o cluster perder quorum, você precisa restaurar o etcd a partir de um backup. Isso é um procedimento manual (veja [Falha e recuperação](../failure-and-recovery/)).
+
+**Por isso backups regulares de etcd são críticos:**
+
+```mermaid
+flowchart LR
+    accTitle: Caminho de recuperação após perda de quorum
+    accDescr: Restaurar etcd do backup é o único caminho de volta.
+
+    LosingQuorum["Perda de quorum<br/>(2+ servidores)"]
+    LosingQuorum --> Backup["Backup de etcd<br/>existente?"]
+    Backup -->|Sim| Restore["Restaurar de backup"]
+    Backup -->|Não| Rebuild["Reconstruir cluster<br/>do zero (perda total)"]
+    Restore --> Operational["Cluster funcional novamente"]
+    Rebuild --> Operational
+```
+
+## Tópicos relacionados
+
+- [Topologias recomendadas](../topologies/): escolher entre 1/3/N servidores.
+- [Requisitos de rede](../network-requirements/): quais portas etcd usa entre nós.
+- [Falha e recuperação](../failure-and-recovery/): runnbooks para perda de quorum.
+- [Manutenção de nó](../node-maintenance/): como atualizar/reparar sem quebrar quorum.
+
+## Fontes e leitura adicional
+
+- [K3s — High Availability Etcd](https://docs.k3s.io/datastore/ha-embedded): implementação de HA no K3s.
+- [etcd Raft Consensus](https://etcd.io/docs/v3.5/learning/design-client/): especificação do algoritmo Raft usado pelo etcd.
+- [Disaster Recovery — K3s](https://docs.k3s.io/datastore/backup-restore): backup e restore de etcd no K3s.

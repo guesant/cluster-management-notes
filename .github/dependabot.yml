@@ -1,0 +1,36 @@
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: America/Sao_Paulo
+    cooldown:
+      default-days: 7
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: chore(actions)
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: bun
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:15"
+      timezone: America/Sao_Paulo
+    cooldown:
+      default-days: 7
+    groups:
+      bun:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: chore(deps)
+    open-pull-requests-limit: 5

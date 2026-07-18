@@ -1,0 +1,109 @@
+---
+title: Inicializar o primeiro servidor e adicionar nós
+sidebar:
+  order: 4
+---
+
+> **Para quem é:** quem está instalando K3s multinode e precisa inicializar o controle plane.
+> **Pré-requisitos:** [topologias recomendadas](../topologies/), [requisitos de rede](../network-requirements/), hosts preparados com Debian/Ubuntu + UFW.
+
+O primeiro servidor é o bootstrap do control plane: ele inicia o etcd, cria os tokens de join para novos nós e fica responsável pelo estado inicial do cluster. Este guia cobre:
+
+1. Instalar o primeiro servidor (servidor-0)
+2. Recuperar o token de join para adicionar servidores e agentes
+3. Validação rápida (API acessível?)
+
+## Passo 1: Instalar o primeiro servidor
+
+Escolha sua topologia (3 servidores com etcd embarcado? ou com datastore externo?) e siga [Instalar o primeiro servidor K3s](../../../tasks/kubernetes/install-first-k3s-server/), com a adaptação:
+
+**Se está usando 3 servidores com etcd embarcado**, adicione ao comando de instalação:
+
+```
+curl -sfL https://get.k3s.io | sh -s - server \
+  --cluster-init \
+  --write-kubeconfig-mode 644
+```
+
+Flag `--cluster-init` ativa o etcd embarcado e prepara este servidor para receber outros servidores via join.
+
+**Se está usando datastore externo (Postgres ou etcd)**, o comando é:
+
+```
+curl -sfL https://get.k3s.io | sh -s - server \
+  --datastore-endpoint='postgres://user:password@postgres-host:5432/k3s' \
+  --write-kubeconfig-mode 644
+```
+
+(Substitua o endpoint pela sua URL de datastore; veja [K3s — External Datastore](https://docs.k3s.io/datastore/external-datastore) para detalhes.)
+
+## Passo 2: Recuperar o token de join
+
+Depois que o primeiro servidor inicia, obtenha o token de join para adicionar novos servidores/agentes:
+
+```
+sudo cat /var/lib/rancher/k3s/server/node-token
+```
+
+Saída esperada:
+
+```
+K102abcdef12345...::server:zyx9876543210...
+```
+
+Guarde esse token — você precisa dele para adicionar servidores e agentes.
+
+## Passo 3: Verificar que a API está rodando
+
+Aguarde ~10-15 segundos enquanto K3s inicia:
+
+```
+sudo kubectl get nodes
+```
+
+Saída esperada (apenas servidor-0):
+
+```
+NAME         STATUS   ROLES                  AGE   VERSION
+servidor-0   Ready    control-plane,master   30s   v1.36.0+k3s1
+```
+
+## Passo 4: Adicionar servidores e agentes
+
+Agora que o primeiro servidor está pronto, siga:
+
+- [Adicionar um servidor K3s](../../../tasks/kubernetes/join-k3s-server/) — para servidor-1, servidor-2, etc.
+- [Adicionar um agente K3s](../../../tasks/kubernetes/join-k3s-agent/) — para workers
+
+Ambos os guias usam o token que você recuperou no Passo 2 e apontam para o primeiro servidor como `server-url`.
+
+## Quora e consenso
+
+Depois de adicionar:
+
+- **1º servidor** — nenhum quorum (etcd não está sincronizado)
+- **2º servidor** — quorum = 2 (qualquer um pode viver sozinho, mas nenhum é suficiente)
+- **3º servidor** — quorum = 2 ✅ (perda de 1 = cluster funciona)
+
+Você pode verificar o status de etcd em qualquer servidor:
+
+```
+sudo k3s server --help | grep etcd
+# ou
+sudo k3s check-etcd
+# (este comando é específico de versão; em versões antigas, use)
+sudo kubectl get endpoints kubernetes -o json | jq -r '.metadata.managedFields[] | select(.manager == "etcd") | .time'
+```
+
+(Método mais confiável é verificar na dashboard do Kubernetes que todos os servidores aparecem como `Ready`.)
+
+## Próximo passo
+
+- [Balancear a API](../api-endpoint/) — configurar endpoint estável para admin/cliente.
+- [Validar o cluster](../validation/) — checklist de verificação pós-implantação.
+- [Operação nó a nó](../node-maintenance/) — atualização e manutenção sem downtime.
+
+## Fontes e leitura adicional
+
+- [K3s — High Availability Setup](https://docs.k3s.io/datastore/ha-embedded): instalação de HA com etcd embarcado.
+- [K3s — External Datastore](https://docs.k3s.io/datastore/external-datastore): alternativa com datastore separado.

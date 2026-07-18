@@ -1,0 +1,54 @@
+---
+title: Visão geral de gerenciamento de segredos
+description: Apresenta o problema que o gerenciamento de segredos resolve e organiza as estratégias cobertas por este notebook.
+sidebar:
+  order: 1
+---
+
+> **Para quem é:** quem precisa escolher uma estratégia de segredos para um cluster e ainda não sabe quais opções existem.
+
+Um Secret Kubernetes nativo é apenas base64 — não criptografado, apenas codificado. Qualquer pessoa com acesso de leitura à API ou ao etcd pode decodificá-lo trivialmente. "Gerenciamento de segredos" é o conjunto de decisões sobre onde os valores reais residem, como chegam ao cluster e como são versionados sem exposição.
+
+## Como funciona
+
+Toda estratégia de segredos precisa responder a três perguntas: onde o valor real fica armazenado (Git criptografado, um secret store externo), como ele chega ao Secret Kubernetes (um controller, um operator, aplicação manual), e como é revogado ou rotacionado quando necessário.
+
+```mermaid
+flowchart LR
+    accTitle: Perguntas centrais de qualquer estratégia de segredos
+    accDescr: Toda estratégia decide onde o valor real reside, como ele chega ao Secret Kubernetes e como é rotacionado.
+
+    Origem["Onde o valor reside?"] --> Entrega["Como chega ao Secret?"]
+    Entrega --> Rotacao["Como é rotacionado?"]
+```
+
+Este notebook cobre quatro estratégias, cada uma com um trade-off diferente entre simplicidade, quem opera o segredo, e onde fica a fonte de verdade:
+
+| Estratégia | Onde o valor reside | Página |
+| --- | --- | --- |
+| SOPS + age | Git, criptografado por chave assimétrica | [SOPS vs. Sealed Secrets](../sops-vs-sealed-secrets/) |
+| Sealed Secrets | Git, criptografado pela chave pública de um controller no cluster | [SOPS vs. Sealed Secrets](../sops-vs-sealed-secrets/) |
+| External Secrets Operator | Um secret store externo (Vault, OpenBao, provedores de nuvem) | [External Secrets](../external-secrets/) |
+| Infisical (já coberto na Fase 2) | Um secret store externo dedicado (Infisical) | [instalar o Infisical](../../../guides/tasks/secrets/install-infisical/) |
+
+## Alternativas
+
+Um quinto caminho — não versionar nada, aplicar Secrets manualmente fora do GitOps — evita o problema de criptografia no Git, mas sacrifica reprodutibilidade e auditoria. Raramente é a escolha certa além de segredos de bootstrap muito específicos (veja [o problema do bootstrap](../bootstrap-problem/)).
+
+## Quando usar cada estratégia
+
+SOPS e Sealed Secrets mantêm tudo no Git, sem depender de um serviço externo — mais simples de operar, mas o segredo criptografado ainda precisa de uma chave de descriptografia gerenciada com cuidado. External Secrets Operator e Infisical dependem de um serviço externo como fonte de verdade — mais robusto para rotação e auditoria centralizada, ao custo de mais um componente para manter disponível.
+
+## Quando evitar
+
+Não adote múltiplas estratégias simultaneamente sem motivo — cada uma exige seu próprio operator, RBAC e procedimento de rotação. Escolha uma como padrão e documente a decisão, como qualquer outra decisão registrada em [decisões do projeto](../../../project/decisions/).
+
+## Páginas relacionadas
+
+- [O problema do bootstrap](../bootstrap-problem/)
+- [Segredos no Git](../secrets-in-git/)
+- [Criptografia versus secret store](../encryption-vs-secret-store/)
+
+## Referências
+
+- [Kubernetes — Secrets good practices](https://kubernetes.io/docs/concepts/security/secrets-good-practices/): reúne práticas recomendadas de controle de acesso e criptografia de Secrets.

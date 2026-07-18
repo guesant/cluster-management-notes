@@ -1,0 +1,55 @@
+---
+title: Firewall dos nós
+sidebar:
+  order: 7
+---
+
+import ScriptHelper from '../../../../../components/ScriptHelper.astro';
+import k3sHostFirewallScript from '../../../../../scripts/k3s-host-firewall-rules.sh?raw';
+
+Estas regras complementam o [firewall básico dos hosts](../../host/configure-ufw/). Nos hosts K3s, libere também a comunicação interna do cluster. Restrinja `K3S_NODE_CIDR` à rede que contém somente os nós; nunca exponha VXLAN/UDP 8472 à Internet.
+
+Nos managers e agents:
+
+<ScriptHelper
+  runUser="root"
+  runWhere="todos os nós manager e agent"
+  script={k3sHostFirewallScript}
+  fields={[
+    { var: 'K3S_NODE_CIDR', label: 'CIDR da rede privada dos nós' },
+    { var: 'K3S_POD_CIDR', label: 'CIDR dos Pods', defaultValue: '10.42.0.0/16' },
+    { var: 'K3S_SERVICE_CIDR', label: 'CIDR dos Services', defaultValue: '10.43.0.0/16' },
+  ]}
+/>
+
+Somente nos managers:
+
+> **Executar em:** todos os nós manager, como `root`.
+
+```
+bash <<'EOF'
+set -euo pipefail
+
+read -r -p "CIDR da rede privada dos nós: " K3S_NODE_CIDR </dev/tty
+
+if [[ -z "${K3S_NODE_CIDR}" ]]; then
+  printf 'O CIDR dos nós não pode ficar vazio.\n' >&2
+  exit 1
+fi
+
+# Supervisor e API Kubernetes.
+ufw allow in from "${K3S_NODE_CIDR}" to any port 6443 proto tcp
+
+# Comunicação entre managers com etcd embarcado.
+ufw allow in from "${K3S_NODE_CIDR}" to any port 2379:2380 proto tcp
+EOF
+```
+
+Se a API também for administrada por uma rede separada, acrescente uma regra TCP/6443 restrita a essa rede. Se usar Flannel WireGuard em vez de VXLAN, libere UDP/51820 e, para IPv6, UDP/51821 entre os nós no lugar de UDP/8472. Exponha TCP/80, TCP/443 e NodePorts somente quando a arquitetura dos serviços exigir.
+
+## Fontes e leitura adicional
+
+- [K3s — Requirements: Networking](https://docs.k3s.io/installation/requirements#networking) — Mantém a tabela oficial de portas, origens e destinos exigidos por API, Flannel, kubelet e etcd.
+- [K3s — Basic Network Options](https://docs.k3s.io/networking/basic-network-options) — Detalha os backends VXLAN e WireGuard do Flannel e as opções de rede alternativas.
+- [Ubuntu Server — Firewall](https://ubuntu.com/server/docs/how-to/security/firewalls/) — Referência oficial do Ubuntu para configurar e revisar regras com UFW.
+- [Kubernetes — Service](https://kubernetes.io/docs/concepts/services-networking/service/) — Explica os tipos de Service, incluindo `NodePort` e `LoadBalancer`, que podem exigir portas adicionais nos hosts.

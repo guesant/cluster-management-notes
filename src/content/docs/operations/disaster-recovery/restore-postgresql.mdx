@@ -1,0 +1,38 @@
+---
+title: Restaurar o PostgreSQL (cenário de disaster recovery)
+sidebar:
+  order: 4
+---
+
+> **Pré-requisitos:** [backups do PostgreSQL configurados](../../guides/tasks/databases/configure-postgresql-backups/) e um backup existente.
+> **Contexto:** esta página cobre quando usar a restauração durante um incidente real; o procedimento técnico completo está em [restaurar um cluster PostgreSQL](../../guides/tasks/databases/restore-postgresql-cluster/).
+
+## Quando restaurar a partir de backup
+
+- Corrupção de dados detectada (exclusão indevida, migração malsucedida, erro de aplicação).
+- Necessidade de recuperação point-in-time para um momento anterior a um erro conhecido.
+- Perda completa do cluster PostgreSQL (host, em nó único).
+
+## Quando NÃO restaurar a partir de backup
+
+Se o `Cluster` tem múltiplas instâncias e apenas uma falhou, o CloudNativePG já promove uma réplica automaticamente — restaurar de backup externo não é necessário nesse caso.
+
+## Procedimento
+
+Siga [restaurar um cluster PostgreSQL](../../guides/tasks/databases/restore-postgresql-cluster/) — o procedimento cria um novo cluster a partir do backup, sem afetar o original durante a validação.
+
+## Escolher o ponto de recuperação
+
+Para corrupção detectada em um momento conhecido, use `targetTime` imediatamente anterior ao evento. Para perda completa sem uma causa lógica identificada, o ponto mais recente disponível costuma ser a escolha certa.
+
+## Validação
+
+Siga a validação funcional (schema, contagens conhecidas, consulta de teste) descrita na página procedural — a existência do Pod rodando não comprova integridade dos dados.
+
+## Próximo passo
+
+Se este banco for parte de uma reconstrução maior do cluster, retome [reconstruir um cluster single-node](../rebuild-single-node-cluster/).
+
+## Fontes e leitura adicional
+
+- [CloudNativePG — Recovery](https://cloudnative-pg.io/documentation/current/recovery/): referência oficial de recuperação point-in-time.

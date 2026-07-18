@@ -1,0 +1,4 @@
+server: "https://${K3S_API_HOST}:6443"
+token: "${K3S_TOKEN}"
+node-ip: "${K3S_NODE_IP}"
+node-name: "${K3S_NODE_NAME}"

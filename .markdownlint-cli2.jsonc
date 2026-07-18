@@ -1,0 +1,13 @@
+{
+	// MD013 (linhas longas), MD025 (título único) e MD041 (primeira linha
+	// precisa ser um título) são desligadas porque o título de cada página
+	// vem do frontmatter do Starlight, não de um `#` no corpo do arquivo.
+	"config": {
+		"default": true,
+		"MD013": false,
+		"MD025": false,
+		"MD041": false,
+		"MD034": false
+	},
+	"globs": ["README.md", "src/content/docs/**/*.md"]
+}

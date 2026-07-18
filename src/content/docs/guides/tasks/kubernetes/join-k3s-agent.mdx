@@ -1,0 +1,67 @@
+---
+title: Adicionar agente
+sidebar:
+  order: 3
+---
+
+import ScriptHelper from '../../../../../components/ScriptHelper.astro';
+import FileWriter from '../../../../../components/FileWriter.astro';
+import addK3sAgentBefore from '../../../../../scripts/add-k3s-agent-before.sh?raw';
+import addK3sAgentConfig from '../../../../../scripts/add-k3s-agent-config.yaml?raw';
+import addK3sAgentWriteConfig from '../../../../../scripts/add-k3s-agent-write-config.sh?raw';
+import addK3sAgentAfter from '../../../../../scripts/add-k3s-agent-after.sh?raw';
+
+Em cada agente, preencha os campos abaixo para gerar os comandos de configuração. Nenhum valor preenchido sai do seu navegador.
+
+## Preparar o host
+
+<ScriptHelper
+  runUser="root"
+  runWhere="host que será acrescentado como nó agent"
+  script={addK3sAgentBefore}
+  title={"Preparar diretório"}
+/>
+
+## Criar o arquivo de configuração
+
+Use a aba **Conteúdo** para colar o arquivo manualmente com `vim`/`nvim`/`nano`, ou a aba
+**Script** para gerá-lo automaticamente.
+
+<FileWriter
+  path="/etc/rancher/k3s/config.yaml"
+  runUser="root"
+  runWhere="host que será acrescentado como nó agent"
+  owner="root"
+  group="root"
+  content={addK3sAgentConfig}
+  script={addK3sAgentWriteConfig}
+  fields={[
+    { var: 'K3S_NODE_IP', label: 'IP deste nó' },
+    { var: 'K3S_NODE_NAME', label: 'Nome único deste nó' },
+    { var: 'K3S_API_HOST', label: 'Host ou IP estável da API' },
+    { var: 'K3S_TOKEN', label: 'Token do cluster', type: 'password' },
+  ]}
+/>
+
+## Instalar o K3s
+
+<ScriptHelper
+  runWhere="o mesmo host, depois que `/etc/rancher/k3s/config.yaml` já existir"
+  script={addK3sAgentAfter}
+  fields={[{ var: 'K3S_VERSION', label: 'Versão do K3s', defaultValue: 'v1.36.1+k3s1' }]}
+/>
+
+Em um servidor ou estação com kubeconfig, valide o nó:
+
+> **Executar em:** qualquer máquina com `KUBECONFIG` e acesso à API.
+
+```
+kubectl get nodes -o wide
+```
+
+## Fontes e leitura adicional
+
+- [K3s — Quick-Start Guide](https://docs.k3s.io/quick-start) — Apresenta o fluxo oficial para registrar agentes com o endereço e o token do servidor.
+- [K3s — `k3s agent`](https://docs.k3s.io/cli/agent) — Referência das opções do agent, incluindo `server`, `token`, `node-name` e `node-ip`.
+- [K3s — Architecture](https://docs.k3s.io/architecture) — Explica o registro dos agents, o balanceador local e as conexões mantidas com os servers.
+- [K3s — Token Management](https://docs.k3s.io/cli/token) — Diferencia tokens de server, agent e bootstrap e descreve como eles autenticam a entrada de nós.

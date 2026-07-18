@@ -1,0 +1,47 @@
+---
+title: Início
+description: Anotações práticas sobre infraestrutura, containers e clusters — conceitos, blueprints, guias, operação, ferramentas e scripts, com foco atual em K3s.
+---
+
+Minhas anotações sobre infraestrutura, containers e clusters: conceitos, blueprints, guias
+passo a passo, operação e ferramentas. O foco atual é criar e operar clusters K3s de nó único
+(*single-node*) ou multinó (*multi-node*); o restante do escopo — Docker Swarm, outras
+distribuições Kubernetes, mais ferramentas — está descrito em
+[Escopo do projeto](project/scope/) e ainda em expansão.
+
+:::note
+As anotações deste guia foram elaboradas e revisadas com o apoio de inteligência artificial, especificamente o ChatGPT. Alguns scripts e outros conteúdos deste repositório também podem ter sido criados ou modificados com auxílio de IA. Valide o código, os comandos, as versões e as decisões de segurança de acordo com o seu ambiente antes de utilizá-los.
+:::
+
+:::danger
+Execute primeiro em um ambiente de teste. Os comandos alteram autenticação SSH, firewall, serviços do sistema e componentes do cluster. Mantenha uma sessão SSH funcional aberta durante mudanças de acesso e tenha acesso ao console da máquina antes de aplicar regras remotamente.
+:::
+
+## Comece por aqui
+
+- [Ensaio: cluster K3s](getting-started/create-a-k3s-cluster/): roteiro com caminho comum, escolha de topologia, checkpoints e módulos opcionais.
+- [Escopo, convenções e versões](reference/conventions/): premissas adotadas pelos comandos e versões usadas como referência.
+
+## Por objetivo
+
+Os links abaixo cobrem o caminho **K3s + Longhorn + Infisical** documentado neste projeto. Conceitos agnósticos e alternativas (Sealed Secrets, SOPS, External Secrets Operator, OpenBao para segredos; RKE2, kubeadm, etc. para outras distribuições) estão descritos em [Aprender](/learn/) — consulte lá se sua escolha for diferente.
+
+- **Entender o que estou operando** — [fundamentos do Kubernetes](learn/clusters/kubernetes/), [arquitetura do K3s](learn/clusters/k3s-architecture/), [ciclo de vida de imagens](learn/containers/image-lifecycle/).
+- **Criar o primeiro cluster** — [ensaio: cluster K3s](getting-started/create-a-k3s-cluster/), [instalar o primeiro servidor](guides/tasks/kubernetes/install-first-k3s-server/).
+- **Proteger o host** — [firewall (UFW)](guides/tasks/host/configure-ufw/), [hardening de SSH](guides/tasks/host/harden-ssh/), [Fail2Ban](guides/tasks/host/configure-fail2ban/).
+- **Adicionar mais nós** — [servidor adicional](guides/tasks/kubernetes/join-k3s-server/), [agente](guides/tasks/kubernetes/join-k3s-agent/), [firewall entre nós K3s](guides/tasks/kubernetes/configure-k3s-firewall-rules/).
+- **Expor aplicações e emitir certificados** — [Gateway API e Traefik](guides/tasks/networking/configure-traefik-gateway-api/), [cert-manager](guides/tasks/certificates/install-cert-manager/), [NetworkPolicy](guides/tasks/networking/configure-network-policies/).
+- **Ter armazenamento persistente** — [instalar o Longhorn](guides/tasks/storage/install-longhorn/) (ou consulte [armazenamento em Kubernetes](learn/storage/) para alternativas).
+- **Implantar com GitOps** — [instalar o Argo CD](guides/tasks/gitops/install-argocd/), [bootstrap do repositório GitOps](guides/tasks/gitops/bootstrap-gitops/), [templates copiáveis](guides/blueprints/k3s-single-node-gitops/templates/).
+- **Gerenciar segredos** — [instalar o Infisical](guides/tasks/secrets/install-infisical/) (ou consulte [gerenciamento de segredos](learn/secrets-management/) para SOPS, Sealed Secrets, OpenBao, External Secrets).
+- **Controlar quem acessa o cluster** — [acesso remoto ao cluster](guides/tasks/kubernetes/configure-kubeconfig/), [identidade e RBAC](guides/tasks/kubernetes/configure-rbac/).
+- **Manter e atualizar** — [manutenção e atualização do K3s](operations/maintenance/k3s-cluster-maintenance/), [runbook de manutenção e mudanças](operations/maintenance/maintenance-runbook/), [validação pós-instalação](operations/checklists/post-install-checklist/).
+- **Seguir um checklist operacional** — [guia de operação contínua](operations/checklists/cluster-operational-checklist/), [prontidão de workloads](operations/checklists/application-readiness/).
+- **Observar e fazer backup** — [observabilidade e alertas](operations/observability/observability-and-alerting/), [backup e recuperação](operations/backups/backup-and-recovery/).
+- **Consultar ferramentas e comandos prontos** — [ferramentas de linha de comando](toolbox/tools/kubernetes-management/command-line-tools/), [índice de ferramentas e catálogos](toolbox/tools/overview/).
+
+## Fontes e leitura adicional
+
+- [Documentação do Kubernetes](https://kubernetes.io/docs/): referência oficial dos conceitos, APIs e procedimentos comuns usados ao longo do guia.
+- [Documentação do K3s](https://docs.k3s.io/): fonte oficial da arquitetura, instalação, configuração e operação da distribuição adotada pelo projeto.
+- [Cloud Native Glossary — CNCF](https://glossary.cncf.io/): glossário mantido pela Cloud Native Computing Foundation para termos do ecossistema cloud native.

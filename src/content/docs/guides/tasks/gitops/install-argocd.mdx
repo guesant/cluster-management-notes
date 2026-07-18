@@ -1,0 +1,64 @@
+---
+title: Argo CD
+sidebar:
+  order: 2
+---
+
+import ScriptHelper from '../../../../../components/ScriptHelper.astro';
+import installArgoCdScript from '../../../../../scripts/install-argo-cd.sh?raw';
+
+Os comandos desta página devem ser executados em um servidor ou em uma estação administrativa que tenha `kubectl`, Helm, acesso à API e um kubeconfig válido.
+
+## O que é e para que serve
+
+O Argo CD é um controlador de entrega contínua para Kubernetes baseado em GitOps. Em vez de usar a estação administrativa para reaplicar os manifests a cada mudança, o Argo CD observa o estado desejado registrado em um repositório Git, compara esse conteúdo com os recursos existentes no cluster e informa quando há diferenças. Dependendo da política configurada, ele pode sincronizar essas diferenças automaticamente e corrigir alterações feitas diretamente no cluster.
+
+O principal recurso do Argo CD é a `Application`. Cada `Application` informa qual repositório, revisão e caminho devem ser observados, em qual cluster e namespace o conteúdo será aplicado e qual política de sincronização será usada. Assim, o Git passa a registrar o estado desejado e o histórico das mudanças, enquanto o Argo CD faz a reconciliação com o cluster.
+
+O Argo CD não substitui a revisão de código, o controle de acesso ao repositório nem um gerenciador de segredos. Não versione credenciais em manifests: forneça ao Argo CD apenas a credencial necessária para ler o repositório privado e use o mecanismo de segredos adotado pelo ambiente para os dados das aplicações.
+
+Instale uma versão fixa do chart. O servidor permanece com TLS habilitado e sem Ingress; o acesso inicial será por port-forward.
+
+<ScriptHelper
+  runWhere="qualquer máquina com `KUBECONFIG`, Helm e acesso administrativo à API"
+  script={installArgoCdScript}
+  fields={[
+    { var: 'ARGO_CD_CHART_VERSION', label: 'Versão do chart Argo CD', defaultValue: '10.1.3' },
+    { var: 'ARGO_CD_CPU_REQUEST', label: 'CPU solicitada pelo servidor', defaultValue: '100m' },
+    { var: 'ARGO_CD_MEMORY_REQUEST', label: 'Memória solicitada pelo servidor', defaultValue: '128Mi' },
+    { var: 'ARGO_CD_CPU_LIMIT', label: 'Limite de CPU do servidor', defaultValue: '500m' },
+    { var: 'ARGO_CD_MEMORY_LIMIT', label: 'Limite de memória do servidor', defaultValue: '512Mi' },
+  ]}
+/>
+
+Valide a instalação:
+
+> **Executar em:** qualquer máquina com `KUBECONFIG` e acesso à API.
+
+```
+kubectl --namespace argocd rollout status deployment/argocd-server --timeout=180s
+kubectl --namespace argocd get pods
+helm --namespace argocd status argocd
+```
+
+## Troubleshooting
+
+Se `rollout status` expirar, verifique `kubectl --namespace argocd describe pod` no Pod do `argocd-server` — a causa mais comum é limite de recursos insuficiente para os valores de CPU/memória informados no formulário.
+
+## Rollback
+
+```
+helm --namespace argocd uninstall argocd
+kubectl delete namespace argocd
+```
+
+## Próximo passo
+
+[Acessar o Argo CD](../access-argocd/) para obter a senha inicial e trocá-la antes de qualquer outro uso.
+
+## Fontes e leitura adicional
+
+- [Getting Started — Argo CD](https://argo-cd.readthedocs.io/en/stable/getting_started/): fluxo oficial de instalação, acesso inicial e criação de uma aplicação.
+- [Helm chart do Argo CD](https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd): valores, templates e notas de versão do chart usado nesta página.
+- [Gestão de usuários — Argo CD](https://argo-cd.readthedocs.io/en/stable/operator-manual/user-management/): orienta sobre a conta `admin`, usuários locais e integração com provedores de identidade.
+- [Práticas de segurança — Argo CD](https://argo-cd.readthedocs.io/en/stable/operator-manual/security/): reúne o modelo de segurança, divulgações e recomendações operacionais do projeto.

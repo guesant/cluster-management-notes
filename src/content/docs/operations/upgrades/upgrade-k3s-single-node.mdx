@@ -1,0 +1,62 @@
+---
+title: Atualizar o K3s (nó único)
+sidebar:
+  order: 1
+---
+
+import ScriptHelper from '../../../../components/ScriptHelper.astro';
+import upgradeK3sServerScript from '../../../../scripts/upgrade-k3s-server.sh?raw';
+
+> **Pré-requisitos:** acesso root ao host, snapshot do etcd recente e copiado para fora do host.
+> **Versões testadas:** K3s v1.36.1+k3s1.
+
+Em um cluster de nó único, atualizar o K3s interrompe o cluster inteiro durante o reinício do serviço — não há outro manager para absorver as requisições enquanto o processo reinicia. Planeje uma janela de indisponibilidade, mesmo que curta, e não trate esta operação como uma mudança sem impacto.
+
+## Antes de atualizar
+
+1. Leia as notas de versão do release alvo e confirme compatibilidade com os componentes instalados (cert-manager, Argo CD, Longhorn).
+2. Crie e copie um snapshot recente: [backup do etcd](../../backups/backup-k3s-etcd/).
+3. Confirme que o snapshot e o token do servidor estão acessíveis fora do host, para o caso de a atualização falhar.
+
+## Atualizar
+
+Como a configuração já está em `/etc/rancher/k3s/config.yaml`, a atualização não exige repetir argumentos:
+
+<ScriptHelper
+  runUser="root"
+  runWhere="o nó manager"
+  script={upgradeK3sServerScript}
+  fields={[
+    { var: 'K3S_VERSION', label: 'Versão exata do K3s que será instalada' },
+  ]}
+/>
+
+## Validação
+
+> **Executar em:** o mesmo host.
+
+```
+systemctl status k3s
+k3s --version
+k3s kubectl get nodes
+k3s kubectl get pods --all-namespaces
+```
+
+O nó deve voltar a `Ready` na nova versão, e os Pods de `kube-system` devem estar `Running`. Confira também que Argo CD, Traefik e demais componentes de plataforma se recuperaram — uma reinicialização do K3s reinicia os Pods do sistema, mas não deveria afetar os dados persistentes.
+
+## Troubleshooting
+
+Se o serviço não voltar a `active (running)`, `journalctl -u k3s -n 100` normalmente indica a causa — incompatibilidade de versão do Kubernetes com um CRD instalado é uma causa comum. Não force uma segunda tentativa sem entender o erro; siga para o rollback.
+
+## Rollback
+
+Sem um segundo manager, o caminho de rollback seguro é restaurar o snapshot criado antes da atualização — veja [restaurar um snapshot](../../backups/backup-k3s-etcd/#restaurar-um-snapshot). Reinstalar a versão anterior do binário sem restaurar o datastore pode deixar o cluster em um estado inconsistente se a nova versão já tiver migrado dados do etcd.
+
+## Próximo passo
+
+Depois de validar, registre a versão efetivamente implantada no [runbook de manutenção](../../maintenance/maintenance-runbook/).
+
+## Fontes e leitura adicional
+
+- [K3s — Manual Upgrades](https://docs.k3s.io/upgrades/manual): define a ordem de atualização e as restrições entre versões do Kubernetes.
+- [K3s — Rolling Back K3s](https://docs.k3s.io/upgrades/roll-back): descreve os pré-requisitos e o processo de rollback com restauração do datastore.

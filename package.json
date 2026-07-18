@@ -1,0 +1,51 @@
+{
+  "name": "infrastructure-and-cluster-notebook",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "lint:md": "markdownlint-cli2",
+    "lint:mdx": "eslint .",
+    "lint": "npm run lint:md && npm run lint:mdx"
+  },
+  "dependencies": {
+    "@astrojs/react": "^6.0.1",
+    "@astrojs/starlight": "^0.41.3",
+    "@iconify-icons/lucide": "^1.2.135",
+    "@iconify/react": "^6.0.2",
+    "@radix-ui/react-dialog": "^1.1.19",
+    "age-encryption": "^0.3.0",
+    "astro": "^7.0.2",
+    "astro-mermaid": "^2.1.0",
+    "clipboard": "^2.0.11",
+    "clsx": "^2.1.1",
+    "mermaid": "^11.4.0",
+    "monaco-editor": "^0.53.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "eslint": "^9.18.0",
+    "eslint-plugin-mdx": "^3.8.1",
+    "markdownlint-cli2": "^0.23.1"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "sharp@0.34.5": true
+  },
+  "trustedDependencies": [
+    "esbuild",
+    "sharp"
+  ],
+  "overrides": {
+    "js-yaml": "^4.3.0"
+  }
+}
