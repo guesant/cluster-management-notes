@@ -28,7 +28,7 @@ apoio, e que o processo de revisão humana não substitui a validação técnica
 - Links para documentação oficial de terceiros (Kubernetes, K3s, Argo CD, cert-manager, etc.):
   esse conteúdo é de responsabilidade dos respectivos projetos, não deste repositório.
 - Versões e números específicos citados como referência: consulte sempre a fonte upstream listada
-  em [Escopo, convenções e versões](../reference/conventions/) antes de aplicar em produção.
+  em [Escopo, convenções e versões](../../reference/conventions/) antes de aplicar em produção.
 
 ## Responsabilidade de validação
 

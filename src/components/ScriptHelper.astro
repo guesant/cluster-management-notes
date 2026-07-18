@@ -1,5 +1,5 @@
 ---
-// Helper interativo para scripts bash da documentação. A UI (React + shadcn)
+// Helper interativo para scripts bash da documentação. A UI (React)
 // mostra o script final com botão de copiar; a engrenagem abre o modal de
 // personalização (campos read/embutido/criptografado via age, toggles de
 // heredoc e histórico, edição avançada do corpo). O output padrão é composto
@@ -8,6 +8,7 @@ import type { ScriptField } from "./script-helper/types";
 import {
     composeScript,
     initialFieldStates,
+    maskFieldStates,
     validateFields,
 } from "./script-helper/compose";
 import ScriptHelperApp from "./script-helper/ScriptHelperApp";
@@ -39,13 +40,21 @@ const {
 
 validateFields(fields);
 
-const initialOutput = composeScript(script, initialFieldStates(fields), {
+const composeOptions = {
     shell: "bash",
     heredoc,
     historyOff: false,
     strict,
     identityPath: "~/.config/age/keys.txt",
-});
+} as const;
+
+const initialStates = initialFieldStates(fields);
+const initialOutput = composeScript(script, initialStates, composeOptions);
+const initialDisplay = composeScript(
+    script,
+    maskFieldStates(initialStates),
+    composeOptions,
+);
 ---
 
 <div class="script-helper not-content">
@@ -59,6 +68,7 @@ const initialOutput = composeScript(script, initialFieldStates(fields), {
         encryption={encryption}
         strict={strict}
         initialOutput={initialOutput}
+        initialDisplay={initialDisplay}
     />
 </div>
 

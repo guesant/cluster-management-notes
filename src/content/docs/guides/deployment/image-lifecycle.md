@@ -4,7 +4,7 @@ sidebar:
   order: 1
 ---
 
-Este guia transforma os itens de imagens do [guia de operação contínua](../operations-overview/) em um fluxo prático de avaliação, atualização, implantação e rollback. Antes de aplicá-lo a produção, confirme também os requisitos de [prontidão dos workloads](../../kubernetes/workloads/production-readiness/) e as [convenções deste repositório](../../reference/conventions/).
+Este guia transforma os itens de imagens do [guia de operação contínua](../../operations-overview/) em um fluxo prático de avaliação, atualização, implantação e rollback. Antes de aplicá-lo a produção, confirme também os requisitos de [prontidão dos workloads](../../../kubernetes/workloads/production-readiness/) e as [convenções deste repositório](../../../reference/conventions/).
 
 O objetivo não é atualizar toda imagem assim que uma versão aparece. O objetivo é manter cada mudança identificável, revisável, compatível, observável e reversível dentro dos limites reais da aplicação.
 
@@ -143,7 +143,7 @@ Fluxo recomendado:
 5. descreva no PR escopo, risco, homologação, critérios de sucesso, interrupção e rollback;
 6. revise o diff renderizado e a ordem de atualização entre CRDs, controllers e workloads;
 7. homologue exatamente o digest proposto;
-8. aprove e integre o PR; então permita que o [Argo CD](argo-cd/) reconcilie a mudança conforme o [bootstrap GitOps](gitops-bootstrap/);
+8. aprove e integre o PR; então permita que o [Argo CD](../argo-cd/) reconcilie a mudança conforme o [bootstrap GitOps](../gitops-bootstrap/);
 9. acompanhe o rollout e a janela de observação;
 10. anexe a evidência final ao PR, ticket ou registro operacional.
 

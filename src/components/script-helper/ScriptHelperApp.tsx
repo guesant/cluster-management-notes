@@ -7,9 +7,9 @@ import { Icon } from '@iconify/react';
 import settingsIcon from '@iconify-icons/lucide/settings';
 import copyIcon from '@iconify-icons/lucide/copy';
 import checkIcon from '@iconify-icons/lucide/check';
-import { composeScript } from './compose';
+import { composeScript, generatedSecretPath, maskFieldStates } from './compose';
 import type { FieldMode, FieldState, ScriptField, TargetShell } from './types';
-import { cn } from './ui/cn';
+import { clsx } from 'clsx';
 import { encryptValue, isLikelyAgeRecipient } from './encryption';
 import { Button } from './ui/button';
 import {
@@ -30,7 +30,9 @@ const IDENTITY_PATH_DEFAULT = '~/.config/age/keys.txt';
 
 const MESSAGES = {
 	inlinePassword:
-		'Atenção: o valor ficará em texto claro no script gerado. Considere o modo criptografado ou desativar o histórico do bash.',
+		'O preview acima mostra *** no lugar do valor, mas o script copiado o contém em texto claro. Considere o modo criptografado ou desativar o histórico do bash.',
+	generate:
+		'O valor é criado na hora da execução com openssl rand; nem esta página nem o script copiado o contêm.',
 	encrypted: 'Requer o CLI age e a chave privada correspondente na máquina que executará o script.',
 	invalidRecipient: 'Chave pública age inválida (use o valor age1… gerado por age-keygen).',
 	missingRecipient: 'Informe a chave pública age (age1…) para criptografar os campos marcados.',
@@ -40,6 +42,7 @@ const MODE_LABELS: Record<FieldMode, string> = {
 	read: 'Perguntar ao executar (read)',
 	inline: 'Embutir no script',
 	encrypted: 'Criptografar (age)',
+	generate: 'Gerar ao executar (openssl rand)',
 };
 
 export interface ScriptHelperAppProps {
@@ -51,6 +54,8 @@ export interface ScriptHelperAppProps {
 	encryption: boolean;
 	strict: boolean;
 	initialOutput: string;
+	/** Versão exibida do output inicial, com senhas embutidas mascaradas. */
+	initialDisplay: string;
 }
 
 function MonacoPane({
@@ -96,13 +101,9 @@ function MonacoPane({
 	}, [value, ready, readOnly]);
 
 	return (
-		<div className="overflow-hidden rounded-md border border-border">
-			<div ref={hostRef} className="min-h-24">
-				{!ready && (
-					<pre className="m-0 overflow-x-auto whitespace-pre-wrap break-words p-3 font-mono text-[13px] leading-relaxed">
-						{value}
-					</pre>
-				)}
+		<div className="sh-editor">
+			<div ref={hostRef} className="sh-editor-host">
+				{!ready && <pre className="sh-editor-fallback">{value}</pre>}
 			</div>
 		</div>
 	);
@@ -121,7 +122,9 @@ export default function ScriptHelperApp(props: ScriptHelperAppProps) {
 	const [historyOff, setHistoryOff] = useState(false);
 	const [recipient, setRecipient] = useState('');
 	const [identityPath, setIdentityPath] = useState(IDENTITY_PATH_DEFAULT);
+	const [saves, setSaves] = useState<Record<string, boolean>>({});
 	const [output, setOutput] = useState(props.initialOutput);
+	const [display, setDisplay] = useState(props.initialDisplay);
 	const [recipientError, setRecipientError] = useState<string | null>(null);
 	const [copied, setCopied] = useState(false);
 
@@ -152,25 +155,26 @@ export default function ScriptHelperApp(props: ScriptHelperAppProps) {
 						}
 					}
 				}
-				states.push({ field, mode, value, ciphertext });
+				states.push({ field, mode, value, ciphertext, saveGenerated: saves[field.var] ?? false });
 			}
 			if (token !== tokenRef.current) return;
 			setRecipientError(error);
-			setOutput(
-				composeScript(body, states, {
-					shell,
-					heredoc,
-					historyOff,
-					strict: props.strict,
-					identityPath,
-				}),
-			);
+			const opts = {
+				shell,
+				heredoc,
+				historyOff,
+				strict: props.strict,
+				identityPath,
+			};
+			setOutput(composeScript(body, states, opts));
+			setDisplay(composeScript(body, maskFieldStates(states), opts));
 		}, 150);
 		return () => window.clearTimeout(timer);
 	}, [
 		body,
 		values,
 		modes,
+		saves,
 		shell,
 		heredoc,
 		historyOff,
@@ -208,15 +212,15 @@ export default function ScriptHelperApp(props: ScriptHelperAppProps) {
 	const anyEncrypted = props.fields.some((f) => (modes[f.var] ?? 'read') === 'encrypted');
 
 	return (
-		<div className="grid gap-3">
-			<div className="flex flex-wrap items-center gap-2">
-				<p className="m-0 grow text-sm font-semibold text-muted-foreground">
+		<div className="sh-root">
+			<div className="sh-toolbar">
+				<p className="sh-toolbar-title">
 					{props.title ?? 'Script final (copie este)'}
 				</p>
 				<div
 					role="tablist"
 					aria-label="Shell do terminal onde o comando será colado"
-					className="flex items-center gap-0.5 rounded-md border border-border p-0.5"
+					className="sh-tabs"
 				>
 					{(['bash', 'zsh', 'fish'] as const).map((s) => (
 						<button
@@ -225,12 +229,7 @@ export default function ScriptHelperApp(props: ScriptHelperAppProps) {
 							role="tab"
 							aria-selected={shell === s}
 							onClick={() => setShell(s)}
-							className={cn(
-								'h-7 cursor-pointer rounded px-2.5 font-mono text-xs font-medium transition-colors',
-								shell === s
-									? 'bg-accent text-accent-foreground'
-									: 'text-muted-foreground hover:text-foreground',
-							)}
+							className={clsx('sh-tab', shell === s && 'sh-tab--active')}
 						>
 							{s}
 						</button>
@@ -239,7 +238,7 @@ export default function ScriptHelperApp(props: ScriptHelperAppProps) {
 				<Dialog>
 					<DialogTrigger asChild>
 						<Button variant="outline" size="sm">
-							<Icon icon={settingsIcon} className="size-4" aria-hidden />
+							<Icon icon={settingsIcon} className="sh-icon" aria-hidden />
 							Personalizar
 						</Button>
 					</DialogTrigger>
@@ -253,7 +252,7 @@ export default function ScriptHelperApp(props: ScriptHelperAppProps) {
 						</DialogHeader>
 
 						{props.fields.length > 0 && (
-							<div className="grid gap-4">
+							<div className="sh-fields">
 								{props.fields.map((field) => {
 									const mode = modes[field.var] ?? 'read';
 									const warning =
@@ -261,21 +260,23 @@ export default function ScriptHelperApp(props: ScriptHelperAppProps) {
 											? MESSAGES.inlinePassword
 											: mode === 'encrypted'
 												? MESSAGES.encrypted
-												: null;
+												: mode === 'generate'
+													? MESSAGES.generate
+													: null;
 									return (
-										<div key={field.var} className="grid gap-1.5">
+										<div key={field.var} className="sh-field">
 											<Label htmlFor={`sh-input-${field.var}`}>
 												{field.label}{' '}
-												<code className="text-xs text-muted-foreground">${field.var}</code>
+												<code className="sh-field-var">${field.var}</code>
 											</Label>
-											<div className="flex flex-wrap gap-2">
+											<div className="sh-field-row">
 												<Input
 													id={`sh-input-${field.var}`}
 													type={field.type === 'password' ? 'password' : 'text'}
-													className="min-w-40 flex-1"
+													className="sh-field-input"
 													placeholder={field.placeholder ?? ''}
 													value={values[field.var] ?? ''}
-													disabled={mode === 'read'}
+													disabled={mode === 'read' || mode === 'generate'}
 													onChange={(e) =>
 														setValues((prev) => ({ ...prev, [field.var]: e.target.value }))
 													}
@@ -295,9 +296,23 @@ export default function ScriptHelperApp(props: ScriptHelperAppProps) {
 													{props.encryption && (
 														<option value="encrypted">{MODE_LABELS.encrypted}</option>
 													)}
+													{field.type === 'password' && (
+														<option value="generate">{MODE_LABELS.generate}</option>
+													)}
 												</NativeSelect>
 											</div>
-											{warning && <p className="m-0 text-xs text-warning">{warning}</p>}
+											{mode === 'generate' && (
+												<Label className="sh-toggle">
+													<Checkbox
+														checked={saves[field.var] ?? false}
+														onChange={(e) =>
+															setSaves((prev) => ({ ...prev, [field.var]: e.target.checked }))
+														}
+													/>
+													Salvar o valor gerado em <code>{generatedSecretPath(field.var)}</code>
+												</Label>
+											)}
+											{warning && <p className="sh-note sh-note--warning">{warning}</p>}
 										</div>
 									);
 								})}
@@ -305,8 +320,8 @@ export default function ScriptHelperApp(props: ScriptHelperAppProps) {
 						)}
 
 						{props.encryption && anyEncrypted && (
-							<div className="grid gap-3 rounded-md border border-dashed border-border p-3">
-								<div className="grid gap-1.5">
+							<div className="sh-encryption-box">
+								<div className="sh-field">
 									<Label htmlFor="sh-recipient">Chave pública age (recipient)</Label>
 									<Textarea
 										id="sh-recipient"
@@ -316,7 +331,7 @@ export default function ScriptHelperApp(props: ScriptHelperAppProps) {
 										onChange={(e) => setRecipient(e.target.value)}
 									/>
 								</div>
-								<div className="grid gap-1.5">
+								<div className="sh-field">
 									<Label htmlFor="sh-identity">Caminho da chave privada na máquina executora</Label>
 									<Input
 										id="sh-identity"
@@ -324,24 +339,19 @@ export default function ScriptHelperApp(props: ScriptHelperAppProps) {
 										onChange={(e) => setIdentityPath(e.target.value)}
 									/>
 								</div>
-								<p className="m-0 text-xs text-muted-foreground">
+								<p className="sh-note">
 									Gere um par de chaves com <code>age-keygen -o ~/.config/age/keys.txt</code> e cole
 									aqui a chave pública (<code>age1…</code>). A criptografia acontece no seu
 									navegador; para decodificar, a máquina que executa o script precisa do CLI{' '}
 									<code>age</code> e da chave privada correspondente.
 								</p>
-								{recipientError && <p className="m-0 text-xs text-destructive">{recipientError}</p>}
+								{recipientError && <p className="sh-note sh-note--error">{recipientError}</p>}
 							</div>
 						)}
 
-						<div className="grid gap-1.5">
-							<div className="flex flex-wrap gap-x-6 gap-y-2">
-								<Label
-									className={cn(
-										'flex items-center gap-2 font-normal',
-										shell === 'fish' ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
-									)}
-								>
+						<div className="sh-field">
+							<div className="sh-toggles">
+								<Label className={clsx('sh-toggle', shell === 'fish' && 'sh-toggle--disabled')}>
 									<Checkbox
 										checked={shell === 'fish' ? true : heredoc}
 										disabled={shell === 'fish'}
@@ -350,12 +360,7 @@ export default function ScriptHelperApp(props: ScriptHelperAppProps) {
 									Envolver em <code>bash &lt;&lt;'EOF'</code>
 								</Label>
 								{props.historyToggle && (
-									<Label
-										className={cn(
-											'flex items-center gap-2 font-normal',
-											shell !== 'bash' ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
-										)}
-									>
+									<Label className={clsx('sh-toggle', shell !== 'bash' && 'sh-toggle--disabled')}>
 										<Checkbox
 											checked={shell === 'bash' && historyOff}
 											disabled={shell !== 'bash'}
@@ -366,18 +371,16 @@ export default function ScriptHelperApp(props: ScriptHelperAppProps) {
 								)}
 							</div>
 							{shell === 'fish' && (
-								<p className="m-0 text-xs text-muted-foreground">
+								<p className="sh-note">
 									No fish não há heredoc: o script é sempre encapsulado com{' '}
 									<code>printf … | bash</code>. Desativar o histórico só está disponível no bash.
 								</p>
 							)}
 						</div>
 
-						<details className="rounded-md border border-border p-3">
-							<summary className="cursor-pointer text-sm font-medium text-muted-foreground">
-								Editar corpo do script (avançado)
-							</summary>
-							<div className="mt-3">
+						<details className="sh-advanced">
+							<summary>Editar corpo do script (avançado)</summary>
+							<div className="sh-advanced-body">
 								<MonacoPane value={body} onChange={setBody} />
 							</div>
 						</details>
@@ -390,17 +393,17 @@ export default function ScriptHelperApp(props: ScriptHelperAppProps) {
 					</DialogContent>
 				</Dialog>
 				<Button size="sm" ref={copyButtonRef}>
-					<Icon icon={copied ? checkIcon : copyIcon} className="size-4" aria-hidden />
+					<Icon icon={copied ? checkIcon : copyIcon} className="sh-icon" aria-hidden />
 					{copied ? 'Copiado!' : 'Copiar script'}
 				</Button>
-				<span className="sr-only" aria-live="polite">
+				<span className="sh-sr-only" aria-live="polite">
 					{copied ? 'Script copiado' : ''}
 				</span>
 			</div>
 
-			<MonacoPane value={output} readOnly />
+			<MonacoPane value={display} readOnly />
 
-			<p className="m-0 text-xs text-muted-foreground">
+			<p className="sh-note">
 				Os valores preenchidos ficam só no seu navegador — nada é enviado para fora desta página.
 				Leia o script gerado por completo antes de executá-lo.
 			</p>

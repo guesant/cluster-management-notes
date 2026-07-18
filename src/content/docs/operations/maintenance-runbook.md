@@ -6,13 +6,13 @@ sidebar:
 
 Use este runbook para registrar uma rotina recorrente ou conduzir uma mudança planejada no cluster e nos workloads. Ele organiza decisões, responsáveis, horários e evidências; os critérios técnicos continuam nos guias temáticos:
 
-- [guia de operação contínua](../guides/operations-overview/);
-- [prontidão de workloads para produção](../kubernetes/workloads/production-readiness/);
-- [ciclo de vida de imagens e rollouts](../guides/deployment/image-lifecycle/);
-- [observabilidade e alertas](observability-and-alerting/);
-- [backup e recuperação](backup-and-recovery/);
-- [manutenção do cluster K3s](k3s-cluster-maintenance/);
-- [validação pós-instalação](k3s-post-install-checklist/).
+- [guia de operação contínua](../../guides/operations-overview/);
+- [prontidão de workloads para produção](../../kubernetes/workloads/production-readiness/);
+- [ciclo de vida de imagens e rollouts](../../guides/deployment/image-lifecycle/);
+- [observabilidade e alertas](../observability-and-alerting/);
+- [backup e recuperação](../backup-and-recovery/);
+- [manutenção do cluster K3s](../k3s-cluster-maintenance/);
+- [validação pós-instalação](../k3s-post-install-checklist/).
 
 Crie um registro novo para cada execução. Não sobrescreva a execução anterior: o histórico permite comparar duração, falhas, capacidade e eficácia do rollback ao longo do tempo.
 
@@ -28,14 +28,14 @@ Crie um registro novo para cada execução. Não sobrescreva a execução anteri
 
 ## Rotinas recorrentes
 
-As rotinas abaixo são um índice. Selecione os itens aplicáveis no [guia de operação contínua](../guides/operations-overview/) e registre somente resultado, exceções, evidências e ações pendentes neste runbook; não replique todos os checkboxes a cada execução.
+As rotinas abaixo são um índice. Selecione os itens aplicáveis no [guia de operação contínua](../../guides/operations-overview/) e registre somente resultado, exceções, evidências e ações pendentes neste runbook; não replique todos os checkboxes a cada execução.
 
 | Frequência inicial | Foco da revisão | Guias para critérios e validação |
 | --- | --- | --- |
-| Contínua ou diária | Saúde do cluster e dos workloads, sinais externos, capacidade, coleta de telemetria, alertas e último backup esperado | [Observabilidade e alertas](observability-and-alerting/), [backup e recuperação](backup-and-recovery/) e [guia contínuo](../guides/operations-overview/) |
-| Semanal | Tendências, alertas ruidosos ou recorrentes, certificados, divergência de imagens e presença dos backups externos | [Observabilidade e alertas](observability-and-alerting/), [ciclo de vida de imagens](../guides/deployment/image-lifecycle/) e [backup e recuperação](backup-and-recovery/) |
-| Mensal ou por janela | Atualizações disponíveis, compatibilidade, capacidade, requests e limits, retenção, responsáveis e prontidão para drenar nós | [Prontidão de workloads](../kubernetes/workloads/production-readiness/), [ciclo de vida de imagens](../guides/deployment/image-lifecycle/) e [manutenção do K3s](k3s-cluster-maintenance/) |
-| Trimestral ou conforme a criticidade | Restauração cronometrada, teste ponta a ponta de alertas, perda de componentes, acessos e dependências fora de suporte | [Backup e recuperação](backup-and-recovery/), [observabilidade e alertas](observability-and-alerting/) e [guia contínuo](../guides/operations-overview/) |
+| Contínua ou diária | Saúde do cluster e dos workloads, sinais externos, capacidade, coleta de telemetria, alertas e último backup esperado | [Observabilidade e alertas](../observability-and-alerting/), [backup e recuperação](../backup-and-recovery/) e [guia contínuo](../../guides/operations-overview/) |
+| Semanal | Tendências, alertas ruidosos ou recorrentes, certificados, divergência de imagens e presença dos backups externos | [Observabilidade e alertas](../observability-and-alerting/), [ciclo de vida de imagens](../../guides/deployment/image-lifecycle/) e [backup e recuperação](../backup-and-recovery/) |
+| Mensal ou por janela | Atualizações disponíveis, compatibilidade, capacidade, requests e limits, retenção, responsáveis e prontidão para drenar nós | [Prontidão de workloads](../../kubernetes/workloads/production-readiness/), [ciclo de vida de imagens](../../guides/deployment/image-lifecycle/) e [manutenção do K3s](../k3s-cluster-maintenance/) |
+| Trimestral ou conforme a criticidade | Restauração cronometrada, teste ponta a ponta de alertas, perda de componentes, acessos e dependências fora de suporte | [Backup e recuperação](../backup-and-recovery/), [observabilidade e alertas](../observability-and-alerting/) e [guia contínuo](../../guides/operations-overview/) |
 
 Uma rotina sem mudança pode encerrar depois da revisão e do registro de ações pendentes. Quando houver atualização, reinicialização, drenagem, alteração de configuração ou recuperação, preencha também todas as seções de mudança a seguir.
 
@@ -100,11 +100,11 @@ Confirme ainda que:
 - não há incidente ativo ou degradação sem explicação que invalide a baseline;
 - responsáveis, revisores e contatos necessários estão disponíveis;
 - o relógio dos sistemas usados para evidência está sincronizado;
-- a [validação pós-instalação](k3s-post-install-checklist/) e a [prontidão dos workloads](../kubernetes/workloads/production-readiness/) não possuem pendências bloqueantes aplicáveis.
+- a [validação pós-instalação](../k3s-post-install-checklist/) e a [prontidão dos workloads](../../kubernetes/workloads/production-readiness/) não possuem pendências bloqueantes aplicáveis.
 
 ### Backup e prontidão de restauração
 
-Ter um arquivo de backup não prova que o ambiente pode ser recuperado. Use o [guia de backup e recuperação](backup-and-recovery/) para distinguir snapshot do datastore, volumes, backups próprios das aplicações, configurações, credenciais e token do K3s.
+Ter um arquivo de backup não prova que o ambiente pode ser recuperado. Use o [guia de backup e recuperação](../backup-and-recovery/) para distinguir snapshot do datastore, volumes, backups próprios das aplicações, configurações, credenciais e token do K3s.
 
 | Ativo | RPO/RTO | Método e destino | Último sucesso | Cópia fora do domínio de falha | Último restore testado | Evidência | Estado |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -129,7 +129,7 @@ Não presuma compatibilidade apenas porque cada componente possui uma versão ma
 | Gateway, DNS e certificados | | | | | |
 | Workload e banco de dados | | | | | |
 
-Registre separadamente versões de charts, aplicações, imagens, CRDs e controllers. Siga o [ciclo de vida de imagens e rollouts](../guides/deployment/image-lifecycle/) para identificar tag, digest, origem, homologação e artefato anterior.
+Registre separadamente versões de charts, aplicações, imagens, CRDs e controllers. Siga o [ciclo de vida de imagens e rollouts](../../guides/deployment/image-lifecycle/) para identificar tag, digest, origem, homologação e artefato anterior.
 
 ### Capacidade, disrupções e quorum
 
@@ -213,7 +213,7 @@ Repita os sinais da baseline e compare antes e depois. Valide também o estado d
 | Fluxo funcional crítico | | | | | |
 | Métricas, logs e alertas | | | | | |
 
-Consulte os critérios detalhados de [prontidão de workloads](../kubernetes/workloads/production-readiness/), [observabilidade e alertas](observability-and-alerting/) e [manutenção do K3s](k3s-cluster-maintenance/).
+Consulte os critérios detalhados de [prontidão de workloads](../../kubernetes/workloads/production-readiness/), [observabilidade e alertas](../observability-and-alerting/) e [manutenção do K3s](../k3s-cluster-maintenance/).
 
 ### Janela de observação
 

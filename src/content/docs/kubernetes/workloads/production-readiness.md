@@ -4,7 +4,7 @@ sidebar:
   order: 1
 ---
 
-Este guia transforma os itens de prontidão do [guia de operação contínua](../../guides/operations-overview/) em decisões, validações e evidências aplicáveis a Deployments, StatefulSets, Jobs e CronJobs. Consulte também os [conceitos fundamentais do Kubernetes](../../concepts/kubernetes/) antes de adaptar os exemplos.
+Este guia transforma os itens de prontidão do [guia de operação contínua](../../../guides/operations-overview/) em decisões, validações e evidências aplicáveis a Deployments, StatefulSets, Jobs e CronJobs. Consulte também os [conceitos fundamentais do Kubernetes](../../../concepts/kubernetes/) antes de adaptar os exemplos.
 
 Prontidão não é uma propriedade permanente. Revise o workload antes da primeira implantação, depois de mudanças relevantes e periodicamente com base no consumo, nas falhas e no comportamento observados. Em um cluster de nó único, réplicas, distribuição e PodDisruptionBudget ainda documentam a intenção, mas não criam alta disponibilidade contra a perda do host.
 
@@ -145,7 +145,7 @@ Não use `concurrencyPolicy` como trava entre CronJobs diferentes; ela se aplica
 
 ## ServiceAccount e securityContext
 
-Use uma ServiceAccount dedicada por workload ou fronteira de privilégio. Se o Pod não chama a API Kubernetes, desabilite a montagem automática do token. Se chama, conceda apenas os recursos e verbos necessários e valide-os conforme o guia de [identidade e RBAC](../security/identity-and-rbac/).
+Use uma ServiceAccount dedicada por workload ou fronteira de privilégio. Se o Pod não chama a API Kubernetes, desabilite a montagem automática do token. Se chama, conceda apenas os recursos e verbos necessários e valide-os conforme o guia de [identidade e RBAC](../../security/identity-and-rbac/).
 
 Adote um `securityContext` compatível com a imagem e com o perfil Restricted do Pod Security Standards sempre que possível:
 
@@ -156,11 +156,11 @@ Adote um `securityContext` compatível com a imagem e com o perfil Restricted do
 - habilite `readOnlyRootFilesystem` e monte volumes graváveis apenas onde forem necessários;
 - não use `privileged`, `hostPID`, `hostIPC` ou `hostNetwork` sem justificativa e controles compensatórios.
 
-Esses controles não substituem a política de tráfego. Defina também a [NetworkPolicy](../networking/network-policies/) mínima para DNS, dependências e entrada esperada.
+Esses controles não substituem a política de tráfego. Defina também a [NetworkPolicy](../../networking/network-policies/) mínima para DNS, dependências e entrada esperada.
 
 ## Exemplo mínimo coerente
 
-O exemplo combina uma ServiceAccount sem token, três réplicas, rollout conservador, topology spread preferencial, probes distintas, encerramento gracioso, recursos, security context, Service e PDB. Substitua namespace, imagem, endpoints, recursos, IDs e prazos pelos valores validados para a aplicação. Gerencie versão e digest conforme o [ciclo de vida de imagens](../../guides/deployment/image-lifecycle/).
+O exemplo combina uma ServiceAccount sem token, três réplicas, rollout conservador, topology spread preferencial, probes distintas, encerramento gracioso, recursos, security context, Service e PDB. Substitua namespace, imagem, endpoints, recursos, IDs e prazos pelos valores validados para a aplicação. Gerencie versão e digest conforme o [ciclo de vida de imagens](../../../guides/deployment/image-lifecycle/).
 
 ```yaml
 apiVersion: v1
@@ -384,11 +384,11 @@ Inclua versão ou commit do manifesto, ambiente, data, executor e conclusão. Sa
 
 ## Conteúdo relacionado
 
-- [Guia de operação contínua](../../guides/operations-overview/)
-- [Conceitos fundamentais do Kubernetes](../../concepts/kubernetes/)
-- [Ciclo de vida de imagens](../../guides/deployment/image-lifecycle/)
-- [Identidade e RBAC](../security/identity-and-rbac/)
-- [Isolamento com NetworkPolicy](../networking/network-policies/)
+- [Guia de operação contínua](../../../guides/operations-overview/)
+- [Conceitos fundamentais do Kubernetes](../../../concepts/kubernetes/)
+- [Ciclo de vida de imagens](../../../guides/deployment/image-lifecycle/)
+- [Identidade e RBAC](../../security/identity-and-rbac/)
+- [Isolamento com NetworkPolicy](../../networking/network-policies/)
 
 ## Fontes e leitura adicional
 

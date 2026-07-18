@@ -3,7 +3,7 @@ title: Guia de operação contínua
 description: Checklist de boas práticas, monitoramento, alertas, atualizações, probes, manutenção e recuperação para operar clusters K3s.
 ---
 
-Este guia complementa a [validação pós-instalação](../operations/k3s-post-install-checklist/). A validação confirma que o cluster e os módulos escolhidos terminaram o bootstrap em condições conhecidas; os checklists abaixo ajudam a manter cluster e workloads observáveis, atualizáveis e recuperáveis ao longo do tempo.
+Este guia complementa a [validação pós-instalação](../../operations/k3s-post-install-checklist/). A validação confirma que o cluster e os módulos escolhidos terminaram o bootstrap em condições conhecidas; os checklists abaixo ajudam a manter cluster e workloads observáveis, atualizáveis e recuperáveis ao longo do tempo.
 
 ## Como usar este guia
 
@@ -19,7 +19,7 @@ As frequências deste guia são pontos de partida. Um ambiente crítico pode exi
 
 ### Responsabilidade e boas práticas
 
-**Procedimento:** [prontidão de workloads para produção](../kubernetes/workloads/production-readiness/). **Evidência mínima:** owner e criticidade registrados, manifesto ou revisão versionada e resultado das validações aplicáveis.
+**Procedimento:** [prontidão de workloads para produção](../../kubernetes/workloads/production-readiness/). **Evidência mínima:** owner e criticidade registrados, manifesto ou revisão versionada e resultado das validações aplicáveis.
 
 - [ ] Há um responsável operacional e um canal de escalonamento definidos para cada cluster e workload crítico.
 - [ ] Criticidade, dependências, janela de manutenção e impacto esperado de indisponibilidade estão registrados.
@@ -32,7 +32,7 @@ As frequências deste guia são pontos de partida. Um ambiente crítico pode exi
 
 ### Imagens e política de atualização
 
-**Procedimento:** [ciclo de vida de imagens de containers](deployment/image-lifecycle/). **Evidência mínima:** tag e digest desejados e observados, origem da mudança, avaliação de compatibilidade, homologação e referência de rollback.
+**Procedimento:** [ciclo de vida de imagens de containers](../deployment/image-lifecycle/). **Evidência mínima:** tag e digest desejados e observados, origem da mudança, avaliação de compatibilidade, homologação e referência de rollback.
 
 - [ ] Nenhum workload de produção usa `latest`, `lts`, `stable` ou outra tag flutuante como versão efetiva.
 - [ ] Cada imagem usa uma versão explícita e, quando a reprodutibilidade exigir, também um digest imutável.
@@ -47,7 +47,7 @@ As frequências deste guia são pontos de partida. Um ambiente crítico pode exi
 
 ### Probes e ciclo de vida
 
-**Procedimento:** [prontidão de workloads para produção](../kubernetes/workloads/production-readiness/). **Evidência mínima:** semântica de cada probe, tempos medidos e resultados dos testes de inicialização, indisponibilidade, travamento e encerramento.
+**Procedimento:** [prontidão de workloads para produção](../../kubernetes/workloads/production-readiness/). **Evidência mínima:** semântica de cada probe, tempos medidos e resultados dos testes de inicialização, indisponibilidade, travamento e encerramento.
 
 - [ ] Cada workload de longa duração foi avaliado individualmente quanto à necessidade de `startupProbe`, `readinessProbe` e `livenessProbe`.
 - [ ] A readiness só libera tráfego quando a aplicação consegue atender requisições; sua falha retira o Pod do serviço sem provocar reinícios desnecessários.
@@ -60,7 +60,7 @@ As frequências deste guia são pontos de partida. Um ambiente crítico pode exi
 
 ### Monitoramento e observabilidade
 
-**Procedimento:** [observabilidade e alertas](../operations/observability-and-alerting/). **Evidência mínima:** inventário de sinais e targets, dashboards ou consultas, retenção, teste de indisponibilidade e confirmação de monitoramento externo.
+**Procedimento:** [observabilidade e alertas](../../operations/observability-and-alerting/). **Evidência mínima:** inventário de sinais e targets, dashboards ou consultas, retenção, teste de indisponibilidade e confirmação de monitoramento externo.
 
 - [ ] Existe monitoramento da saúde dos nós, API/control plane, workloads, armazenamento e componentes opcionais adotados.
 - [ ] Dashboards apresentam, quando aplicável, disponibilidade, taxa de erros, latência, saturação, capacidade e tendência de crescimento.
@@ -73,7 +73,7 @@ As frequências deste guia são pontos de partida. Um ambiente crítico pode exi
 
 ### Alertas
 
-**Procedimento:** [observabilidade e alertas](../operations/observability-and-alerting/). **Evidência mínima:** regra, owner, severidade, runbook, destino e resultado datado de um teste ponta a ponta.
+**Procedimento:** [observabilidade e alertas](../../operations/observability-and-alerting/). **Evidência mínima:** regra, owner, severidade, runbook, destino e resultado datado de um teste ponta a ponta.
 
 - [ ] Cada alerta representa uma condição acionável e possui severidade, responsável, destino e link para o procedimento de resposta.
 - [ ] Limiares e duração reduzem ruído sem esconder falhas reais; eventos informativos que não exigem ação não acordam uma pessoa.
@@ -84,7 +84,7 @@ As frequências deste guia são pontos de partida. Um ambiente crítico pode exi
 
 ### Backups e recuperação
 
-**Procedimento:** [backup e recuperação](../operations/backup-and-recovery/). **Evidência mínima:** matriz de ativos, RPO/RTO, última execução válida, cópia fora do domínio de falha e resultado cronometrado do último restore drill.
+**Procedimento:** [backup e recuperação](../../operations/backup-and-recovery/). **Evidência mínima:** matriz de ativos, RPO/RTO, última execução válida, cópia fora do domínio de falha e resultado cronometrado do último restore drill.
 
 - [ ] Os ativos necessários à recuperação foram inventariados: estado do Kubernetes/etcd, token do K3s, dados dos volumes, backups próprios das aplicações, configurações e credenciais necessárias.
 - [ ] Está registrado que snapshot do etcd não inclui dados dos volumes e que réplica de armazenamento não substitui backup.
@@ -100,7 +100,7 @@ As frequências deste guia são pontos de partida. Um ambiente crítico pode exi
 
 ## 2. Rotina recorrente
 
-Registre as execuções com o [runbook de manutenção e mudanças](../operations/maintenance-runbook/). Os itens abaixo definem a cobertura; o runbook guarda responsável, resultado, evidência, exceções e ações pendentes sem duplicar o checklist inteiro.
+Registre as execuções com o [runbook de manutenção e mudanças](../../operations/maintenance-runbook/). Os itens abaixo definem a cobertura; o runbook guarda responsável, resultado, evidência, exceções e ações pendentes sem duplicar o checklist inteiro.
 
 ### Contínua ou diária
 
@@ -117,13 +117,13 @@ Registre as execuções com o [runbook de manutenção e mudanças](../operation
 - [ ] Alertas disparados foram revisados quanto a causa, resposta, recorrência e ruído.
 - [ ] Tendências de consumo e crescimento de armazenamento foram revisadas.
 - [ ] Falhas recorrentes, eventos anormais e degradações de probes possuem acompanhamento.
-- [ ] [Certificados](../kubernetes/extensions/cert-manager/) e credenciais próximos do vencimento foram identificados.
-- [ ] Não surgiram workloads com [tags flutuantes, imagens sem inventário ou versões divergentes](deployment/image-lifecycle/) do estado desejado.
-- [ ] [Backups externos esperados](../operations/backup-and-recovery/) estão presentes dentro da retenção definida.
+- [ ] [Certificados](../../kubernetes/extensions/cert-manager/) e credenciais próximos do vencimento foram identificados.
+- [ ] Não surgiram workloads com [tags flutuantes, imagens sem inventário ou versões divergentes](../deployment/image-lifecycle/) do estado desejado.
+- [ ] [Backups externos esperados](../../operations/backup-and-recovery/) estão presentes dentro da retenção definida.
 
 ### Mensal ou por janela de manutenção
 
-- [ ] Novas versões de K3s, charts, controllers, operators e [imagens](deployment/image-lifecycle/) foram inventariadas sem atualização automática apenas por estarem disponíveis.
+- [ ] Novas versões de K3s, charts, controllers, operators e [imagens](../deployment/image-lifecycle/) foram inventariadas sem atualização automática apenas por estarem disponíveis.
 - [ ] Suporte, correções de segurança, compatibilidade e impacto operacional foram avaliados para priorizar as atualizações.
 - [ ] Correções urgentes seguem um fluxo extraordinário controlado e não aguardam a revisão mensal quando o risco não permite.
 - [ ] Atualizações aprovadas passaram por homologação, backup, mudança controlada e validação posterior.
@@ -134,7 +134,7 @@ Registre as execuções com o [runbook de manutenção e mudanças](../operation
 
 ### Trimestral ou conforme a criticidade
 
-- [ ] Um [teste de restauração completo](../operations/backup-and-recovery/) foi executado e cronometrado em ambiente isolado.
+- [ ] Um [teste de restauração completo](../../operations/backup-and-recovery/) foi executado e cronometrado em ambiente isolado.
 - [ ] RPO e RTO continuam compatíveis com o resultado do teste e com as necessidades atuais.
 - [ ] Um teste de alertas confirmou geração, roteamento, recebimento, escalonamento e encerramento.
 - [ ] Acessos, credenciais, responsáveis e contatos foram revisados.
@@ -143,7 +143,7 @@ Registre as execuções com o [runbook de manutenção e mudanças](../operation
 
 ## 3. Antes e depois de uma manutenção
 
-Use o [runbook de manutenção e mudanças](../operations/maintenance-runbook/) para preencher baseline, responsáveis, janela, etapas, critérios objetivos, log de timestamps, rollback, observação posterior e fechamento.
+Use o [runbook de manutenção e mudanças](../../operations/maintenance-runbook/) para preencher baseline, responsáveis, janela, etapas, critérios objetivos, log de timestamps, rollback, observação posterior e fechamento.
 
 ### Antes
 
@@ -168,18 +168,18 @@ Use o [runbook de manutenção e mudanças](../operations/maintenance-runbook/) 
 
 ## Procedimentos relacionados
 
-- [Validação pós-instalação](../operations/k3s-post-install-checklist/)
-- [Backup, atualização e remoção de nós](../operations/k3s-cluster-maintenance/)
-- [Longhorn e armazenamento persistente](../kubernetes/extensions/longhorn/)
-- [Templates de GitOps e monitoramento](deployment/templates/)
-- [Argo CD](deployment/argo-cd/) e [bootstrap GitOps](deployment/gitops-bootstrap/)
-- [Identidade e RBAC](../kubernetes/security/identity-and-rbac/)
-- [NetworkPolicy](../kubernetes/networking/network-policies/)
-- [Prontidão de workloads para produção](../kubernetes/workloads/production-readiness/)
-- [Ciclo de vida de imagens](deployment/image-lifecycle/)
-- [Observabilidade e alertas](../operations/observability-and-alerting/)
-- [Backup e recuperação](../operations/backup-and-recovery/)
-- [Runbook de manutenção e mudanças](../operations/maintenance-runbook/)
+- [Validação pós-instalação](../../operations/k3s-post-install-checklist/)
+- [Backup, atualização e remoção de nós](../../operations/k3s-cluster-maintenance/)
+- [Longhorn e armazenamento persistente](../../kubernetes/extensions/longhorn/)
+- [Templates de GitOps e monitoramento](../deployment/templates/)
+- [Argo CD](../deployment/argo-cd/) e [bootstrap GitOps](../deployment/gitops-bootstrap/)
+- [Identidade e RBAC](../../kubernetes/security/identity-and-rbac/)
+- [NetworkPolicy](../../kubernetes/networking/network-policies/)
+- [Prontidão de workloads para produção](../../kubernetes/workloads/production-readiness/)
+- [Ciclo de vida de imagens](../deployment/image-lifecycle/)
+- [Observabilidade e alertas](../../operations/observability-and-alerting/)
+- [Backup e recuperação](../../operations/backup-and-recovery/)
+- [Runbook de manutenção e mudanças](../../operations/maintenance-runbook/)
 
 ## Fontes e leitura adicional
 

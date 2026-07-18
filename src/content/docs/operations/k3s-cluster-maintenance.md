@@ -4,7 +4,7 @@ sidebar:
   order: 4
 ---
 
-Estes procedimentos apoiam as janelas de mudança e os testes definidos no [guia de operação contínua](../guides/operations-overview/). Para inventário, RPO/RTO e restauração completa, use também o [guia de backup e recuperação](backup-and-recovery/).
+Estes procedimentos apoiam as janelas de mudança e os testes definidos no [guia de operação contínua](../../guides/operations-overview/). Para inventário, RPO/RTO e restauração completa, use também o [guia de backup e recuperação](../backup-and-recovery/).
 
 ## Snapshot do etcd
 
@@ -24,7 +24,7 @@ k3s etcd-snapshot list
 Copie os snapshots e o token de servidor para armazenamento externo. Um snapshot preso ao mesmo host não protege contra perda do nó ou do disco. Consulte o procedimento oficial de backup e restauração listado ao fim da página.
 
 :::note[TODO — Velero]
-Avaliar e documentar uma implementação de Velero somente depois de escolher object storage, plugins, CSI, escopo e retenção. O [guia de backup e recuperação](backup-and-recovery/) registra os critérios que essa avaliação deve atender.
+Avaliar e documentar uma implementação de Velero somente depois de escolher object storage, plugins, CSI, escopo e retenção. O [guia de backup e recuperação](../backup-and-recovery/) registra os critérios que essa avaliação deve atender.
 :::
 
 ## Atualização

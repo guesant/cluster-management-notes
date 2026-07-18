@@ -1,40 +1,4 @@
 #!/usr/bin/env bash
-# Command runner do projeto: executa o comando informado dentro de um contêiner
-# seguindo as regras (menor privilégio, imagem fixada, sem rede
-# quando possível). Idempotente: dentro de um contêiner roda o comando
-# diretamente. O modo de execução é detectado (bare/podman/docker) ou forçado
-# via JAIL_MODE.
-#
-# Seguro por padrão: sem rede, sem capabilities, rootfs somente leitura e
-# limites de recursos. Rede é opt-in.
-#
-# Uso:
-#   JAIL_NETWORK=1 ./jail-exec.sh bun install
-#   ./jail-exec.sh bun run build
-#   JAIL_PUBLISH=4321 ./jail-exec.sh bun run dev -- --host 0.0.0.0
-#   JAIL_MODE=docker ./jail-exec.sh bun run lint
-#   JAIL_MODE=compose ./jail-exec.sh bun run dev -- --host 0.0.0.0
-#   ALLOW_RUN_COMMANDS_IN_HOST=1 ./jail-exec.sh bun run lint
-#
-# Variáveis:
-#   JAIL_MODE     auto (padrão) | bare | podman | docker | bwrap | compose —
-#                 força o modo
-#   JAIL_IMAGE    imagem a usar em podman/docker; por padrão constrói o target
-#                 "jail" de .container/Containerfile (cacheado; JAIL_REBUILD=1 força)
-#   JAIL_NETWORK  vazio/none = sem rede (padrão); qualquer outro valor habilita
-#   JAIL_PUBLISH  porta publicada em 127.0.0.1 (ex.: 4321); implica rede
-#   ALLOW_RUN_COMMANDS_IN_HOST  não vazio = atalho para JAIL_MODE=bare
-#
-# Modo bwrap: sandbox de user namespaces (Bubblewrap) usando os binários do
-# host — sem daemon, sem sudo e sem imagem. O comando precisa existir no host
-# e a versão não é fixada; com JAIL_PUBLISH a rede do host é compartilhada e a
-# porta já fica acessível localmente sem publicação.
-#
-# Modo compose: sobe (se preciso) o serviço "app" de .container/compose.yml em
-# segundo plano e roda o comando com `compose exec` — útil para o fluxo de dev
-# persistente (mesmo contêiner entre comandos; porta 4321 já publicada em
-# 127.0.0.1). JAIL_NETWORK/JAIL_PUBLISH não se aplicam: valem as opções do
-# compose.yml. Dentro de um contêiner, roda o comando diretamente.
 
 set -euo pipefail
 
@@ -44,10 +8,7 @@ CONTAINERFILE="${SCRIPT_DIR}/.container/Containerfile"
 COMPOSE_FILE="${SCRIPT_DIR}/.container/compose.yml"
 LOCAL_IMAGE_TAG="localhost/cluster-management-notes-jail:latest"
 
-# Garante a imagem padrão (target "jail" do Dockerfile único do projeto),
-# construindo-a apenas quando ainda não existe ou quando JAIL_REBUILD=1.
 ensure_image() {
-  # $@: comando do runtime (ex.: docker, sudo docker, podman)
   if [[ -n "$IMAGE" ]]; then
     return
   fi

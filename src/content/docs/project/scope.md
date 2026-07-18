@@ -19,7 +19,7 @@ passo e scripts reutilizáveis.
 - Rotinas operacionais: observabilidade, backup e recuperação, manutenção.
 
 As premissas técnicas detalhadas (usuário assumido, formato dos blocos de comando, versões de
-referência) estão em [Escopo, convenções e versões](../reference/conventions/).
+referência) estão em [Escopo, convenções e versões](../../reference/conventions/).
 
 ## Para quem é
 
@@ -38,4 +38,4 @@ comando.
 - Conteúdo sobre Docker e Docker Swarm está planejado, mas ainda não foi escrito — a seção
   correspondente aparecerá na navegação assim que existir.
 
-Veja também o [aviso sobre uso de IA na elaboração deste conteúdo](./disclaimer/).
+Veja também o [aviso sobre uso de IA na elaboração deste conteúdo](../disclaimer/).

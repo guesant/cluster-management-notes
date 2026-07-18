@@ -60,7 +60,7 @@ A partir da versão 2, `cmctl` possui ciclo de releases independente do cert-man
 
 Não use a antiga imagem `cert-manager-ctl` como alternativa atual em Docker: o cert-manager 1.14 foi a última versão que a publicou. Este guia usa o binário standalone `cmctl`; o upstream também documenta o [modo de plugin `kubectl cert-manager`](https://cert-manager.io/docs/reference/cmctl/#kubectl-plugin), instalado com o mesmo binário sob o nome esperado pelo `kubectl`.
 
-Os procedimentos de `check api`, diagnóstico e renovação ficam na página do [cert-manager](../kubernetes/extensions/cert-manager/).
+Os procedimentos de `check api`, diagnóstico e renovação ficam na página do [cert-manager](../../kubernetes/extensions/cert-manager/).
 
 ## longhornctl
 

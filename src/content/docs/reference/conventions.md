@@ -56,7 +56,7 @@ Cada página temática deve terminar com `## Fontes e leitura adicional`. Ao cri
 - confirme no upstream comandos, defaults e suporte antes de atualizar o texto;
 - registre uma data de revisão quando a página mantiver uma tabela de versões ou outra informação que envelheça rapidamente.
 
-Listas como `awesome-*`, métricas de popularidade e catálogos de produtos ajudam a encontrar opções, mas não comprovam segurança, manutenção, compatibilidade ou adequação. Para escolhê-las, siga os critérios do [índice de ferramentas e catálogos](tools-and-resources/) e retorne à fonte oficial de cada projeto.
+Listas como `awesome-*`, métricas de popularidade e catálogos de produtos ajudam a encontrar opções, mas não comprovam segurança, manutenção, compatibilidade ou adequação. Para escolhê-las, siga os critérios do [índice de ferramentas e catálogos](../tools-and-resources/) e retorne à fonte oficial de cada projeto.
 
 ## Fontes e leitura adicional
 

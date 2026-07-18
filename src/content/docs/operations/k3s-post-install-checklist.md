@@ -4,7 +4,7 @@ sidebar:
   order: 5
 ---
 
-Use este checklist como uma verificação pontual antes de considerar a instalação concluída. Depois do bootstrap, siga o [guia de operação contínua](../guides/operations-overview/) para manutenção, monitoramento, alertas, atualização de imagens, probes e testes de recuperação.
+Use este checklist como uma verificação pontual antes de considerar a instalação concluída. Depois do bootstrap, siga o [guia de operação contínua](../../guides/operations-overview/) para manutenção, monitoramento, alertas, atualização de imagens, probes e testes de recuperação.
 
 Os itens do núcleo se aplicam à instalação do K3s. Os blocos marcados como
 **quando adotado** só se aplicam quando o respectivo módulo fizer parte da
@@ -31,7 +31,7 @@ arquitetura escolhida.
 - [ ] Os CRDs da Gateway API existem e o Traefik não registra erros do provider.
 - [ ] Os namespaces isolados possuem deny por padrão, DNS funcional e permissões explícitas testadas para cada fluxo necessário.
 
-## [cert-manager](../kubernetes/extensions/cert-manager/) (quando adotado)
+## [cert-manager](../../kubernetes/extensions/cert-manager/) (quando adotado)
 
 - [ ] O cert-manager possui pods saudáveis.
 - [ ] `cmctl check api --wait=2m` confirma os CRDs e o webhook, quando a CLI é adotada.

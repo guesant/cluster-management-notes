@@ -14,6 +14,26 @@ export const UNSAFE_IN_DOUBLE_QUOTES_RE = /["`$\\]/;
 
 const IDENTITY_PATH_FALLBACK = '~/.config/age/keys.txt';
 
+/** Máscara exibida no preview no lugar de senhas embutidas. */
+export const INLINE_MASK = '***';
+
+/** Arquivo onde o modo `generate` salva o valor, quando habilitado. */
+export function generatedSecretPath(varName: string): string {
+	return `/tmp/${varName}.secret`;
+}
+
+/**
+ * Versão dos estados para exibição: senhas em modo embutido viram `***`.
+ * O script copiado usa os estados reais; só o preview é mascarado.
+ */
+export function maskFieldStates(states: FieldState[]): FieldState[] {
+	return states.map((state) =>
+		state.mode === 'inline' && state.field.type === 'password' && state.value
+			? { ...state, value: INLINE_MASK }
+			: state,
+	);
+}
+
 /** Envolve um valor em aspas simples de shell, escapando `'` como `'\''`. */
 export function shellSingleQuote(value: string): string {
 	return `'${value.replaceAll("'", "'\\''")}'`;
@@ -50,6 +70,7 @@ export function initialFieldStates(fields: ScriptField[]): FieldState[] {
 		mode: field.defaultMode ?? 'read',
 		value: field.defaultValue ?? '',
 		ciphertext: null,
+		saveGenerated: false,
 	}));
 }
 
@@ -78,6 +99,21 @@ function emitField(state: FieldState, opts: ComposeOptions): string {
 
 	if (mode === 'inline') {
 		return `# ${field.label}\n${field.var}=${shellSingleQuote(value)}`;
+	}
+
+	if (mode === 'generate') {
+		const lines = [
+			`# ${field.label} (gerado ao executar)`,
+			`${field.var}="$(openssl rand -base64 32)"`,
+		];
+		if (state.saveGenerated) {
+			const file = generatedSecretPath(field.var);
+			lines.push(
+				`( umask 077; printf '%s\\n' "$${field.var}" >${shellSingleQuote(file)} )`,
+				`printf 'Valor de ${field.var} salvo em ${file}\\n'`,
+			);
+		}
+		return lines.join('\n');
 	}
 
 	if (!ciphertext) {
