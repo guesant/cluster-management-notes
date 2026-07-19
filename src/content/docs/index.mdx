@@ -1,13 +1,15 @@
 ---
 title: Início
-description: Anotações práticas sobre infraestrutura, containers e clusters — conceitos, blueprints, guias, operação, ferramentas e scripts, com foco atual em K3s.
+description: Anotações práticas sobre infraestrutura, containers e clusters — conceitos, blueprints, guias, operação, ferramentas e scripts.
 ---
 
-Minhas anotações sobre infraestrutura, containers e clusters: conceitos, blueprints, guias
-passo a passo, operação e ferramentas. O foco atual é criar e operar clusters K3s de nó único
-(*single-node*) ou multinó (*multi-node*); o restante do escopo — Docker Swarm, outras
-distribuições Kubernetes, mais ferramentas — está descrito em
-[Escopo do projeto](project/scope/) e ainda em expansão.
+Anotações práticas sobre infraestrutura, containers e clusters: conceitos, blueprints, guias
+passo a passo, operação e ferramentas.
+
+**Documentação disponível hoje:** o caminho mais completo cobre clusters K3s (nó único ou multinó),
+complementado com material sobre conceitos agnósticos e alternativas para cada escolha tecnológica
+(segredos, armazenamento, implantação, etc.). Outras distribuições Kubernetes, Docker Swarm e
+serviços cloud gerenciados estão em expansão — ver [Escopo do projeto](project/scope/).
 
 :::note
 As anotações deste guia foram elaboradas e revisadas com o apoio de inteligência artificial, especificamente o ChatGPT. Alguns scripts e outros conteúdos deste repositório também podem ter sido criados ou modificados com auxílio de IA. Valide o código, os comandos, as versões e as decisões de segurança de acordo com o seu ambiente antes de utilizá-los.
@@ -24,7 +26,9 @@ Execute primeiro em um ambiente de teste. Os comandos alteram autenticação SSH
 
 ## Por objetivo
 
-Os links abaixo cobrem o caminho **K3s + Longhorn + Infisical** documentado neste projeto. Conceitos agnósticos e alternativas (Sealed Secrets, SOPS, External Secrets Operator, OpenBao para segredos; RKE2, kubeadm, etc. para outras distribuições) estão descritos em [Aprender](/learn/) — consulte lá se sua escolha for diferente.
+**Roteiros com escolhas específicas:** os links abaixo executam o caminho **K3s + Longhorn + Infisical** como descrito em [Caminho K3s single-node](getting-started/create-a-k3s-cluster/) — um conjunto concreto de escolhas documentadas de ponta a ponta.
+
+**Se sua escolha for diferente:** cada tópico abaixo tem material agnóstico em [Aprender](/learn/) cobrinido conceitos e alternativas (Sealed Secrets, SOPS, External Secrets Operator, OpenBao para segredos; RKE2, kubeadm para outras distribuições Kubernetes; Docker Swarm; etc.). Consulte lá para entender trade-offs e comparações.
 
 - **Entender o que estou operando** — [fundamentos do Kubernetes](learn/clusters/kubernetes/), [arquitetura do K3s](learn/clusters/k3s-architecture/), [ciclo de vida de imagens](learn/containers/image-lifecycle/).
 - **Criar o primeiro cluster** — [ensaio: cluster K3s](getting-started/create-a-k3s-cluster/), [instalar o primeiro servidor](guides/tasks/kubernetes/install-first-k3s-server/).
