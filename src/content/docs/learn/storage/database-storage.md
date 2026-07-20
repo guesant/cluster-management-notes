@@ -5,7 +5,7 @@ sidebar:
   order: 6
 ---
 
-> **Para quem é:** quem vai rodar um banco de dados (PostgreSQL via CloudNativePG, neste notebook) sobre armazenamento distribuído e quer entender os trade-offs antes de configurar.
+> **Para quem é:** quem vai rodar um banco de dados (ex.: PostgreSQL, via operador Kubernetes ou gerenciado) sobre armazenamento distribuído e quer entender os trade-offs antes de configurar.
 
 Um banco de dados escreve de forma muito mais sensível a latência e ordem do que a maioria das aplicações stateless. Armazenamento distribuído em rede, como o Longhorn, adiciona uma camada entre o processo do banco e o disco físico — essa camada tem custo, e o banco de dados é o workload mais provável de sentir esse custo.
 

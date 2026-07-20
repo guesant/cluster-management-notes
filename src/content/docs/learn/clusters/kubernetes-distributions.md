@@ -114,9 +114,9 @@ Kubernetes é um padrão; as distribuições implementam. Além de K3s/RKE2, exi
 
 ## Decisão prática
 
-**Comece com K3s** (padrão recomendado).
+**K3s** é o ponto de partida deste notebook (minimalista, 50MB, 30s deploy) — simples para começar.
 
-**Mude para kubeadm se:**
+**Use kubeadm se:**
 
 - Quer aprender Kubernetes a fundo
 - On-prem com exigências extremas

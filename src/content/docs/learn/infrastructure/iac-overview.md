@@ -29,7 +29,7 @@ resource "aws_instance" "k3s_server" {
 
 - Declarativo, versionado no git, reproducível
 
-## Terraform — De facto padrão
+## Terraform — Abordagem declarativa (mais adotada)
 
 **O que é:**
 
@@ -115,18 +115,18 @@ resource "aws_instance" "k3s_server" {
 
 ---
 
-## Padrão: Terraform
+## Critérios de decisão
 
-Recomendação geral é **Terraform** porque:
+**Terraform** é a escolha mais adotada quando:
 
-1. De facto padrão (maior comunidade)
+1. Comunidade grande importa (mais exemplos, Stack Overflow)
 2. Módulos reutilizáveis (Terraform Registry)
-3. Multi-cloud maduro
-4. Suporte empresarial
+3. Multi-cloud necessário
+4. Equipe já usa HCL
 
-Se a licença de Terraform for problema → **OpenTofu** (mesmo padrão).
+**OpenTofu** se a licença de Terraform for bloqueador (mesmo padrão, comunidade).
 
-Se preferir code-centric → **Pulumi**.
+**Pulumi** se a equipe prefere code-first (Python/Go/TypeScript com verdadeira lógica).
 
 ---
 
