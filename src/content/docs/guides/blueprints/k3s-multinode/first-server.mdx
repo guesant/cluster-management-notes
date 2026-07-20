@@ -98,10 +98,9 @@ servidores aparecem como `Ready`:
 sudo kubectl get nodes
 ```
 
-Inspecionar o etcd diretamente (listar membros do Raft, por exemplo) é possível, mas o comando
-exato varia entre versões do K3s; consulte a
-[documentação de HA com etcd embarcado](https://docs.k3s.io/datastore/ha-embedded) para a sintaxe
-da versão instalada, em vez de depender de um comando fixo aqui.
+Inspecionar o etcd diretamente (listar membros do Raft) também é possível, usando `etcdctl` com os
+certificados que o próprio K3s gera; veja o comando completo e o resultado esperado em
+[validar o cluster multinode](../validation/#3-verificar-etcd-quorum).
 
 ## Próximo passo
 

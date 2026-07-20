@@ -62,7 +62,11 @@ helm install headlamp headlamp/headlamp \
   --version <VERSAO_DO_CHART>
 ```
 
-A versão exata do chart deve ser conferida nas releases do repositório antes da instalação; este notebook não fixa uma versão de referência para o Headlamp em [convenções](../../../reference/conventions/).
+Até a escrita deste texto, a versão mais recente do chart no Artifact Hub é `0.43.0`; confirme se
+há uma versão mais nova nas [releases do repositório](https://github.com/kubernetes-sigs/headlamp/releases)
+antes de instalar, e leia o changelog do chart para identificar mudanças que afetem uma instalação
+já existente. Este notebook não fixa uma versão de referência para o Headlamp em
+[convenções](../../../reference/conventions/).
 
 Depois de instalado, o acesso ao dashboard normalmente passa por `kubectl port-forward` ou por uma `Ingress`/`Gateway` própria, e não deveria ser exposto publicamente sem autenticação: um dashboard administrativo do cluster tem, por definição, acesso a segredos e à capacidade de criar ou excluir recursos, então a mesma segmentação de rede aplicada a outros serviços de administração (VPN, rede interna, ou autenticação forte no ponto de entrada) deve valer aqui.
 

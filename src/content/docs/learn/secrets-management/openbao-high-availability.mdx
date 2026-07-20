@@ -33,7 +33,7 @@ Cada réplica precisa passar pelo próprio processo de unseal antes de participa
 
 ## Armazenamento compartilhado
 
-Todas as réplicas de um cluster HA precisam enxergar o mesmo estado, o que exige um backend de armazenamento compartilhado entre elas. O caminho recomendado atualmente pelo próprio OpenBao é o **Integrated Storage**, baseado em Raft: cada réplica participa diretamente do consenso e mantém sua própria cópia replicada dos dados, sem depender de um serviço de armazenamento externo adicional. A alternativa mais estabelecida antes do Integrated Storage era usar o **Consul** como backend externo, que também implementa Raft internamente e serve como fonte de verdade compartilhada para as réplicas do OpenBao.
+Todas as réplicas de um cluster HA precisam enxergar o mesmo estado, o que exige um backend de armazenamento compartilhado entre elas. O caminho recomendado atualmente pelo próprio OpenBao é o **Integrated Storage**, baseado em Raft: cada réplica participa diretamente do consenso e mantém sua própria cópia replicada dos dados, sem depender de um serviço de armazenamento externo adicional. O **Consul** já foi a alternativa mais estabelecida antes do Integrated Storage, mas o projeto reduziu esse suporte depois que o Consul deixou de usar uma licença aprovada pela OSI; hoje ele aparece principalmente como coordenador de lock (`ha_storage`) combinado com outro backend de dados, não mais como a opção padrão de armazenamento primário. Para um cluster novo, prefira Integrated Storage; confirme o estado atual do suporte a Consul e a outros backends externos na [documentação de armazenamento do OpenBao](https://openbao.org/docs/configuration/storage/) antes de adotar uma topologia que dependa dele.
 
 ## Alternativas
 

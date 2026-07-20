@@ -39,7 +39,7 @@ helm install rancher rancher-latest/rancher \
   --set hostname=rancher.example.com
 ```
 
-Fixe `--version` com uma versão específica do chart antes de instalar; sem isso, o Helm instala a versão mais recente do momento, o que torna a instalação não reprodutível. Confirme a versão atual nas [releases do chart](https://github.com/rancher/rancher/releases) antes de aplicar.
+Fixe `--version` com uma versão específica do chart antes de instalar; sem isso, o Helm instala a versão mais recente do momento, o que torna a instalação não reprodutível. Até a escrita deste texto, a versão mais recente do chart estável é `2.14.3`; confirme se há uma versão mais nova nas [releases do chart](https://github.com/rancher/rancher/releases) e leia o changelog antes de aplicar, já que upgrades do Rancher costumam ter passos de migração específicos entre versões.
 
 ## Portainer
 
@@ -50,7 +50,7 @@ docker run -d \
   portainer/portainer-ce:<versão-do-portainer>
 ```
 
-Montar `/var/run/docker.sock` dentro do container dá ao Portainer controle equivalente a root sobre o host: qualquer processo com acesso a esse socket pode criar containers privilegiados e escapar do isolamento normal de containers. Trate o acesso ao Portainer com o mesmo cuidado que se daria a uma credencial administrativa do host, e não publique a porta além de `127.0.0.1` sem um motivo explícito. Fixe a tag da imagem (evite `:latest`); confirme a versão atual nas [releases do Portainer](https://github.com/portainer/portainer/releases).
+Montar `/var/run/docker.sock` dentro do container dá ao Portainer controle equivalente a root sobre o host: qualquer processo com acesso a esse socket pode criar containers privilegiados e escapar do isolamento normal de containers. Trate o acesso ao Portainer com o mesmo cuidado que se daria a uma credencial administrativa do host, e não publique a porta além de `127.0.0.1` sem um motivo explícito. Fixe a tag da imagem (evite `:latest`); até a escrita deste texto, a versão mais recente é `2.39.5` (LTS). Confirme se há uma versão mais nova nas [releases do Portainer](https://github.com/portainer/portainer/releases) e leia o changelog antes de atualizar uma instalação existente.
 
 ## Cockpit
 
@@ -69,7 +69,7 @@ helm install headlamp headlamp/headlamp \
   --version <versão-do-chart>
 ```
 
-O projeto foi doado à CNCF e hoje vive sob a organização `kubernetes-sigs`, não mais sob o nome antigo do mantenedor original (Kinvolk); confirme a versão do chart nas [releases do projeto](https://github.com/kubernetes-sigs/headlamp/releases) antes de instalar. Não exponha o dashboard publicamente sem autenticação: como qualquer painel administrativo do cluster, ele tem acesso a Secrets e à capacidade de criar ou excluir recursos.
+O projeto foi doado à CNCF e hoje vive sob a organização `kubernetes-sigs`, não mais sob o nome antigo do mantenedor original (Kinvolk). Até a escrita deste texto, a versão mais recente do chart é `0.43.0`; confirme se há uma versão mais nova nas [releases do projeto](https://github.com/kubernetes-sigs/headlamp/releases) e leia o changelog antes de instalar. Não exponha o dashboard publicamente sem autenticação: como qualquer painel administrativo do cluster, ele tem acesso a Secrets e à capacidade de criar ou excluir recursos.
 
 ## Escolher a ferramenta
 

@@ -82,14 +82,18 @@ helm repo update
 helm install velero vmware-tanzu/velero \
   --namespace velero \
   --create-namespace \
-  --set configuration.backupStorageLocation.bucket=velero \
-  --set configuration.backupStorageLocation.provider=aws \
-  --set configuration.backupStorageLocation.config.s3Url=http://minio.minio.svc.cluster.local:9000 \
-  --set configuration.backupStorageLocation.config.insecureSkipTLSVerify=true \
+  --set configuration.backupStorageLocation[0].bucket=velero \
+  --set configuration.backupStorageLocation[0].provider=aws \
+  --set configuration.backupStorageLocation[0].config.s3Url=http://minio.minio.svc.cluster.local:9000 \
+  --set configuration.backupStorageLocation[0].config.insecureSkipTLSVerify=true \
   --set schedules.daily.schedule='0 2 * * *' \
   --set schedules.daily.template.ttl=720h \
   --set schedules.daily.template.includedNamespaces='{*}'
 ```
+
+`backupStorageLocation` é uma lista no chart oficial (confirmado em `values.yaml`, mesmo quando só
+um local é declarado), por isso o índice `[0]` é obrigatório nesses `--set`; omiti-lo cria uma
+chave solta que o chart ignora, deixando o Velero sem nenhum `BackupStorageLocation` configurado.
 
 O provider `aws` aqui não significa que o backup vai para a AWS: o Velero usa o plugin AWS para
 falar com qualquer backend que implemente a API S3, incluindo o MinIO. `insecureSkipTLSVerify`
@@ -148,10 +152,10 @@ EOF
 helm install velero vmware-tanzu/velero \
   --namespace velero \
   --create-namespace \
-  --set configuration.backupStorageLocation.bucket=my-velero-bucket \
-  --set configuration.backupStorageLocation.provider=aws \
-  --set configuration.volumeSnapshotLocation.provider=aws \
-  --set configuration.volumeSnapshotLocation.config.region=us-east-1
+  --set configuration.backupStorageLocation[0].bucket=my-velero-bucket \
+  --set configuration.backupStorageLocation[0].provider=aws \
+  --set configuration.volumeSnapshotLocation[0].provider=aws \
+  --set configuration.volumeSnapshotLocation[0].config.region=us-east-1
 ```
 
 Sem `s3Url` nem `insecureSkipTLSVerify`, o plugin AWS assume o endpoint público padrão da região
@@ -194,7 +198,19 @@ restauração quando só uma fração específica do backup precisa voltar.
 Volumes que não usam um provisionador com suporte a snapshot CSI (como `hostPath` ou a maioria
 dos volumes locais do K3s) não são cobertos pelo backup de objetos padrão do Velero. Para esses
 casos, o Velero oferece um mecanismo de backup em nível de sistema de arquivos, que copia os
-dados do volume em vez de depender de um snapshot do storage:
+dados do volume em vez de depender de um snapshot do storage. Esse mecanismo depende do
+DaemonSet `node-agent`, que não é instalado por padrão pelo chart; habilite-o na instalação (ou
+com `helm upgrade`, se o Velero já estiver instalado sem ele):
+
+```bash
+helm upgrade velero vmware-tanzu/velero \
+  --namespace velero \
+  --reuse-values \
+  --set deployNodeAgent=true
+```
+
+Com o `node-agent` rodando em cada nó, o backup pode então declarar o uso do backup por sistema
+de arquivos:
 
 ```bash
 velero backup create with-fs-backup \

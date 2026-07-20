@@ -9,7 +9,7 @@ sidebar:
 > **Versões testadas:** CoreDNS 1.10+, Nginx 1.25+, K3s 1.36.
 
 Este blueprint substitui port-forwards manuais por um setup permanente. O **CoreDNS** resolve
-domínios internos (`grafana.cluster.local`) para `127.0.0.1`, e um **reverse proxy** (Nginx,
+domínios internos (`grafana.internal`) para `127.0.0.1`, e um **reverse proxy** (Nginx,
 HAProxy ou Traefik) escutando na porta 443 do mesmo host roteia cada conexão para o serviço
 correto usando SNI (o nome de domínio que o cliente TLS envia antes da negociação, visível mesmo
 sem descriptografar o tráfego).
@@ -31,9 +31,9 @@ graph LR
     subgraph After["Com blueprint"]
         L2["operator@laptop"]
         L2 -->|"ssh bastion"| B["Bastion"]
-        B -->|"https://grafana.cluster.local"| G2["Grafana"]
-        B -->|"https://prometheus.cluster.local"| P2["Prometheus"]
-        B -->|"https://argocd.cluster.local"| A2["ArgoCD (porta 443 única)"]
+        B -->|"https://grafana.internal"| G2["Grafana"]
+        B -->|"https://prometheus.internal"| P2["Prometheus"]
+        B -->|"https://argocd.internal"| A2["ArgoCD (porta 443 única)"]
     end
 ```
 
@@ -50,7 +50,7 @@ configuradas.
 
 - [Split-horizon DNS](../../../learn/networking/split-horizon-dns/): o conceito por trás de um
   domínio resolver de forma diferente conforme a origem da consulta, que é o que permite
-  `grafana.cluster.local` existir só na rede interna.
+  `grafana.internal` existir só na rede interna.
 - [Reverse proxy: fundamentos](../../../learn/networking/reverse-proxy-basics/): como um proxy
   decide para onde encaminhar uma conexão TLS sem terminar a criptografia antes de saber o
   destino.
@@ -76,9 +76,9 @@ sequenceDiagram
     participant Proxy as Reverse proxy (127.0.0.1:443)
     participant Svc as Serviço interno (ex.: Grafana)
 
-    Admin->>DNS: resolve grafana.cluster.local
+    Admin->>DNS: resolve grafana.internal
     DNS-->>Admin: 127.0.0.1
-    Admin->>Proxy: conexão HTTPS, SNI = grafana.cluster.local
+    Admin->>Proxy: conexão HTTPS, SNI = grafana.internal
     Proxy->>Svc: encaminha para grafana-svc:3000
     Svc-->>Admin: resposta HTTP
 ```
@@ -113,7 +113,7 @@ pela rede.
 
 ```mermaid
 graph TB
-    Cluster["Dentro do cluster<br/>CoreDNS resolve .cluster.local"]
+    Cluster["Dentro do cluster<br/>CoreDNS resolve .internal"]
     Bastion["Bastion ou laptop<br/>Reverse proxy (Nginx/HAProxy)<br/>127.0.0.1:443"]
 
     Bastion -->|"consulta DNS"| Cluster
@@ -159,9 +159,13 @@ CoreDNS, por sua vez, só precisa ser alcançável pela rede interna que faz as 
 internet. Para TLS, certificados auto-assinados são aceitáveis em laboratório, já que o objetivo é
 criptografar a conexão, não provar identidade a um público externo; em produção, prefira
 certificados emitidos por uma CA interna ou por Let's Encrypt com um domínio que a organização
-controla. O sufixo `.cluster.local` usado nos exemplos é um domínio arbitrário de uso interno, não
-o `.local` reservado por multicast DNS (RFC 6762); qualquer sufixo que não colida com um domínio
-público real funciona, desde que seja usado de forma consistente. Nenhuma das duas variantes
+controla. O sufixo `.internal` usado nos exemplos é reservado pela IANA especificamente para uso
+não roteável na internet (RFC 9476), o que evita duas armadilhas: colidir com o `.local`
+reservado por multicast DNS (RFC 6762), e colidir com `cluster.local`, o domínio que o próprio
+Kubernetes/K3s usa internamente para resolver Services e Pods via CoreDNS. Declarar uma zona
+adicional para `cluster.local` no CoreDNS pode sobrepor o plugin `kubernetes` responsável por essa
+resolução interna e quebrar o DNS do próprio cluster; por isso este blueprint usa `.internal` para
+os domínios administrativos, e não o domínio interno do Kubernetes. Nenhuma das duas variantes
 citadas aqui adiciona autenticação por padrão: se o serviço interno não tiver login próprio, a
 autenticação (basic auth, OAuth) precisa ser configurada no reverse proxy.
 
@@ -177,3 +181,4 @@ autenticação (basic auth, OAuth) precisa ser configurada no reverse proxy.
 - [Nginx Reverse Proxy Guide](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/): setup detalhado.
 - [HAProxy Configuration](https://www.haproxy.org/#docs): alternativa a Nginx.
 - [RFC 6762 (mDNS)](https://tools.ietf.org/html/rfc6762): especificação do domínio `.local` reservado para multicast DNS.
+- [RFC 9476](https://www.rfc-editor.org/rfc/rfc9476): reserva o domínio `.internal` para uso interno não roteável, o sufixo usado neste blueprint.

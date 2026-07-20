@@ -62,10 +62,26 @@ eles parte do cluster, o que já é um bom indicador indireto de quorum saudáve
 fora do quorum não permanece registrado como endpoint por muito tempo.
 
 O etcd do K3s roda embarcado no próprio processo `k3s`, não como um pod separado em
-`kube-system`; por isso não há um `etcdctl member list` padrão aplicável da mesma forma que em
-clusters onde o etcd roda como pod estático. Para inspecionar o Raft diretamente, consulte a
-[documentação de HA com etcd embarcado](https://docs.k3s.io/datastore/ha-embedded) da versão
-instalada.
+`kube-system`; por isso não há um pod para usar com `kubectl exec` como em clusters onde o etcd
+roda como pod estático. O K3s não inclui o binário `etcdctl` no `PATH`, mas expõe os certificados
+TLS necessários para conectar diretamente no endpoint `https://localhost:2379`; com `etcdctl`
+instalado separadamente no host, liste os membros do Raft com:
+
+```bash
+sudo etcdctl member list --write-out=table \
+  --endpoints=https://localhost:2379 \
+  --cacert=/var/lib/rancher/k3s/server/tls/etcd/server-ca.crt \
+  --cert=/var/lib/rancher/k3s/server/tls/etcd/server-client.crt \
+  --key=/var/lib/rancher/k3s/server/tls/etcd/server-client.key
+```
+
+**Esperado:** uma linha por servidor do control plane, cada uma com `IS LEADER` `true` em exatamente
+um membro e `false` nos demais. Um número de membros menor que o esperado indica quorum degradado
+mesmo que `kubectl get nodes` ainda mostre os servidores como `Ready`, já que o status do nó
+Kubernetes e o estado do Raft são reportados por caminhos diferentes. Os caminhos de certificado
+acima valem para a instalação padrão do K3s (`/var/lib/rancher/k3s/`); confirme-os contra a
+[documentação de HA com etcd embarcado](https://docs.k3s.io/datastore/ha-embedded) se o cluster usa
+um `--data-dir` customizado.
 
 ## 4. Verificar conectividade entre nós
 

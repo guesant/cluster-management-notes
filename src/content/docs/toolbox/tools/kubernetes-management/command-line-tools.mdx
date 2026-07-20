@@ -38,19 +38,19 @@ Helm é um gerenciador de pacotes para Kubernetes. Um **chart** reúne templates
 
 Helm renderiza manifests e os envia à API Kubernetes usando o kubeconfig, mas não mantém um controller próprio reconciliando continuamente a release. Depois da instalação, uma alteração manual no cluster não é corrigida por Helm até uma nova operação; essa é uma diferença importante em relação ao Argo CD. Referência: [introdução ao Helm](https://helm.sh/docs/intro/introduction/).
 
-A instalação oficial usa o script mantido pelo próprio projeto Helm:
+Desde o lançamento do Helm v4, o v3 passou a receber apenas manutenção por um período limitado; novas instalações devem usar o v4. Confirme o estado atual de suporte do v3 na [política de releases do Helm](https://helm.sh/docs/topics/release_policy/) antes de optar por instalar a série anterior. A instalação oficial usa o script mantido pelo próprio projeto Helm:
 
 > **Executar em:** máquina onde a CLI será instalada.
 
 ```bash
-curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4
 chmod +x get_helm.sh
 
 DESIRED_VERSION=<versão-do-helm> ./get_helm.sh
 rm get_helm.sh
 ```
 
-Fixe `DESIRED_VERSION` com uma versão específica das [releases do Helm](https://github.com/helm/helm/releases) em vez de omiti-la; sem essa variável, o script instala a versão mais recente disponível no momento da execução, o que torna a instalação não reprodutível entre máquinas.
+Fixe `DESIRED_VERSION` com uma versão específica das [releases do Helm](https://github.com/helm/helm/releases) em vez de omiti-la; sem essa variável, o script instala a versão mais recente disponível no momento da execução, o que torna a instalação não reprodutível entre máquinas. Até a escrita deste texto, a versão estável mais recente é `v4.2.3`; confirme se há uma versão mais nova nas releases e leia o changelog antes de fixá-la.
 
 ## Argo CD CLI
 
@@ -71,7 +71,7 @@ sudo install -o root -g root -m 0755 argocd /usr/local/bin/argocd
 rm argocd
 ```
 
-Fixe `ARGOCD_VERSION` com uma versão específica das [releases do Argo CD](https://github.com/argoproj/argo-cd/releases); prefira alinhá-la à versão do chart Argo CD já instalado no cluster (veja [instalar o Argo CD](../../../../guides/tasks/gitops/install-argocd/)), já que a CLI e o servidor têm compatibilidade mais estreita entre versões próximas.
+Fixe `ARGOCD_VERSION` com uma versão específica das [releases do Argo CD](https://github.com/argoproj/argo-cd/releases); prefira alinhá-la à versão do chart Argo CD já instalado no cluster (veja [instalar o Argo CD](../../../../guides/tasks/gitops/install-argocd/)), já que a CLI e o servidor têm compatibilidade mais estreita entre versões próximas. Até a escrita deste texto, a versão estável mais recente é `v3.4.5`; confirme se há uma versão mais nova nas releases e leia o changelog antes de fixá-la.
 
 ## cmctl
 
