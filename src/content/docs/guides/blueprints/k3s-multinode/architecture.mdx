@@ -49,10 +49,17 @@ Quorum = floor(N / 2) + 1
 
 ### Perda de 1 servidor em 3 (quorum OK)
 
-```yaml
-[Servidor 1 — OK]   [Servidor 2 — FALHA]   [Servidor 3 — OK]
-        └─────────────────────┬─────────────────────┘
-              Quorum = 2 ✅ (continua funcional)
+```mermaid
+graph TB
+    S1["Servidor 1<br/>✅ OK"]
+    S2["Servidor 2<br/>❌ FALHA"]
+    S3["Servidor 3<br/>✅ OK"]
+    
+    Status["Quorum = 2<br/>✅ Continua funcional"]
+    
+    S1 --> Status
+    S2 -.-> Status
+    S3 --> Status
 ```
 
 - Workloads continuam rodando.
@@ -61,10 +68,17 @@ Quorum = floor(N / 2) + 1
 
 ### Perda de 2 servidores em 3 (quorum QUEBRADO)
 
-```yaml
-[Servidor 1 — OK]   [Servidor 2 — FALHA]   [Servidor 3 — FALHA]
-        └─────────────────────┬─────────────────────┘
-              Quorum = 1 ❌ (cluster travado)
+```mermaid
+graph TB
+    S1["Servidor 1<br/>✅ OK"]
+    S2["Servidor 2<br/>❌ FALHA"]
+    S3["Servidor 3<br/>❌ FALHA"]
+    
+    Status["Quorum = 1<br/>❌ Cluster travado"]
+    
+    S1 --> Status
+    S2 -.-> Status
+    S3 -.-> Status
 ```
 
 - Nenhuma nova mudança pode ser commitada (API retorna erro).

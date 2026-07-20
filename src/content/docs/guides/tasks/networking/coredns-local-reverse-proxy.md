@@ -17,14 +17,21 @@ Solução: DNS local + reverse proxy no host resolvem domínios internos automat
 
 ## Arquitetura
 
-```yaml
-Seu host
-  ├─ /etc/hosts ou systemd-resolved (aponta *.cluster.local → 127.0.0.1)
-  └─ Nginx/HAProxy em 127.0.0.1:443
-         ↓ (SNI-based routing)
-Cluster
-  ├─ CoreDNS (resolve *.cluster.local)
-  └─ Serviços (api.cluster.local, grafana.cluster.local, etc.)
+```mermaid
+graph TB
+    subgraph Host["Seu host"]
+        DNS["DNS local<br/>(/etc/hosts ou systemd-resolved)<br/>*.cluster.local → 127.0.0.1"]
+        Proxy["Nginx/HAProxy<br/>127.0.0.1:443<br/>(SNI-based routing)"]
+        DNS --> Proxy
+    end
+    
+    subgraph K8s["Cluster Kubernetes"]
+        CoreDNS["CoreDNS<br/>resolve *.cluster.local"]
+        Services["Serviços<br/>api.cluster.local<br/>grafana.cluster.local<br/>etc."]
+        CoreDNS --> Services
+    end
+    
+    Proxy -->|SNI routing| K8s
 ```
 
 ## CoreDNS setup no cluster

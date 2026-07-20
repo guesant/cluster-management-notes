@@ -100,14 +100,19 @@ kubeconfig:
 
 **Com LB:**
 
-```yaml
-kubeconfig:
-  server: https://api.cluster.local:6443
-
-Cloud LB
-  ├─ k3s-1:6443
-  ├─ k3s-2:6443
-  └─ k3s-3:6443
+```mermaid
+graph TB
+    Config["kubeconfig:<br/>server: https://api.cluster.local:6443"]
+    
+    LB["Cloud LB"]
+    S1["k3s-1:6443"]
+    S2["k3s-2:6443"]
+    S3["k3s-3:6443"]
+    
+    Config --> LB
+    LB --> S1
+    LB --> S2
+    LB --> S3
 ```
 
 Perder K3s 1 → LB roteia para 2 ou 3.

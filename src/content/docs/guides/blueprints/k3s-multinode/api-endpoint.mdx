@@ -31,18 +31,20 @@ api.seu-cluster.local.  A   10.0.0.12  ; servidor-2
 
 Coloque um load balancer (Nginx, HAProxy, ou managed LB em nuvem) na frente dos servidores:
 
-```yaml
-Clientes (admin, workload, apps)
-       ↓
-┌─────────────────────────────────────┐
-│ Load Balancer (10.0.0.5:6443)       │
-│ - Health checks aos servidores      │
-│ - Round-robin ou least-conn         │
-│ - Backend: 10.0.0.10/11/12:6443     │
-└─────────────────────────────────────┘
-       ↓↓↓
-   [Servidor 0]  [Servidor 1]  [Servidor 2]
-    :6443         :6443         :6443
+```mermaid
+graph TD
+    Clients["Clientes<br/>(admin, workload, apps)"]
+    
+    LB["Load Balancer (10.0.0.5:6443)<br/>- Health checks aos servidores<br/>- Round-robin ou least-conn<br/>- Backend: 10.0.0.10/11/12:6443"]
+    
+    S0["Servidor 0<br/>:6443"]
+    S1["Servidor 1<br/>:6443"]
+    S2["Servidor 2<br/>:6443"]
+    
+    Clients --> LB
+    LB --> S0
+    LB --> S1
+    LB --> S2
 ```
 
 **Vantagens:**
