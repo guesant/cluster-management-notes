@@ -14,7 +14,7 @@ Cenários de falha em um cluster multinode K3s com etcd embarcado e como recuper
 
 **O que acontece:**
 
-```
+```yaml
 [Servidor 0]  [Servidor 1]  [Servidor 2]  (quorum OK: 3, precisa de 2)
                    ✅            ✅
 [Agente 1]    [Agente 2]    [Agente 3]
@@ -28,7 +28,7 @@ Cenários de falha em um cluster multinode K3s com etcd embarcado e como recuper
 
 **Recuperação:**
 
-```
+```yaml
 # 1. Aguardar ~5-10 min para certeza que o nó está morto
 sleep 300
 
@@ -50,7 +50,7 @@ kubectl get nodes  # Aguardar "Ready"
 
 **O que acontece:**
 
-```
+```yaml
 [Servidor 0]  [Servidor 1]  [Servidor 2]  (quorum OK: 3, precisa de 2)
     ❌              ✅            ✅
 ```
@@ -62,7 +62,7 @@ kubectl get nodes  # Aguardar "Ready"
 
 **Recuperação:**
 
-```
+```yaml
 # 1. Aguardar eleição de novo líder (~30 segundos)
 sleep 30
 
@@ -89,7 +89,7 @@ Se servidor-0 estava rodando workloads, eles são movidos para servidor-1 e serv
 
 **O que acontece:**
 
-```
+```yaml
 [Servidor 0]  [Servidor 1]  [Servidor 2]  (quorum QUEBRADO: 1 vivo, precisa de 2)
     ✅              ❌            ❌
 ```
@@ -102,7 +102,7 @@ Se servidor-0 estava rodando workloads, eles são movidos para servidor-1 e serv
 
 **Sintomas:**
 
-```
+```yaml
 kubectl create pod test --image=nginx
 # Error: Unavailable (etcd não consegue confirmar)
 
@@ -114,7 +114,7 @@ sudo kubectl get nodes
 
 Este é um procedimento manual. Você precisa de um backup de etcd feito antes da falha.
 
-```
+```yaml
 # 1. Verificar se tem backup
 ls -la /var/lib/rancher/k3s/server/db/snapshots/
 
@@ -124,7 +124,7 @@ ls -la /var/lib/rancher/k3s/server/db/snapshots/
 
 Se tem backup:
 
-```
+```yaml
 # 2. Parar todos os servidores
 # (em cada servidor)
 sudo systemctl stop k3s
@@ -163,7 +163,7 @@ sudo kubectl get nodes
 2. **Verificar que servidores K3s conseguem alcançar** o datastore restaurado
 3. **Reiniciar K3s nos servidores**
 
-```
+```yaml
 # Em cada servidor
 sudo systemctl restart k3s
 
@@ -180,7 +180,7 @@ sudo kubectl get nodes
 
 **O que acontece:**
 
-```
+```yaml
 [Servidor 0]  ←(partição)→  [Servidor 1]  [Servidor 2]
     (isolado)                       ✅ quorum!
                             (comunicação OK)
@@ -193,7 +193,7 @@ sudo kubectl get nodes
 
 **Recuperação:**
 
-```
+```yaml
 # 1. Reparar a partição de rede
 # (verificar cabos, firewall, roteador)
 
@@ -210,7 +210,7 @@ sudo kubectl get nodes
 
 ## Checklist: Antes de falhas acontecerem
 
-```
+```yaml
 ☐ Backup de etcd configurado (snapshots automáticos)
 ☐ Snapshots testados — consegue restaurar de um?
 ☐ Monitoramento alertando sobre perda de nó
@@ -229,7 +229,7 @@ sudo kubectl get nodes
 
 Se o backup de etcd não existe ou está corrompido:
 
-```
+```yaml
 # 1. Remover todos os dados de K3s
 sudo rm -rf /var/lib/rancher/k3s/
 

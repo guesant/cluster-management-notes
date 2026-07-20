@@ -95,13 +95,13 @@ Ambas substituem Flannel (CNI padrão K3s), oferecendo networking mais robusto. 
 helm repo add cilium https://helm.cilium.io
 helm install cilium cilium/cilium --namespace kube-system \
   --set kubeProxyReplacement=strict
-```yaml
+```
 
 ### Calico
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/tigera-operator.yaml
-```yaml
+```
 
 ---
 
@@ -119,7 +119,7 @@ spec:
   policyTypes:
   - Ingress
   - Egress
-```yaml
+```
 
 Cilium adiciona `CiliumNetworkPolicy` para L7 (DNS, HTTP).
 

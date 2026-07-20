@@ -59,7 +59,7 @@ Control plane: $0.10/hora (~$73/mês)
 Nodes (3x t3.medium): $0.042 × 3 × 730h/mês = $92/mês
 Data transfer: ~$10/mês (estimate)
 Total: ~$175/mês
-```yaml
+```
 
 ### K3s self-hosted (3 nós t3.medium na AWS)
 
@@ -67,7 +67,7 @@ Total: ~$175/mês
 Nodes (3x t3.medium): $0.042 × 3 × 730h/mês = $92/mês
 Data transfer: ~$5/mês
 Total: ~$97/mês (sem control plane AWS)
-```yaml
+```
 
 **EKS é ~80% mais caro** (mas você paga pela conveniência).
 
@@ -132,7 +132,7 @@ Total: ~$97/mês (sem control plane AWS)
 Dev/Test → K3s local (laptop)
 Staging → RKE2 self-hosted (dedicated VMs)
 Production → EKS (HA, compliance, multi-zone)
-```yaml
+```
 
 Arquitetura porta (mesmos YAMLs), operação customizada por ambiente.
 

@@ -11,7 +11,7 @@ Este blueprint substitui port-forwards manuais por um setup permanente: **CoreDN
 
 ## O problema que este blueprint resolve
 
-```
+```yaml
 Sem blueprint:
   operator@laptop → kubectl port-forward svc/grafana :3000
   (manual toda vez, quebra se laptop reconecta)
@@ -37,7 +37,7 @@ Com blueprint:
 
 ## Topologia
 
-```
+```yaml
 ┌─────────────────────────────────────────┐
 │  Admin laptop (ou bastion/VPN gateway)  │
 │  Rede: pode resolver cluster.local      │
@@ -68,7 +68,7 @@ Com blueprint:
 
 CoreDNS rodando como serviço no cluster, reverse proxy no bastion/laptop:
 
-```
+```yaml
 ┌─ Dentro do cluster ─┐
 │ CoreDNS             │
 │ resolva .local      │
@@ -89,7 +89,7 @@ CoreDNS rodando como serviço no cluster, reverse proxy no bastion/laptop:
 
 Ambos rodando fora do cluster (ex.: Pihole + Nginx no bastion):
 
-```
+```yaml
 ┌─ Bastion/servidor de infra ─┐
 │ CoreDNS + Reverse Proxy      │
 │ Resolve + roteia em paralelo │
@@ -102,7 +102,7 @@ Ambos rodando fora do cluster (ex.: Pihole + Nginx no bastion):
 
 Se está usando Traefik como ingress controller, pode configurar roteamento interno:
 
-```
+```yaml
 Traefik já está na porta 443
   └─ adicionar IngressRoute para domínios internos
   └─ roteia para serviços por SNI

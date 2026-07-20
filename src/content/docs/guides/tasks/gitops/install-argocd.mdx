@@ -35,7 +35,7 @@ Valide a instalação:
 
 > **Executar em:** qualquer máquina com `KUBECONFIG` e acesso à API.
 
-```
+```yaml
 kubectl --namespace argocd rollout status deployment/argocd-server --timeout=180s
 kubectl --namespace argocd get pods
 helm --namespace argocd status argocd
@@ -47,7 +47,7 @@ Se `rollout status` expirar, verifique `kubectl --namespace argocd describe pod`
 
 ## Rollback
 
-```
+```yaml
 helm --namespace argocd uninstall argocd
 kubectl delete namespace argocd
 ```

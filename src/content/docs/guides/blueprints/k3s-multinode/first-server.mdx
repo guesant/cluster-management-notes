@@ -19,7 +19,7 @@ Escolha sua topologia (3 servidores com etcd embarcado? ou com datastore externo
 
 **Se está usando 3 servidores com etcd embarcado**, adicione ao comando de instalação:
 
-```
+```yaml
 curl -sfL https://get.k3s.io | sh -s - server \
   --cluster-init \
   --write-kubeconfig-mode 644
@@ -29,7 +29,7 @@ Flag `--cluster-init` ativa o etcd embarcado e prepara este servidor para recebe
 
 **Se está usando datastore externo (Postgres ou etcd)**, o comando é:
 
-```
+```yaml
 curl -sfL https://get.k3s.io | sh -s - server \
   --datastore-endpoint='postgres://user:password@postgres-host:5432/k3s' \
   --write-kubeconfig-mode 644
@@ -41,13 +41,13 @@ curl -sfL https://get.k3s.io | sh -s - server \
 
 Depois que o primeiro servidor inicia, obtenha o token de join para adicionar novos servidores/agentes:
 
-```
+```yaml
 sudo cat /var/lib/rancher/k3s/server/node-token
 ```
 
 Saída esperada:
 
-```
+```yaml
 K102abcdef12345...::server:zyx9876543210...
 ```
 
@@ -57,13 +57,13 @@ Guarde esse token — você precisa dele para adicionar servidores e agentes.
 
 Aguarde ~10-15 segundos enquanto K3s inicia:
 
-```
+```yaml
 sudo kubectl get nodes
 ```
 
 Saída esperada (apenas servidor-0):
 
-```
+```yaml
 NAME         STATUS   ROLES                  AGE   VERSION
 servidor-0   Ready    control-plane,master   30s   v1.36.0+k3s1
 ```
@@ -87,7 +87,7 @@ Depois de adicionar:
 
 Você pode verificar o status de etcd em qualquer servidor:
 
-```
+```yaml
 sudo k3s server --help | grep etcd
 # ou
 sudo k3s check-etcd

@@ -31,7 +31,7 @@ services:
     image: postgres
     environment:
       POSTGRES_PASSWORD: example
-```yaml
+```
 
 Tudo roda na **mesma máquina**, via `docker-compose up`.
 
@@ -57,7 +57,7 @@ Sintaxe: Docker Compose YAML + `docker service` em vez de `docker-compose`:
 
 ```bash
 docker service create --replicas 3 -p 80:8080 nginx
-```yaml
+```
 
 Tudo roda em **múltiplos hosts** coordenados via quorum de managers.
 
@@ -99,7 +99,7 @@ spec:
       containers:
       - name: nginx
         image: nginx
-```yaml
+```
 
 Tudo roda em **múltiplos hosts** com conceitos avançados (namespaces, RBAC, ingress, CSI).
 
@@ -123,13 +123,13 @@ Docker Swarm
 Kubernetes (K3s ou EKS)
   ↓ (escala, multi-region, SaaS)
 EKS / GKE / AKS
-```yaml
+```
 
 Ou direto:
 
 ```yaml
 Laptop (Compose) → Kubernetes (K3s)
-```yaml
+```
 
 (muitas equipes pulam Swarm por causa do mercado — Kubernetes é onipresente.)
 

@@ -10,7 +10,7 @@ Um **reverse proxy** senta na frente de serviços e intercepta requests, decidin
 
 ## Visão de alto nível
 
-```
+```yaml
 Forward proxy (VPN, proxy pessoal):
   Cliente → [Forward proxy] → Internet
   (cliente controla, servidor não vê quem é)
@@ -51,7 +51,7 @@ flowchart LR
 
 Roteia baseado em path da URL:
 
-```
+```yaml
 GET /grafana → proxy para Grafana:3000
 GET /prometheus → proxy para Prometheus:9090
 GET /argocd → proxy para ArgoCD:8080
@@ -72,7 +72,7 @@ location /prometheus/ {
 
 Roteia baseado no header `Host` ou `SNI` (TLS):
 
-```
+```yaml
 Host: grafana.cluster.local → proxy para Grafana:3000
 Host: prometheus.cluster.local → proxy para Prometheus:9090
 SNI: argocd.cluster.local → proxy para ArgoCD:8080
@@ -95,7 +95,7 @@ server {
 
 Lê o TLS ClientHello para extrair o domínio solicitado **antes** de desencriptar:
 
-```
+```yaml
 Cliente conecta a 127.0.0.1:443
   TLS ClientHello contém: SNI = grafana.cluster.local
 Proxy lê SNI, roteia para Grafana:3000
@@ -106,7 +106,7 @@ Proxy lê SNI, roteia para Grafana:3000
 
 ## Fluxo de requisição
 
-```
+```yaml
 1. Cliente → reverse proxy (HTTP/HTTPS)
 2. Reverse proxy:
    a. Lê header Host / SNI
@@ -133,13 +133,13 @@ Proxy lê SNI, roteia para Grafana:3000
 Para HTTPS com múltiplos domínios internos:
 
 **Opção A: Wildcard**
-```
+```yaml
 *.cluster.local
 → único certificado, cobre grafana.cluster.local, prometheus.cluster.local, etc.
 ```
 
 **Opção B: SAN (Subject Alternative Names)**
-```
+```yaml
 Certificado com SANs:
   - grafana.cluster.local
   - prometheus.cluster.local
@@ -147,7 +147,7 @@ Certificado com SANs:
 ```
 
 **Opção C: Cert-manager (recomendado)**
-```
+```yaml
 cert-manager emite certs automaticamente por domínio
 Traefik integra com cert-manager
 Certificados renovam automaticamente

@@ -19,7 +19,7 @@ Adicionar um novo servidor a um cluster K3s multinode é similar ao single-node,
 
 No novo servidor (servidor-1), execute:
 
-```
+```yaml
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.36.0+k3s1 sh -s - server \
   --server https://<ip-primeiro-servidor>:6443 \
   --token <seu-token-de-join> \
@@ -32,7 +32,7 @@ Substitua:
 
 Exemplo real:
 
-```
+```yaml
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.36.0+k3s1 sh -s - server \
   --server https://10.0.0.10:6443 \
   --token 'K102abc123::server:xyz789' \
@@ -43,13 +43,13 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.36.0+k3s1 sh -s - server \
 
 Espere ~20-30 segundos enquanto etcd sincroniza entre os dois servidores. No servidor-1, verifique:
 
-```
+```yaml
 sudo kubectl get nodes
 ```
 
 Ambos servidores devem aparecer como `Ready`:
 
-```
+```yaml
 NAME         STATUS   ROLES                  AGE   VERSION
 servidor-0   Ready    control-plane,master   2m    v1.36.0+k3s1
 servidor-1   Ready    control-plane,master   30s   v1.36.0+k3s1
@@ -59,7 +59,7 @@ servidor-1   Ready    control-plane,master   30s   v1.36.0+k3s1
 
 Repita os passos 1-2 no servidor-2, apontando ainda para servidor-0 como `--server`:
 
-```
+```yaml
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.36.0+k3s1 sh -s - server \
   --server https://10.0.0.10:6443 \
   --token 'K102abc123::server:xyz789' \
@@ -72,7 +72,7 @@ Quando servidor-2 estiver `Ready`, você tem quorum completo (3 servidores, quor
 
 Depois que 3 servidores estão `Ready`, verifique que etcd tem quorum saudável:
 
-```
+```yaml
 # Em qualquer servidor, listar membros de etcd
 sudo k3s secrets-encrypt status
 
@@ -89,7 +89,7 @@ Saída esperada: nenhuma "RAFT error" — todos os membros devem estar sincroniz
 **Causa:** firewall bloqueando porta 6443 entre servidores.
 
 **Solução:**
-```
+```yaml
 # No servidor novo, testar conectividade ao primeiro
 sudo nc -zv 10.0.0.10 6443
 ```
@@ -101,7 +101,7 @@ Se falhar, configure firewall conforme [requisitos de rede](../network-requireme
 **Causa:** etcd não sincronizou ainda, ou há problema de disco/memória.
 
 **Solução:**
-```
+```yaml
 # Verificar logs
 sudo journalctl -u k3s -n 50
 
@@ -114,7 +114,7 @@ sleep 60 && sudo kubectl get nodes
 **Causa:** token copiado incorretamente (espaços, quebras de linha).
 
 **Solução:** copie novamente do arquivo no servidor-0 com cuidado:
-```
+```yaml
 # No servidor-0
 sudo cat /var/lib/rancher/k3s/server/node-token
 # copiar sem espaços/quebras

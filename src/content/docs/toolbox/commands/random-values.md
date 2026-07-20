@@ -9,7 +9,7 @@ sidebar:
 ```bash
 openssl rand -base64 16
 # Saída: abcd1234EFGH5678ijkl9012
-```yaml
+```
 
 **Quando usar:** configurar senhas iniciais, secrets, tokens.
 
@@ -19,9 +19,6 @@ openssl rand -base64 16
 - Para 16 bytes → ~24 caracteres em base64.
 - Alternativa: `tr </dev/urandom 'A-Za-z0-9' | head -c 16`.
 
-**Relacionado:**
-
-- [Gerar token hexadecimal](#gerar-token-hexadecimal)
 - [Criar chave SSH](/toolbox/commands/certificates/#criar-chave-ssh)
 
 ---
@@ -31,7 +28,7 @@ openssl rand -base64 16
 ```bash
 openssl rand -hex 32
 # Saída: 4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d
-```yaml
+```
 
 **Quando usar:** tokens de API, session IDs, que precisam ser ASCII-safe hex.
 
@@ -40,10 +37,6 @@ openssl rand -hex 32
 - `-hex` encod em hexadecimal (2 caracteres por byte).
 - Para 32 bytes → 64 caracteres hex.
 - Mais legível que base64 para logs/configs.
-
-**Relacionado:**
-
-- [Gerar senha aleatória](#gerar-senha-aleatória-imprimível)
 
 ---
 
@@ -55,7 +48,7 @@ uuidgen
 
 # Versão lowercase (alguns sistemas exigem)
 uuidgen | tr A-Z a-z
-```yaml
+```
 
 **Quando usar:** IDs únicos para resources, eventos, cluster IDs.
 
@@ -74,7 +67,7 @@ echo $((RANDOM % 100 + 1))
 
 # Entre 0 e 255
 echo $((RANDOM % 256))
-```yaml
+```
 
 **Quando usar:** delays aleatórios em scripts, seed para testes.
 
@@ -82,7 +75,3 @@ echo $((RANDOM % 256))
 
 - `$RANDOM` é bash; em sh usar `/dev/urandom`.
 - Para ranges maiores, usar `awk 'BEGIN { srand(); print int(rand() * N) }'`.
-
-**Relacionado:**
-
-- [Gerar senha aleatória](#gerar-senha-aleatória-imprimível)

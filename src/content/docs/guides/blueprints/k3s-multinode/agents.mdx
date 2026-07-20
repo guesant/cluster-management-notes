@@ -11,7 +11,7 @@ Agentes (também chamados "workers") são nós que **apenas executam workloads**
 
 ## Topologias
 
-```
+```yaml
 Topologia A: 1 servidor + agentes
   [Servidor] (control plane + etcd)
      ↑
@@ -31,7 +31,7 @@ Topologia B: 3 servidores + agentes (recomendado para HA)
 
 No novo agente, execute os mesmos passos de [host preparado](../../../tasks/host/) da Fase 2:
 
-```
+```yaml
 # Debian/Ubuntu com sudo disponível, kernel 5.x+, arch amd64/arm64
 # Firewall já permitindo tráfego dos servidores conforme [requisitos de rede]
 ```
@@ -40,7 +40,7 @@ No novo agente, execute os mesmos passos de [host preparado](../../../tasks/host
 
 Execute **em cada agente novo**:
 
-```
+```yaml
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.36.0+k3s1 K3S_URL=https://<ip-servidor>:6443 K3S_TOKEN=<seu-token> sh -
 ```
 
@@ -50,7 +50,7 @@ Onde:
 
 Exemplo:
 
-```
+```yaml
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.36.0+k3s1 K3S_URL=https://10.0.0.10:6443 K3S_TOKEN='K102abc123::server:xyz789' sh -
 ```
 
@@ -58,13 +58,13 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.36.0+k3s1 K3S_URL=https://
 
 Aguarde ~10-15 segundos. Em **qualquer servidor**, verifique:
 
-```
+```yaml
 sudo kubectl get nodes
 ```
 
 O novo agente deve aparecer como `Ready`:
 
-```
+```yaml
 NAME         STATUS   ROLES          AGE     VERSION
 servidor-0   Ready    control-plane  10m     v1.36.0+k3s1
 agente-1     Ready    worker         20s     v1.36.0+k3s1
@@ -86,7 +86,7 @@ agente-1     Ready    worker         20s     v1.36.0+k3s1
 
 Se você quer que servidores **não** corram workloads (dedicados a control plane), adicione taint:
 
-```
+```yaml
 # Em um servidor
 sudo kubectl taint nodes <nome-servidor> node-role.kubernetes.io/control-plane=:NoSchedule
 ```
@@ -95,7 +95,7 @@ Pods agora só correm em agentes, a menos que especifiquem tolerate.
 
 **Reverter:**
 
-```
+```yaml
 sudo kubectl taint nodes <nome-servidor> node-role.kubernetes.io/control-plane:NoSchedule-
 ```
 
@@ -103,7 +103,7 @@ sudo kubectl taint nodes <nome-servidor> node-role.kubernetes.io/control-plane:N
 
 Depois que agentes estão `Ready`, o scheduler distribui pods entre eles automaticamente. Para testar:
 
-```
+```yaml
 # Criar um pod de teste
 kubectl run nginx --image=nginx:latest
 
@@ -115,7 +115,7 @@ kubectl get pod nginx -o wide
 
 Se precisar remover um agente:
 
-```
+```yaml
 # 1. Drenar o agente (move workloads para outros nós)
 kubectl drain <nome-agente> --ignore-daemonsets --delete-emptydir-data
 
@@ -136,7 +136,7 @@ Veja [Remover um nó K3s](../../../tasks/kubernetes/remove-k3s-node/) para detal
 **Causa:** firewall, conectividade, ou falta de recursos.
 
 **Solução:**
-```
+```yaml
 # No agente
 sudo journalctl -u k3s-agent -n 50
 
@@ -149,7 +149,7 @@ kubectl describe node <nome-agente>
 **Causa:** token inválido, IP do servidor inacessível, ou firewall.
 
 **Solução:**
-```
+```yaml
 # No agente, testar conectividade
 sudo nc -zv <ip-servidor> 6443
 

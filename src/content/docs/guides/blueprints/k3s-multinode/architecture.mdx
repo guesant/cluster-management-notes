@@ -31,7 +31,7 @@ Um **servidor líder** coordena todas as escritas. Cada mudança é proposta aos
 
 O quorum é a quantidade **mínima de servidores que precisam estar saudáveis** para que o cluster funcione. Para N servidores:
 
-```
+```yaml
 Quorum = floor(N / 2) + 1
 ```
 
@@ -49,7 +49,7 @@ Quorum = floor(N / 2) + 1
 
 ### Perda de 1 servidor em 3 (quorum OK)
 
-```
+```yaml
 [Servidor 1 — OK]   [Servidor 2 — FALHA]   [Servidor 3 — OK]
         └─────────────────────┬─────────────────────┘
               Quorum = 2 ✅ (continua funcional)
@@ -61,7 +61,7 @@ Quorum = floor(N / 2) + 1
 
 ### Perda de 2 servidores em 3 (quorum QUEBRADO)
 
-```
+```yaml
 [Servidor 1 — OK]   [Servidor 2 — FALHA]   [Servidor 3 — FALHA]
         └─────────────────────┬─────────────────────┘
               Quorum = 1 ❌ (cluster travado)

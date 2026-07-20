@@ -13,7 +13,7 @@ Configurar um reverse proxy (Nginx, HAProxy) para rotear requests de `127.0.0.1:
 
 ### Passo 1: Gerar certificado auto-assinado
 
-```
+```yaml
 # Gerar chave e certificado para *.local
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
   -keyout /etc/nginx/certs/local.key \
@@ -26,7 +26,7 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 
 ### Passo 2: Criar configuração Nginx
 
-```
+```yaml
 cat > /etc/nginx/sites-available/local-proxy <<'EOF'
 # Upstream servers (serviços internos)
 upstream grafana_backend {
@@ -105,7 +105,7 @@ sudo systemctl restart nginx
 
 ### Passo 1: Criar certificado (igual a Nginx)
 
-```
+```yaml
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
   -keyout /etc/haproxy/certs/local.key \
   -out /etc/haproxy/certs/local.crt \
@@ -118,7 +118,7 @@ chmod 600 /etc/haproxy/certs/local.pem
 
 ### Passo 2: Configuração HAProxy
 
-```
+```yaml
 cat > /etc/haproxy/haproxy.cfg <<'EOF'
 global
   log stdout local0
@@ -164,7 +164,7 @@ sudo systemctl restart haproxy
 
 ## Passo 3: Testar acesso
 
-```
+```yaml
 # Desde o mesmo host (ou via SSH)
 curl -k https://grafana.cluster.local
 
@@ -179,7 +179,7 @@ curl -k https://grafana.cluster.local
 
 Se CoreDNS não resolve externamente:
 
-```
+```yaml
 # Adicionar manualmente ao /etc/hosts
 sudo bash -c 'cat >> /etc/hosts <<EOF
 127.0.0.1 grafana.cluster.local
@@ -195,7 +195,7 @@ EOF'
 **Causa:** reverse proxy não está ouvindo ou serviço backend não está acessível.
 
 **Solução:**
-```
+```yaml
 # Verificar que proxy está ouvindo
 sudo netstat -tuln | grep 127.0.0.1:443
 
@@ -212,7 +212,7 @@ curl localhost:3000
 **Causa:** certificado não cobre o domínio.
 
 **Solução:**
-```
+```yaml
 # Regenerar certificado com SANs corretos
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
   -keyout /etc/nginx/certs/local.key \
@@ -226,7 +226,7 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 **Causa:** reverse proxy não consegue alcançar o backend.
 
 **Solução:**
-```
+```yaml
 # Verificar firewall
 sudo ufw allow 3000  # para Grafana, etc.
 

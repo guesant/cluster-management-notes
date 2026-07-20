@@ -12,7 +12,7 @@ OpenBao começa cada reinicialização no estado **sealed** — as chaves de cri
 
 ## O problema que auto-unseal resolve
 
-```
+```yaml
 Cenário sem auto-unseal:
   1. OpenBao reinicia (crash, update, failover)
   2. Status: SEALED (nenhuma leitura/escrita possível)

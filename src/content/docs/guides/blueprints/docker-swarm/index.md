@@ -31,7 +31,7 @@ Swarm é **mais simples** — um comando (`docker swarm init`) já cria o cluste
     │
 [Worker-0]  [Worker-1]  [Worker-2]
  (app)       (app)       (app)
-```yaml
+```
 
 - **3 ou 5 managers**: quorum para tolerância a falhas. Managers também podem rodar workloads.
 - **Múltiplos workers**: máquinas especializadas para aplicações, sem responsabilidade de consenso.

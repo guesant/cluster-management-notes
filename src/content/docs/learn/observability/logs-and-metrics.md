@@ -48,7 +48,7 @@ Logs e métricas são os pilares de observabilidade. Prometheus coleta métricas
 ```bash
 helm install prometheus prometheus-community/kube-prometheus-stack \
   --namespace monitoring --create-namespace
-```yaml
+```
 
 ---
 
@@ -76,7 +76,7 @@ helm install prometheus prometheus-community/kube-prometheus-stack \
 ```bash
 helm install loki loki-stack/loki-stack \
   --namespace logging --create-namespace
-```yaml
+```
 
 ---
 
@@ -101,7 +101,7 @@ helm install loki loki-stack/loki-stack \
 ```bash
 helm install grafana prometheus-community/grafana \
   --namespace monitoring
-```yaml
+```
 
 ---
 
@@ -117,7 +117,7 @@ Prometheus ← Alertmanager (alertas)
     Grafana (visualização)
        ↓
     Dashboard
-```yaml
+```
 
 ---
 
@@ -143,7 +143,7 @@ Prometheus ← Alertmanager (alertas)
   for: 5m
   annotations:
     summary: "Pod {{ $labels.pod }} restarting too often"
-```yaml
+```
 
 ### Loki: Errors em logs
 
@@ -152,7 +152,7 @@ alerts:
   - alert: ErrorsIncreasing
     expr: |
       sum by (job) (rate({level="error"} [5m])) > 10
-```yaml
+```
 
 ---
 

@@ -22,7 +22,7 @@ Clusters multinode K3s com etcd embarcado têm resiliência, mas também novos m
 
 Quando o cluster para de responder:
 
-```
+```yaml
 # 1. Verificar nós
 sudo kubectl get nodes
 
@@ -45,7 +45,7 @@ sudo journalctl -u k3s -n 50 | grep etcd
 
 **Recuperação:**
 
-```
+```yaml
 # 1. Aguardar 5 min (timeout kubelet)
 sleep 300
 
@@ -71,7 +71,7 @@ kubectl get nodes
 
 **Recuperação:**
 
-```
+```yaml
 # 1. Aguardar 30 segundos (eleição de novo líder)
 sleep 30
 
@@ -96,7 +96,7 @@ sudo systemctl restart k3s
 
 **Recuperação (com backup):**
 
-```
+```yaml
 # 1. Parar todos os servidores
 # Em cada servidor:
 sudo systemctl stop k3s
@@ -127,7 +127,7 @@ sudo kubectl get nodes
 
 **Recuperação (sem backup — perda total):**
 
-```
+```yaml
 # Reconstruir cluster do zero (perda total de estado)
 # Em cada servidor:
 sudo systemctl stop k3s
@@ -151,7 +151,7 @@ curl -sfL https://get.k3s.io | sh -s - server --cluster-init
 
 **Recuperação:**
 
-```
+```yaml
 # 1. Reparar a rede (ligar roteador, consertar cabo, etc)
 
 # 2. Aguardar 1-2 minutos (convergência de cluster)
@@ -173,7 +173,7 @@ sudo kubectl get nodes
 
 **Recuperação:**
 
-```
+```yaml
 # 1. Parar todos os servidores
 sudo systemctl stop k3s
 
@@ -195,7 +195,7 @@ ssh admin@servidor-2 'sudo systemctl start k3s'
 
 Para estar preparado:
 
-```
+```yaml
 ☐ Backups de etcd configurados (snapshots automáticos)
   # No primeiro servidor:
   sudo ls -la /var/lib/rancher/k3s/server/db/snapshots/

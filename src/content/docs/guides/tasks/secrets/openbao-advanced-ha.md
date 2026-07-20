@@ -28,7 +28,7 @@ Sem auto-unseal:
 aws kms create-key --description "OpenBao unseal key"
 aws kms create-alias --alias-name alias/openbao-unseal \
   --target-key-id <key-id>
-```yaml
+```
 
 ### Helm values (com auto-unseal)
 
@@ -55,7 +55,7 @@ seal:
   config:
     region: us-east-1
     kmsKeyId: arn:aws:kms:...
-```yaml
+```
 
 ### Deploy
 
@@ -64,7 +64,7 @@ helm install openbao openbao/openbao \
   -f values.yaml \
   --namespace secrets \
   --create-namespace
-```yaml
+```
 
 ## HA Replication (3+ replicas)
 
@@ -86,7 +86,7 @@ ha:
                   values:
                   - openbao
               topologyKey: kubernetes.io/hostname
-```yaml
+```
 
 Cada réplica em nó diferente (anti-affinity).
 
@@ -105,7 +105,7 @@ storage:
   config:
     connection_url: "postgresql://user:pass@postgres.default.svc:5432/openbao"
     ha_enabled: true
-```yaml
+```
 
 ## Metrics + Alertas
 
@@ -123,7 +123,7 @@ spec:
   endpoints:
   - port: metrics
     interval: 30s
-```yaml
+```
 
 Alert crítico:
 
@@ -133,7 +133,7 @@ Alert crítico:
   for: 1m
   annotations:
     summary: "OpenBao is sealed"
-```yaml
+```
 
 ## Backup + Restore
 
@@ -147,14 +147,14 @@ kubectl exec -n secrets openbao-0 -- \
 # Restore
 kubectl exec -n secrets openbao-0 -- \
   openbao operator raft snapshot restore /tmp/raft.snap
-```yaml
+```
 
 ### PostgreSQL backup
 
 ```bash
 # Standard PostgreSQL backup
 pg_dump -h postgres.default.svc openbao > openbao-backup.sql
-```yaml
+```
 
 ## Initialization (primeiro start)
 
@@ -164,7 +164,7 @@ kubectl exec -n secrets openbao-0 -- \
   openbao operator init \
     -key-shares=5 \
     -key-threshold=3
-```yaml
+```
 
 Com auto-unseal, não precisa de unseal keys manualmente após init.
 

@@ -25,7 +25,7 @@ Request ID: abc123
 │  └─ Call to Service B (100ms)
 │     ├─ Service B (80ms)
 │     └─ Call to Service C (20ms, ERROR)
-```yaml
+```
 
 ## Jaeger — Distribuído, simples
 
@@ -104,7 +104,7 @@ Request ID: abc123
 docker run --rm -p 6831:6831/udp -p 16686:16686 \
   jaegertracing/all-in-one:latest
 # UI em http://localhost:16686
-```yaml
+```
 
 ### OpenTelemetry Collector
 
@@ -112,7 +112,7 @@ docker run --rm -p 6831:6831/udp -p 16686:16686 \
 helm install otel-collector open-telemetry/opentelemetry-collector \
   --set mode=daemonset \
   --set exporters.jaeger.endpoint=jaeger-collector:14250
-```yaml
+```
 
 ---
 
@@ -129,7 +129,7 @@ tracer = trace.get_tracer(__name__)
 with tracer.start_as_current_span("operation") as span:
     span.set_attribute("user.id", 123)
     # código aqui é rastreado
-```yaml
+```
 
 ---
 
@@ -141,7 +141,7 @@ Enviar 100% dos traces = custo alto. Sampling reduz:
 sampler:
   type: probabilistic
   param: 0.1  # 10% dos traces
-```yaml
+```
 
 Recomendação: 1-10% em production, 100% em dev/test.
 

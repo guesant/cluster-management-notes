@@ -8,7 +8,7 @@ sidebar:
 
 ```bash
 ssh-keygen -t ed25519 -C "seu-email@example.com" -f ~/.ssh/id_ed25519 -N ""
-```yaml
+```
 
 **Quando usar:** configurar autenticação SSH, deployment keys.
 
@@ -21,8 +21,6 @@ ssh-keygen -t ed25519 -C "seu-email@example.com" -f ~/.ssh/id_ed25519 -N ""
 
 **Relacionado:**
 
-- [Inspecionar certificado](#inspecionar-certificado-x509)
-
 ---
 
 ## Inspecionar certificado X.509
@@ -30,7 +28,7 @@ ssh-keygen -t ed25519 -C "seu-email@example.com" -f ~/.ssh/id_ed25519 -N ""
 ```bash
 openssl x509 -in cert.pem -text -noout
 # Mostrar: CN, SAN, válido até, issuer
-```yaml
+```
 
 **Quando usar:** verificar domínios alternativos (SAN), data de expiração, issuer de um certificado.
 
@@ -42,9 +40,6 @@ openssl x509 -in cert.pem -text -noout
 
 **Relacionado:**
 
-- [Verificar expiração](#verificar-expiração-de-certificado)
-- [Converter certificado](#converter-certificado-pem-to-der)
-
 ---
 
 ## Verificar expiração de certificado
@@ -55,7 +50,7 @@ openssl x509 -in cert.pem -noout -dates
 
 # Mais legível:
 openssl x509 -in cert.pem -noout -enddate | cut -d= -f2
-```yaml
+```
 
 **Quando usar:** auditoria de certificados expirando, automação de renovação.
 
@@ -66,15 +61,13 @@ openssl x509 -in cert.pem -noout -enddate | cut -d= -f2
 
 **Relacionado:**
 
-- [Inspecionar certificado](#inspecionar-certificado-x509)
-
 ---
 
 ## Converter certificado PEM to DER
 
 ```bash
 openssl x509 -in cert.pem -outform der -out cert.der
-```yaml
+```
 
 **Quando usar:** alguns sistemas (Windows, Android) usam DER (binário) em vez de PEM (texto).
 
@@ -86,8 +79,6 @@ openssl x509 -in cert.pem -outform der -out cert.der
 
 **Relacionado:**
 
-- [Inspecionar certificado](#inspecionar-certificado-x509)
-
 ---
 
 ## Gerar CSR (Certificate Signing Request)
@@ -95,7 +86,7 @@ openssl x509 -in cert.pem -outform der -out cert.der
 ```bash
 openssl req -new -key private.pem -out request.csr \
   -subj "/C=BR/ST=SP/L=São Paulo/O=Empresa/CN=example.com"
-```yaml
+```
 
 **Quando usar:** solicitar certificado assinado por CA (Let's Encrypt, DigiCert, etc.).
 
@@ -107,15 +98,13 @@ openssl req -new -key private.pem -out request.csr \
 
 **Relacionado:**
 
-- [Criar chave SSH](#criar-chave-ssh)
-
 ---
 
 ## Verificar certificado de um servidor remoto
 
 ```bash
 openssl s_client -connect example.com:443 -showcerts < /dev/null | openssl x509 -text -noout
-```yaml
+```
 
 **Quando usar:** auditar certificado de um serviço remoto sem baixar arquivo.
 
@@ -126,4 +115,3 @@ openssl s_client -connect example.com:443 -showcerts < /dev/null | openssl x509 
 
 **Relacionado:**
 
-- [Inspecionar certificado](#inspecionar-certificado-x509)

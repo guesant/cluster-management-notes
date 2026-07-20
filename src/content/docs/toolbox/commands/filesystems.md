@@ -15,7 +15,7 @@ du -sh /*
 
 # Diretórios grandes
 du -sh /* | sort -h | tail -10
-```yaml
+```
 
 **Quando usar:** diagnosticar disco cheio, encontrar o que está comendo espaço.
 
@@ -28,8 +28,6 @@ du -sh /* | sort -h | tail -10
 
 **Relacionado:**
 
-- [Verificar inodes](#verificar-inodes)
-
 ---
 
 ## Verificar inodes
@@ -40,7 +38,7 @@ df -i
 
 # Que diretório está usando inodes
 find / -xdev -printf '%h\n' 2>/dev/null | sort | uniq -c | sort -rn | head -10
-```yaml
+```
 
 **Quando usar:** filesystem cheio mas espaço disponível (problema de inodes).
 
@@ -51,8 +49,6 @@ find / -xdev -printf '%h\n' 2>/dev/null | sort | uniq -c | sort -rn | head -10
 - Limite: filesystem can run out of inodes antes de ficar sem espaço.
 
 **Relacionado:**
-
-- [Verificar espaço em disco](#verificar-espaço-em-disco)
 
 ---
 
@@ -70,7 +66,7 @@ sudo mount -t nfs -o rw,hard,intr server:/export /mnt/nfs
 
 # Desmontar
 sudo umount /mnt/nfs
-```yaml
+```
 
 **Quando usar:** adicionar storage, backup networks, dev environments.
 
@@ -81,8 +77,6 @@ sudo umount /mnt/nfs
 - `umount`: desmontar antes de remover device.
 
 **Relacionado:**
-
-- [Verificar permissões](#verificar-e-mudar-permissões-de-arquivo)
 
 ---
 
@@ -103,7 +97,7 @@ chmod g-w file.txt    # remover write do group
 
 # Recursivo
 chmod -R 755 /path/to/dir
-```yaml
+```
 
 **Quando usar:** fixar permissions de arquivo/script, security.
 
@@ -113,8 +107,6 @@ chmod -R 755 /path/to/dir
 - `-R`: recursivo (cuidado!).
 
 **Relacionado:**
-
-- [Mudar owner](#mudar-owner-de-arquivo)
 
 ---
 
@@ -132,7 +124,7 @@ sudo chown :group file.txt
 
 # Recursivo
 sudo chown -R user:group /path/to/dir
-```yaml
+```
 
 **Quando usar:** file ownership after copy, container volumes, security.
 
@@ -143,8 +135,6 @@ sudo chown -R user:group /path/to/dir
 - Formato: `user:group`.
 
 **Relacionado:**
-
-- [Verificar permissões](#verificar-e-mudar-permissões-de-arquivo)
 
 ---
 
@@ -165,7 +155,7 @@ find /path -atime -1   # acessado há <1 dia
 # Executar comando em resultados
 find /path -name "*.tmp" -delete
 find /path -name "*.log" -exec gzip {} \;
-```yaml
+```
 
 **Quando usar:** limpeza de filesystem, auditoria, logs.
 
@@ -177,8 +167,6 @@ find /path -name "*.log" -exec gzip {} \;
 - `-exec`: rodar comando em cada resultado.
 
 **Relacionado:**
-
-- [Verificar espaço em disco](#verificar-espaço-em-disco)
 
 ---
 
@@ -196,7 +184,7 @@ grep -c "pattern" file.txt
 
 # Mostrar linha + contexto
 grep -B2 -A2 "pattern" file.txt
-```yaml
+```
 
 **Quando usar:** encontrar configuração, debugar, auditoria.
 
@@ -209,4 +197,3 @@ grep -B2 -A2 "pattern" file.txt
 
 **Relacionado:**
 
-- [Encontrar arquivos](#encontrar-arquivos)

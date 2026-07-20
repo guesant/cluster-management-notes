@@ -10,13 +10,13 @@ Um checklist rápido após a implantação de um cluster multinode K3s. Execute 
 
 ## 1. Verificar nós
 
-```
+```yaml
 sudo kubectl get nodes -o wide
 ```
 
 **Esperado:** todos os nós aparecem com `STATUS = Ready`; `ROLES` mostram `control-plane,master` para servidores e nada para agentes.
 
-```
+```yaml
 NAME         STATUS   ROLES                  AGE    VERSION
 servidor-0   Ready    control-plane,master   5m     v1.36.0+k3s1
 servidor-1   Ready    control-plane,master   3m     v1.36.0+k3s1
@@ -25,20 +25,20 @@ agente-1     Ready    <none>                 90s    v1.36.0+k3s1
 ```
 
 **Se algum nó está `NotReady`:**
-```
+```yaml
 kubectl describe node <nome-nó>
 # Procure por "Conditions" — mensagens de erro indicam problema
 ```
 
 ## 2. Verificar componentes de controle
 
-```
+```yaml
 sudo kubectl get pods -n kube-system
 ```
 
 **Esperado:** pods como `coredns`, `local-path-provisioner`, `metrics-server` devem estar `Running` ou `Completed`.
 
-```
+```yaml
 NAME                           READY   STATUS    RESTARTS   AGE
 coredns-869cb4b5bc-xyz1x       1/1     Running   0          5m
 local-path-provisioner-xyz2y   1/1     Running   0          5m
@@ -49,7 +49,7 @@ metrics-server-abc3d           1/1     Running   0          5m
 
 Em qualquer servidor:
 
-```
+```yaml
 sudo kubectl get endpoints kubernetes -n default
 ```
 
@@ -57,7 +57,7 @@ sudo kubectl get endpoints kubernetes -n default
 
 Ou, mais detalhado (em versões recentes):
 
-```
+```yaml
 # Tentar listar membros de etcd (requer kubectl corretamente configurado)
 sudo kubectl exec -n kube-system <etcd-pod-name> -- \
   etcdctl member list
@@ -72,7 +72,7 @@ sudo kubectl exec -n kube-system <etcd-pod-name> -- \
 
 Testar que cada nó consegue alcançar os outros:
 
-```
+```yaml
 # De servidor-0, testar conexão à API nos outros servidores
 for ip in 10.0.0.11 10.0.0.12; do
   echo "Testing $ip..."
@@ -86,13 +86,13 @@ done
 
 ## 5. Verificar rede overlay (Flannel)
 
-```
+```yaml
 sudo kubectl get pods -n kube-flannel
 ```
 
 **Esperado:** 1 pod flannel por nó, todos `Running`.
 
-```
+```yaml
 NAME                   READY   STATUS    RESTARTS   AGE
 kube-flannel-ds-abc1x  1/1     Running   0          5m
 kube-flannel-ds-def2y  1/1     Running   0          5m
@@ -104,7 +104,7 @@ kube-flannel-ds-jkl4w  1/1     Running   0          5m
 
 Criar um pod de teste em cada agente:
 
-```
+```yaml
 # Criar 3 réplicas de Nginx
 kubectl create deployment nginx --image=nginx:latest --replicas=3
 
@@ -118,7 +118,7 @@ kubectl get pods -o wide | grep nginx
 
 Depois limpar:
 
-```
+```yaml
 kubectl delete deployment nginx
 ```
 
@@ -126,7 +126,7 @@ kubectl delete deployment nginx
 
 Se tiver Longhorn ou outro storage instalado:
 
-```
+```yaml
 sudo kubectl get storageclass
 sudo kubectl get pv
 ```
@@ -135,7 +135,7 @@ sudo kubectl get pv
 
 ## 8. Verificar DNS
 
-```
+```yaml
 # Criar um pod de teste
 kubectl run -it --rm debug --image=alpine --restart=Never -- sh
 
@@ -151,7 +151,7 @@ ping -c1 10.0.0.10   # IP de um nó
 
 ## 9. Verificar API Kubernetes
 
-```
+```yaml
 # Health check
 sudo curl -k https://localhost:6443/healthz
 
@@ -160,7 +160,7 @@ sudo curl -k https://localhost:6443/healthz
 
 Se usa load balancer, testar também:
 
-```
+```yaml
 curl -k https://api.seu-cluster.local:6443/healthz
 # (substitua pelo seu endpoint de LB)
 ```
@@ -169,7 +169,7 @@ curl -k https://api.seu-cluster.local:6443/healthz
 
 Procurar por erros recentes nos servidores:
 
-```
+```yaml
 # Logs do K3s
 sudo journalctl -u k3s -n 20 --no-pager | grep -i error
 

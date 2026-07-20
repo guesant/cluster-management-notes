@@ -14,7 +14,7 @@ Service mesh é um padrão de infraestrutura que gerencia comunicação entre mi
 
 ```yaml
 Pod A → Pod B (qual versão? seguro? latência?)
-```yaml
+```
 
 Cada aplicação precisa lidar com:
 
@@ -29,7 +29,7 @@ Cada aplicação precisa lidar com:
 ```yaml
 Pod A → Sidecar proxy → Network → Sidecar proxy → Pod B
         (Istio/Linkerd lidam com tudo)
-```yaml
+```
 
 ---
 
@@ -144,7 +144,7 @@ Trade-off: menos madura que Istio/Linkerd.
 istioctl install --set profile=demo -y
 # Injetar sidecars automáticamente
 kubectl label namespace default istio-injection=enabled
-```yaml
+```
 
 ### Linkerd
 
@@ -152,7 +152,7 @@ kubectl label namespace default istio-injection=enabled
 helm install linkerd2 linkerd/linkerd2 -n linkerd --create-namespace
 # Injetar sidecars via anotação
 kubectl annotate namespace default linkerd.io/inject=enabled
-```yaml
+```
 
 ---
 

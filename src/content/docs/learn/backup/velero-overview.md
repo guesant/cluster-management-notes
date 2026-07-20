@@ -27,7 +27,7 @@ Na recuperação:
   ├─ Cria namespace novo (ou sobrescreve)
   ├─ Restaura resources via `kubectl apply`
   └─ Reconecta volumes restaurados
-```yaml
+```
 
 ## Diferença: etcd snapshot vs. Velero
 

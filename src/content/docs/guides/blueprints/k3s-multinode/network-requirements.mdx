@@ -68,7 +68,7 @@ Se você tiver instalado:
 
 Em cada nó (servidor e agente), permitir tráfego dos nós do cluster:
 
-```
+```yaml
 # Exemplo: nós em 10.0.0.0/24
 
 # API Kubernetes (requer acesso ao servidor)
@@ -87,7 +87,7 @@ sudo ufw allow from 10.0.0.0/24 to any port 2380 proto tcp
 
 Se seu firewall usa `firewalld`, a sintaxe é similar:
 
-```
+```yaml
 # firewalld: adicionar zona trusted para subnet do cluster
 sudo firewall-cmd --permanent --zone=trusted --add-source=10.0.0.0/24
 sudo firewall-cmd --permanent --zone=trusted --add-port=6443/tcp
@@ -118,7 +118,7 @@ Veja [Balancear a API](../api-endpoint/) para mais.
 
 Depois de configurar firewall, testar conectividade entre nós:
 
-```
+```yaml
 # Em um agente, testar conexão à API do servidor
 telnet <ip-do-servidor> 6443
 
@@ -134,7 +134,7 @@ Se conectar, firewall está ok.
 
 Se está usando IPv6, adicione as mesmas portas para IPv6. UFW aceita:
 
-```
+```yaml
 sudo ufw allow from <ipv6-prefix>/64 to any port 6443 proto tcp
 ```
 
@@ -146,7 +146,7 @@ Se nós estão atrás de NAT (ex.: numa nuvem privada), a rede interna (`10.0.0.
 
 BGP usa a porta **179 TCP** entre nós. Se estiver usando mode BGP em lugar de VXLAN (raro), adicione também:
 
-```
+```yaml
 sudo ufw allow from 10.0.0.0/24 to any port 179 proto tcp
 ```
 

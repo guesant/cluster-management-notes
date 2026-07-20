@@ -56,7 +56,7 @@ Se o líder cai, os standbys elegem um novo líder automaticamente (similar a Ra
 
 Todas as réplicas apontam para o mesmo backend de storage (Postgres, Consul, etc.). O storage é a fonte de verdade.
 
-```
+```yaml
 Bao1 escreve secret X em Postgres
 Bao2 lê secret X de Postgres (mesmo valor)
 Líder cai → Bao2 vira líder → continua escrevendo em Postgres
@@ -87,7 +87,7 @@ OpenBao suporta:
 
 ## Fluxo operacional
 
-```
+```yaml
 1. Inicializar primeira réplica (Bao1)
    - Gera chaves de unseal
    - Cria primeiro secret (ex.: database password)
@@ -115,7 +115,7 @@ OpenBao suporta:
 
 Cada réplica se unseala independentemente via KMS:
 
-```
+```yaml
 Bao1, Bao2, Bao3 reiniciam
   ↓
 Todas comunicam ao KMS

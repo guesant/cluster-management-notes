@@ -24,7 +24,7 @@ echo "senha123" | docker secret create db_password -
 
 # Listar
 docker secret ls
-```yaml
+```
 
 ## Usar secret em um service
 
@@ -33,13 +33,13 @@ docker service create \
   --secret db_password \
   --name app \
   <imagem>
-```yaml
+```
 
 Dentro do container:
 
 ```bash
 cat /run/secrets/db_password
-```yaml
+```
 
 ## Criar uma config
 
@@ -52,7 +52,7 @@ docker service create \
   --config source=nginx.conf,target=/etc/nginx/nginx.conf \
   --name web \
   nginx
-```yaml
+```
 
 ## Renovação de secrets
 
@@ -67,7 +67,7 @@ docker service update \
   --secret-remove db_password \
   --secret-add db_password_v2 \
   <service>
-```yaml
+```
 
 Containers antigos usam secret antigo até serem redeployados.
 

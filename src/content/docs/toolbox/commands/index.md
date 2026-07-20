@@ -50,4 +50,4 @@ command here
 
 **Relacionado:**
 - [outra recipe](/path)
-```yaml
+```

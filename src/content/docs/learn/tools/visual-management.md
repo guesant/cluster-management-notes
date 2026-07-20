@@ -35,7 +35,7 @@ k9s
 # → TUI interativa
 # → Pressione ':' para filtrar/buscar
 # → Pressione 'd' para deletar recurso
-```yaml
+```
 
 ---
 
@@ -184,7 +184,7 @@ k9s
 ```bash
 brew install derailed/k9s/k9s
 k9s
-```yaml
+```
 
 ### Lens
 
@@ -197,7 +197,7 @@ helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
 helm install rancher rancher-stable/rancher \
   --namespace cattle-system --create-namespace \
   --set hostname=rancher.example.com
-```yaml
+```
 
 ### Portainer
 
@@ -205,7 +205,7 @@ helm install rancher rancher-stable/rancher \
 docker run -d -p 8000:8000 -p 9000:9000 \
   portainer/portainer-ce:latest
 # UI em http://localhost:9000
-```yaml
+```
 
 ---
 

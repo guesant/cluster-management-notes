@@ -37,7 +37,7 @@ Em Debian e Ubuntu:
 
 > **Executar em:** cada nó manager ou agent que armazenará volumes Longhorn, como `root`.
 
-```
+```yaml
 apt-get update
 apt-get install --yes \
   bash \
@@ -60,7 +60,7 @@ Carregue os módulos usados pelo engine V1 e por volumes criptografados:
 
 > **Executar em:** cada nó manager ou agent que armazenará volumes Longhorn, como `root`.
 
-```
+```yaml
 modprobe iscsi_tcp
 modprobe nfs
 modprobe dm_crypt
@@ -70,7 +70,7 @@ Persista os módulos para os próximos boots:
 
 > **Executar em:** cada nó manager ou agent que armazenará volumes Longhorn, como `root`.
 
-```
+```yaml
 cat >/etc/modules-load.d/longhorn.conf <<'EOF'
 nfs
 dm_crypt
@@ -82,7 +82,7 @@ Valide cada nó antes de instalar o chart:
 
 > **Executar em:** qualquer máquina com `KUBECONFIG`, acesso à API e `longhornctl`.
 
-```
+```yaml
 longhornctl check preflight
 ```
 
@@ -110,7 +110,7 @@ Valide a instalação:
 
 > **Executar em:** qualquer máquina com `KUBECONFIG`, acesso à API e `longhornctl`.
 
-```
+```yaml
 kubectl --namespace longhorn-system get pods
 kubectl --namespace longhorn-system get daemonsets
 helm --namespace longhorn-system status longhorn
@@ -123,7 +123,7 @@ Quando `kubectl` e o kubeconfig estiverem na estação local:
 
 > **Executar em:** estação administrativa com `KUBECONFIG` e acesso à API.
 
-```
+```yaml
 read -r -p "Porta local para a interface do Longhorn [8080]: " LOCAL_PORT
 LOCAL_PORT="${LOCAL_PORT:-8080}"
 
@@ -137,7 +137,7 @@ Quando o port-forward precisar rodar em um manager, execute nele:
 
 > **Executar em:** nó manager com `KUBECONFIG` e acesso à API.
 
-```
+```yaml
 read -r -p "Porta no manager para a interface do Longhorn [8080]: " MANAGER_PORT
 MANAGER_PORT="${MANAGER_PORT:-8080}"
 

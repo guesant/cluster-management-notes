@@ -25,7 +25,7 @@ resource "aws_instance" "k3s_server" {
   instance_type = "t3.medium"
   # ...
 }
-```yaml
+```
 
 - Declarativo, versionado no git, reproducível
 
@@ -152,7 +152,7 @@ module "k3s_cluster" {
   instance_type = "t3.medium"
   count = 3
 }
-```yaml
+```
 
 Reutilizar módulos em múltiplos clusters.
 

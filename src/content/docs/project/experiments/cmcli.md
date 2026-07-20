@@ -118,7 +118,7 @@ cmcli check firewall
 # Port 6443: ALLOW (OK)
 # Port 2379: CLOSED (⚠️ esperado se etcd externo)
 #   → ver: https://site/guides/blueprints/k3s-multinode/#network-requirements
-```yaml
+```
 
 Isso requer:
 

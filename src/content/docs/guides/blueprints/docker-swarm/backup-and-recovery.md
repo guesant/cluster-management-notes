@@ -29,7 +29,7 @@ Parar o Docker, fazer cópia atômica, reiniciar:
 sudo systemctl stop docker
 sudo tar -czf /backup/swarm-$(date +%s).tar.gz /var/lib/docker/swarm/
 sudo systemctl start docker
-```yaml
+```
 
 Ou, sem downtime (menos seguro, snapshot pode estar inconsistente):
 
@@ -39,7 +39,7 @@ sudo tar -czf /backup/swarm-snapshot.tar.gz /var/lib/docker/swarm/
 
 # Testar backup
 tar -tzf /backup/swarm-snapshot.tar.gz | head
-```yaml
+```
 
 ## Automatizar backup
 
@@ -58,7 +58,7 @@ systemctl start docker
 
 # Manter apenas últimos 7 dias
 find $BACKUP_DIR -name "swarm-*.tar.gz" -mtime +7 -delete
-```yaml
+```
 
 ## Recuperação: perda de um manager (ainda há quorum)
 
@@ -74,7 +74,7 @@ systemctl restart docker
 
 # Rejuntar ao cluster
 docker swarm join --token <MANAGER_TOKEN> <IP>:<PORT>
-```yaml
+```
 
 ## Recuperação: perda de quorum (CRÍTICO)
 
@@ -134,7 +134,7 @@ Antes de colocar em produção, testar o procedimento:
 3. docker swarm init --force-new-cluster
 4. Verificar que services e configs estão lá
 5. Tentar deslocar um service
-```yaml
+```
 
 ## Limitações
 

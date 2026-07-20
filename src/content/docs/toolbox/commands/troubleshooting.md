@@ -18,7 +18,7 @@ sudo !!
 
 # Número específico do histórico
 !123  # Roda comando #123
-```yaml
+```
 
 **Quando usar:** fazer retry rápido, executar com privilégio.
 
@@ -29,8 +29,6 @@ sudo !!
 - Histórico fica em `~/.bash_history`.
 
 **Relacionado:**
-
-- [Ver histórico de comandos](#ver-histórico-de-comandos)
 
 ---
 
@@ -48,7 +46,7 @@ history -c
 
 # Procurar no histórico
 history | grep ssh
-```yaml
+```
 
 **Quando usar:** encontrar comando que rodou antes, auditar.
 
@@ -59,8 +57,6 @@ history | grep ssh
 - Para limpar arquivo: `cat /dev/null > ~/.bash_history`.
 
 **Relacionado:**
-
-- [Executar último comando](#executar-último-comando-novamente)
 
 ---
 
@@ -80,7 +76,7 @@ command > output.txt 2>&1
 
 # Descartar output
 command > /dev/null 2>&1
-```yaml
+```
 
 **Quando usar:** capturar logs, silenciar comandos.
 
@@ -92,8 +88,6 @@ command > /dev/null 2>&1
 - `> file 2>&1`: redirecionar stderr para stdout, então stdout para file.
 
 **Relacionado:**
-
-- [Pipelining](#pipelining-de-comandos)
 
 ---
 
@@ -108,7 +102,7 @@ cat file.txt | grep pattern | sort | uniq
 
 # Usar output em múltiplos comandos
 command | tee file.txt | less
-```yaml
+```
 
 **Quando usar:** encadear transformações, filtrar dados.
 
@@ -119,8 +113,6 @@ command | tee file.txt | less
 - `xargs`: converter stdin em argumentos.
 
 **Relacionado:**
-
-- [Redirecionar stderr/stdout](#redirecionar-stderr-e-stdout)
 
 ---
 
@@ -141,7 +133,7 @@ echo $?  # 0 = sucesso, não-zero = erro
 # AND/OR lógico
 command1 && command2  # Roda cmd2 só se cmd1 suceder
 command1 || command2  # Roda cmd2 só se cmd1 falhar
-```yaml
+```
 
 **Quando usar:** scripts, validações, error handling.
 
@@ -151,8 +143,6 @@ command1 || command2  # Roda cmd2 só se cmd1 falhar
 - `&&` / `||` é shorthand para if/else.
 
 **Relacionado:**
-
-- [Redirecionar stderr/stdout](#redirecionar-stderr-e-stdout)
 
 ---
 
@@ -167,7 +157,7 @@ command && echo "Levou $(($SECONDS - $start_time))s"
 
 # Com /usr/bin/time (mais detalhe)
 /usr/bin/time -v command
-```yaml
+```
 
 **Quando usar:** benchmarking, diagnosticar lentidão.
 
@@ -176,10 +166,6 @@ command && echo "Levou $(($SECONDS - $start_time))s"
 - `time`: mostra real, user, sys.
 - `$SECONDS`: tempo desde bash iniciar (não preciso).
 - `/usr/bin/time -v`: mostra memória, I/O, etc.
-
-**Relacionado:**
-
-- [Monitorar CPU/memória](#monitorar-cpumemória-em-tempo-real)
 
 ---
 
@@ -191,7 +177,7 @@ diff <(command1) <(command2)
 
 # Usando comm (mais eficiente se já são arquivo)
 comm -3 <(sort file1) <(sort file2)
-```yaml
+```
 
 **Quando usar:** comparar saída de dois estados, configs antes/depois.
 
@@ -201,8 +187,6 @@ comm -3 <(sort file1) <(sort file2)
 - `comm`: mostra linhas unique de um arquivo, do outro, e comuns.
 
 **Relacionado:**
-
-- [Pipelining](#pipelining-de-comandos)
 
 ---
 
@@ -214,7 +198,7 @@ seq 1 100 | parallel "curl https://api.example.com?id={}"
 
 # Ou com xargs
 seq 1 100 | xargs -P 4 -I {} curl https://api.example.com?id={}
-```yaml
+```
 
 **Quando usar:** speedup de tarefas independentes (testes, downloads, etc).
 

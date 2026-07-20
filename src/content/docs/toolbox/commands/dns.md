@@ -12,7 +12,7 @@ nslookup example.com
 dig example.com
 # ou
 host example.com
-```yaml
+```
 
 **Quando usar:** verificar que um domínio resolve, descobrir IP de um host.
 
@@ -24,9 +24,6 @@ host example.com
 
 **Relacionado:**
 
-- [Testar conectividade](#testar-conectividade-dns-interno)
-- [Listar servidor DNS](#listar-servidor-dns-configurado)
-
 ---
 
 ## Listar servidor DNS configurado
@@ -35,7 +32,7 @@ host example.com
 cat /etc/resolv.conf
 # ou (systemd-resolved)
 resolvectl status
-```yaml
+```
 
 **Quando usar:** confirmar qual resolver está em uso (Google 8.8.8.8, Cloudflare, local, etc.).
 
@@ -46,8 +43,6 @@ resolvectl status
 
 **Relacionado:**
 
-- [Testar resolução](#testar-resolução-de-domínio)
-
 ---
 
 ## Resolver para um nameserver específico
@@ -55,7 +50,7 @@ resolvectl status
 ```bash
 dig @8.8.8.8 example.com
 # Força uso do Google DNS (8.8.8.8)
-```yaml
+```
 
 **Quando usar:** testar se um nameserver específico responde, contornar cache local.
 
@@ -65,8 +60,6 @@ dig @8.8.8.8 example.com
 - Útil para diagnóstico de DNS distribuído.
 
 **Relacionado:**
-
-- [Testar resolução](#testar-resolução-de-domínio)
 
 ---
 
@@ -82,7 +75,7 @@ dig +short example.com A
 
 # Todos: A, AAAA, MX, NS, TXT
 dig example.com +nocmd +noall +answer
-```yaml
+```
 
 **Quando usar:** auditoria de zona, descobrir todos os IPs/aliases.
 
@@ -93,8 +86,6 @@ dig example.com +nocmd +noall +answer
 - `+nocmd +noall +answer` mostra só answers.
 
 **Relacionado:**
-
-- [Verificar record específico](#verificar-record-mx-txt-cname)
 
 ---
 
@@ -109,7 +100,7 @@ dig example.com TXT
 
 # Aliases (CNAME)
 dig example.com CNAME
-```yaml
+```
 
 **Quando usar:** validar email infrastructure, verificar SPF/DKIM, resolver aliases.
 
@@ -120,8 +111,6 @@ dig example.com CNAME
 - CNAME: não pode existir junto com A record.
 
 **Relacionado:**
-
-- [Listar todos os records](#listar-todos-os-records-de-um-domínio)
 
 ---
 
@@ -138,7 +127,7 @@ docker exec <container> nslookup myservice
 # Verificar CoreDNS
 kubectl get svc -n kube-system coredns
 kubectl logs -n kube-system -l k8s-app=kube-dns
-```yaml
+```
 
 **Quando usar:** diagnosticar resolução de services internas, verificar CoreDNS.
 
@@ -150,8 +139,6 @@ kubectl logs -n kube-system -l k8s-app=kube-dns
 
 **Relacionado:**
 
-- [Testar resolução](#testar-resolução-de-domínio)
-
 ---
 
 ## Medir latência de resolução
@@ -159,7 +146,7 @@ kubectl logs -n kube-system -l k8s-app=kube-dns
 ```bash
 time dig example.com
 # mostra tempo total de lookup
-```yaml
+```
 
 **Quando usar:** diagnosticar lentidão de DNS, comparar resolvers.
 
@@ -171,4 +158,3 @@ time dig example.com
 
 **Relacionado:**
 
-- [Testar resolução](#testar-resolução-de-domínio)

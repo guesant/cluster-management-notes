@@ -151,13 +151,13 @@ spec:
         spec:
           securityContext:
             runAsNonRoot: true
-```yaml
+```
 
 ### Pod Security: Baseline
 
 ```bash
 kubectl label namespace default pod-security.kubernetes.io/enforce=baseline
-```yaml
+```
 
 ---
 

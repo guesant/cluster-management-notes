@@ -16,7 +16,7 @@ Script: `src/scripts/check-cluster-health.sh`
 
 ```bash
 ./src/scripts/check-cluster-health.sh
-```yaml
+```
 
 **Saída:** JSON com status de:
 
@@ -45,7 +45,7 @@ Script: `src/scripts/check-cluster-health.sh`
     "api_responsive": "pass"
   }
 }
-```yaml
+```
 
 ## Integração no CI
 
@@ -69,7 +69,7 @@ Para cada checklist em `operations/checklists/`, criar script correspondente:
 operations/checklists/cluster-operational-checklist.md
 ↓
 src/scripts/validate-cluster-operational.sh
-```yaml
+```
 
 **Estrutura do script:**
 
@@ -90,7 +90,7 @@ check_item_2() {
 generate_report() {
   # Retornar JSON ou texto
 }
-```yaml
+```
 
 ### Checklists candidatos a automação
 
@@ -131,7 +131,7 @@ Todos os scripts retornam JSON para:
     }
   ]
 }
-```yaml
+```
 
 ---
 

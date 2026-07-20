@@ -31,7 +31,7 @@ flowchart TD
 
 Escolha um nó (ex.: agente-1) e draine-o:
 
-```
+```yaml
 kubectl drain agente-1 \
   --ignore-daemonsets \
   --delete-emptydir-data \
@@ -45,7 +45,7 @@ kubectl drain agente-1 \
 
 **Saída esperada:**
 
-```
+```yaml
 node/agente-1 already cordoned
 pod/nginx-abc123 evicted
 pod/my-app-def456 evicted
@@ -60,7 +60,7 @@ Agora o nó está `CordonSchedulingDisabled` — nenhum novo pod é agendado nel
 
 ### Atualizar K3s
 
-```
+```yaml
 # SSH para o nó
 ssh admin@agente-1
 
@@ -76,7 +76,7 @@ sudo systemctl status k3s-agent
 
 Ou, se estiver usando um servidor:
 
-```
+```yaml
 sudo systemctl stop k3s
 
 curl -sfL https://get.k3s.io | INSTALL_K3S_SKIP_START=true sh -
@@ -86,7 +86,7 @@ sudo systemctl start k3s
 
 ### Aplicar patches do SO
 
-```
+```yaml
 sudo apt update && sudo apt upgrade -y
 sudo reboot
 ```
@@ -97,7 +97,7 @@ K3s reinicia automaticamente após o reboot.
 
 Se o nó está danificado, você pode desligá-lo sem impactar o cluster:
 
-```
+```yaml
 # Remover o nó do cluster (não apenas drenar, mas remover)
 kubectl delete node agente-1
 
@@ -109,13 +109,13 @@ ssh admin@agente-1 'sudo shutdown -h now'
 
 Depois que manutenção termina e o nó está saudável, libere-o para receber workloads novamente:
 
-```
+```yaml
 kubectl uncordon agente-1
 ```
 
 **Saída esperada:**
 
-```
+```yaml
 node/agente-1 uncordoned
 ```
 
@@ -123,7 +123,7 @@ node/agente-1 uncordoned
 
 Aguarde ~10 segundos e verifique:
 
-```
+```yaml
 kubectl get nodes
 
 # Esperado: agente-1 volta a "Ready"
@@ -133,7 +133,7 @@ kubectl get nodes
 
 Se o nó fica `NotReady`, confira logs:
 
-```
+```yaml
 kubectl describe node agente-1
 kubectl logs -n kube-system <kubelet-log-pod>
 ```
@@ -142,7 +142,7 @@ kubectl logs -n kube-system <kubelet-log-pod>
 
 Drenar um servidor é similar, mas com mais impacto:
 
-```
+```yaml
 # Drenar servidor-0
 kubectl drain servidor-0 \
   --ignore-daemonsets \
@@ -168,7 +168,7 @@ kubectl uncordon servidor-0
 
 Pod não é gerenciado por Deployment/StatefulSet/DaemonSet — é um pod solo. Solução:
 
-```
+```yaml
 # Opção A: deletar o pod (é solo, recreável)
 kubectl delete pod <nome-pod> -n <namespace>
 
@@ -180,7 +180,7 @@ kubectl drain <nó> --force --ignore-daemonsets --delete-emptydir-data
 
 Pods não terminam em tempo. Aumentar `--grace-period` ou investigar por quê:
 
-```
+```yaml
 # Checar status de pods em drain
 kubectl get pods --all-namespaces | grep <nó>
 
@@ -192,7 +192,7 @@ kubectl drain <nó> --grace-period=5 --force --ignore-daemonsets
 
 Logs indicam falha ao reiniciar K3s. Conferir:
 
-```
+```yaml
 # No nó
 sudo journalctl -u k3s-agent -n 50
 
@@ -209,7 +209,7 @@ Para atualizar o cluster inteiro (ex.: K3s 1.35 → 1.36):
 2. Depois atualizar os agentes um por um
 3. Verificar que cluster está `Ready` após cada nó
 
-```
+```yaml
 # Script para atualizar todos os servidores
 for server in servidor-0 servidor-1 servidor-2; do
   echo "Updating $server..."

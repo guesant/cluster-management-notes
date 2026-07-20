@@ -14,14 +14,14 @@ Portanto, não considere uma porta publicada pelo Docker protegida apenas porque
 
 Para serviços que só devem ser acessados pelo próprio host, faça bind no loopback:
 
-```
+```yaml
 ports:
   - "127.0.0.1:5432:5432"
 ```
 
 Para serviços que devem ser acessados somente por uma rede específica, faça bind no endereço da interface correspondente:
 
-```
+```yaml
 ports:
   - "192.168.1.10:5432:5432"
 ```

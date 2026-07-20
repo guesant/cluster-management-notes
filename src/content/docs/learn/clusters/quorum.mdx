@@ -56,7 +56,7 @@ flowchart LR
 
 ## Cenário: Perda de 1 servidor em 3
 
-```
+```yaml
 Antes:
   [Srv-0 (líder)]  [Srv-1 (seg)]  [Srv-2 (seg)]
         3           3              3
@@ -74,7 +74,7 @@ Quorum de 2 (em 3 servidores) significava: máximo de 1 falha = cluster continua
 
 ## Cenário: Perda de quorum (2+ em 3)
 
-```
+```yaml
 Antes:
   [Srv-0]  [Srv-1]  [Srv-2]
      3       3        3

@@ -66,7 +66,7 @@ K3s API Server
   Kine proxy (converte etcd API → SQL)
        ↓
 PostgreSQL (ou SQLite, MySQL, etcd)
-```yaml
+```
 
 Kine é transparente para aplicações — veem etcd, mas dados estão em SQL.
 

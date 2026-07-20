@@ -18,7 +18,7 @@ sudo systemctl disable nginx
 
 # Status
 sudo systemctl status nginx
-```yaml
+```
 
 **Quando usar:** ligar/desligar aplicações, autostart, diagnóstico.
 
@@ -29,9 +29,6 @@ sudo systemctl status nginx
 - `status`: mostra PID, logs, memória.
 
 **Relacionado:**
-
-- [Ver logs de service](#ver-logs-de-um-service)
-- [Recarregar configuração](#recarregar-configuração-de-service)
 
 ---
 
@@ -52,7 +49,7 @@ journalctl -u nginx -b
 
 # Entre timestamps
 journalctl -u nginx --since "2026-07-19 10:00:00" --until "2026-07-19 11:00:00"
-```yaml
+```
 
 **Quando usar:** debugar service, ver erros de startup.
 
@@ -64,8 +61,6 @@ journalctl -u nginx --since "2026-07-19 10:00:00" --until "2026-07-19 11:00:00"
 - `-b`: desde última boot.
 
 **Relacionado:**
-
-- [Gerenciar serviços](#gerenciar-serviços)
 
 ---
 
@@ -80,7 +75,7 @@ sudo systemctl daemon-reload
 
 # Verificar unidade recarregou
 sudo systemctl status nginx
-```yaml
+```
 
 **Quando usar:** aplicar mudanças de config sem downtime (se suportado).
 
@@ -91,8 +86,6 @@ sudo systemctl status nginx
 - `restart`: mata tudo, inicia novo (downtime).
 
 **Relacionado:**
-
-- [Gerenciar serviços](#gerenciar-serviços)
 
 ---
 
@@ -107,7 +100,7 @@ systemctl status systemd-tmpfiles-clean.timer
 
 # Testar timer (rodar agora)
 sudo systemctl start systemd-tmpfiles-clean.service
-```yaml
+```
 
 **Quando usar:** agendamentos (backups, limpeza), alternativa a cron.
 
@@ -117,8 +110,6 @@ sudo systemctl start systemd-tmpfiles-clean.service
 - Logs vão para journalctl.
 
 **Relacionado:**
-
-- [Ver logs de service](#ver-logs-de-um-service)
 
 ---
 
@@ -147,7 +138,7 @@ WantedBy=multi-user.target
 sudo systemctl daemon-reload
 sudo systemctl enable myapp.service
 sudo systemctl start myapp.service
-```yaml
+```
 
 **Quando usar:** rodar aplicações customizadas como services.
 
@@ -160,9 +151,6 @@ sudo systemctl start myapp.service
 - `Type=forking`: para daemons que fazem fork.
 
 **Relacionado:**
-
-- [Gerenciar serviços](#gerenciar-serviços)
-- [Ver logs de service](#ver-logs-de-um-service)
 
 ---
 
@@ -181,7 +169,7 @@ systemctl list-units --type=target
 
 # Dependências de um unit
 systemctl list-dependencies nginx
-```yaml
+```
 
 **Quando usar:** inicializar em modo específico, entender boot order.
 
@@ -190,7 +178,3 @@ systemctl list-dependencies nginx
 - `multi-user.target`: servidor (sem GUI).
 - `graphical.target`: desktop.
 - `rescue.target`: emergency mode.
-
-**Relacionado:**
-
-- [Gerenciar serviços](#gerenciar-serviços)

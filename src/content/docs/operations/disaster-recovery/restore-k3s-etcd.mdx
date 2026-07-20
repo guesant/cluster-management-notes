@@ -23,7 +23,7 @@ Restaurar um snapshot substitui o estado atual do datastore inteiro. Nunca execu
 
 > **Executar em:** o host de destino, como `root`.
 
-```
+```yaml
 systemctl stop k3s 2>/dev/null || true
 
 k3s server \
@@ -39,7 +39,7 @@ Se o host de destino é uma máquina nova (reconstrução completa), instale o K
 
 > **Executar em:** o host restaurado.
 
-```
+```yaml
 systemctl status k3s
 k3s kubectl get nodes
 k3s kubectl get pods --all-namespaces

@@ -42,7 +42,7 @@ Data Center A        Data Center B         Data Center C
 
 Cloud LB (multi-zona)
   └─ 6443 (API servers)
-```yaml
+```
 
 Perder DC A inteiro → cluster continua (quorum em B+C).
 
@@ -57,7 +57,7 @@ K3s 1 → PostgreSQL Primary (DC-A)
 K3s 2 →   ↓ (async replication)
 K3s 3 → PostgreSQL Replica (DC-B)
         Replica (DC-C)
-```yaml
+```
 
 Vantagens:
 
@@ -74,7 +74,7 @@ Vantagens:
 ```yaml
 kubeconfig:
   server: https://k3s-1:6443  # Single point
-```yaml
+```
 
 **Com LB:**
 
@@ -86,7 +86,7 @@ Cloud LB
   ├─ k3s-1:6443
   ├─ k3s-2:6443
   └─ k3s-3:6443
-```yaml
+```
 
 Perder K3s 1 → LB roteia para 2 ou 3.
 
@@ -128,7 +128,7 @@ evictionHard:
   disk.available: "10%"
 nodeStatusUpdateFrequency: 10s
 nodeStatusReportFrequency: 5m
-```yaml
+```
 
 **Node Problem Detector + auto-removal:**
 
@@ -145,14 +145,14 @@ nodeStatusReportFrequency: 5m
 ```bash
 velero backup create my-backup
 # Se disaster: velero restore create --from-backup my-backup
-```yaml
+```
 
 **Etcd snapshot + restore:**
 
 ```bash
 etcdctl snapshot save backup.db
 etcdctl snapshot restore backup.db --data-dir=/var/lib/etcd-restored
-```yaml
+```
 
 Recomendação: ambos (app-level + datastore-level).
 

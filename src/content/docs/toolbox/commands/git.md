@@ -18,7 +18,7 @@ git diff --cached
 
 # Comparar com branch
 git diff main...feature
-```yaml
+```
 
 **Quando usar:** revisar o que mudou antes de commit.
 
@@ -29,8 +29,6 @@ git diff main...feature
 - `git diff --cached`: mostra staged changes.
 
 **Relacionado:**
-
-- [Fazer commit](#fazer-commit)
 
 ---
 
@@ -46,7 +44,7 @@ git commit -m "Título da mudança" -m "Descrição mais detalhada aqui"
 # Commit com tudo (não recomendado para unstaged)
 git add .
 git commit -m "todos os arquivos"
-```yaml
+```
 
 **Quando usar:** registrar mudanças.
 
@@ -57,9 +55,6 @@ git commit -m "todos os arquivos"
 - Sem `-m`: abre editor.
 
 **Relacionado:**
-
-- [Status e diff](#status-e-diff)
-- [Push](#push-para-remote)
 
 ---
 
@@ -77,7 +72,7 @@ git log --graph --oneline --all
 
 # Commits de um arquivo
 git log -- filename
-```yaml
+```
 
 **Quando usar:** entender histórico, encontrar quando bug foi introduzido.
 
@@ -89,8 +84,6 @@ git log -- filename
 - `--since`/`--until`: range de tempo.
 
 **Relacionado:**
-
-- [Reverter commit](#reverter-commit)
 
 ---
 
@@ -111,7 +104,7 @@ git checkout -b feature/my-feature
 
 # Deletar branch
 git branch -d feature/my-feature
-```yaml
+```
 
 **Quando usar:** isolar trabalho, features paralelas.
 
@@ -121,9 +114,6 @@ git branch -d feature/my-feature
 - Branch local != remote (push para sincronizar).
 
 **Relacionado:**
-
-- [Push](#push-para-remote)
-- [Merge](#merge-de-branches)
 
 ---
 
@@ -138,7 +128,7 @@ git merge --no-ff feature/my-feature
 
 # Abort se conflito
 git merge --abort
-```yaml
+```
 
 **Quando usar:** integrar feature branch em main.
 
@@ -148,9 +138,6 @@ git merge --abort
 - Conflitos requerem resolução manual.
 
 **Relacionado:**
-
-- [Branches](#branches)
-- [Reverter commit](#reverter-commit)
 
 ---
 
@@ -165,7 +152,7 @@ git revert HEAD
 
 # Reset local (desfazer, não cria commit)
 git reset --hard HEAD~1  # Cuidado!
-```yaml
+```
 
 **Quando usar:** desfazer em público (revert), desfazer local (reset).
 
@@ -175,9 +162,6 @@ git reset --hard HEAD~1  # Cuidado!
 - `reset --hard`: destrói histórco local (cuidado em branches compartilhadas).
 
 **Relacionado:**
-
-- [Fazer commit](#fazer-commit)
-- [Ver histórico](#ver-histórico)
 
 ---
 
@@ -195,7 +179,7 @@ git stash pop
 
 # Recuperar stash específico
 git stash apply stash@{0}
-```yaml
+```
 
 **Quando usar:** mudar de branch sem commitar, salvar work in progress.
 
@@ -206,8 +190,6 @@ git stash apply stash@{0}
 - `apply`: recupera mas mantém stash.
 
 **Relacionado:**
-
-- [Branches](#branches)
 
 ---
 
@@ -225,7 +207,7 @@ git push --force-with-lease
 
 # Deletar branch no remote
 git push origin --delete feature/my-feature
-```yaml
+```
 
 **Quando usar:** enviar commits para servidor.
 
@@ -236,9 +218,6 @@ git push origin --delete feature/my-feature
 - Nunca force-push a main/master.
 
 **Relacionado:**
-
-- [Pull](#pull-do-remote)
-- [Fazer commit](#fazer-commit)
 
 ---
 
@@ -253,7 +232,7 @@ git fetch
 
 # Rebase em vez de merge
 git pull --rebase
-```yaml
+```
 
 **Quando usar:** sincronizar com remoto, atualizar local.
 
@@ -264,5 +243,3 @@ git pull --rebase
 
 **Relacionado:**
 
-- [Push](#push-para-remote)
-- [Ver histórico](#ver-histórico)

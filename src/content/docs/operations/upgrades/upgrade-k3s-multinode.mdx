@@ -17,7 +17,7 @@ Atualizar um cluster multinode sem downtime exige coordenação: drain um nó, a
 
 ## Fluxo geral
 
-```
+```yaml
 Servidores: servidor-0 → servidor-1 → servidor-2
 Agentes:    agente-1 → agente-2 → agente-N
 
@@ -31,7 +31,7 @@ Para cada nó:
 
 ## Passo 1: Escolher versão-alvo
 
-```
+```yaml
 # Ver versão atual
 sudo kubectl version --short
 
@@ -47,7 +47,7 @@ Atualizar servidores **primeiro** garante que o control plane fique saudável an
 
 ### Para cada servidor (servidor-0, servidor-1, servidor-2):
 
-```
+```yaml
 # 1. Drenar o servidor (move workloads)
 kubectl drain <nome-servidor> \
   --ignore-daemonsets \
@@ -87,7 +87,7 @@ sleep 120
 
 **Exemplo completo para servidor-0:**
 
-```
+```yaml
 # Drenar
 kubectl drain servidor-0 --ignore-daemonsets --delete-emptydir-data
 
@@ -109,7 +109,7 @@ kubectl uncordon servidor-0
 
 Se tem 3 servidores e está atualizando um de cada vez:
 
-```
+```yaml
 Antes: [Srv0 v1.35]  [Srv1 v1.35]  [Srv2 v1.35]  (quorum = 2)
        [v1.35]       [v1.35]       [v1.35]
 
@@ -130,7 +130,7 @@ Mistura de versões (v1.35 + v1.36) é OK por um tempo. K3s suporta até 1 vers�
 
 Depois que todos os servidores estão atualizados, atualizar agentes:
 
-```
+```yaml
 # Para cada agente (agente-1, agente-2, ...):
 kubectl drain <nome-agente> --ignore-daemonsets --delete-emptydir-data
 
@@ -147,7 +147,7 @@ sleep 60
 
 ## Passo 4: Verificar
 
-```
+```yaml
 # Ver versões finais
 kubectl version --short
 
@@ -162,7 +162,7 @@ kubectl get pods -A
 
 Para clusters com muitos agentes, script para automatizar:
 
-```
+```yaml
 #!/bin/bash
 set -euo pipefail
 
@@ -225,7 +225,7 @@ echo "Cluster upgrade complete!"
 
 Alguns pods não desligam rápido. Aumentar `--grace-period`:
 
-```
+```yaml
 kubectl drain <nó> --grace-period=300 --ignore-daemonsets --delete-emptydir-data
 ```
 
@@ -233,14 +233,14 @@ kubectl drain <nó> --grace-period=300 --ignore-daemonsets --delete-emptydir-dat
 
 Conferir logs:
 
-```
+```yaml
 ssh admin@<servidor>
 sudo journalctl -u k3s -n 50 --no-pager
 ```
 
 Causa comum: versão de K3s não compatível, ou permissões/disco. Reinstalar manualmente se necessário:
 
-```
+```yaml
 sudo systemctl stop k3s
 sudo rm -rf /var/lib/rancher/k3s/
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.36.0+k3s1 sh -
@@ -250,7 +250,7 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.36.0+k3s1 sh -
 
 Isso **não deveria acontecer** se você seguir o procedimento (atualizar 1 nó de cada vez). Se acontecer:
 
-```
+```yaml
 # Parar o upgrade imediatamente
 # Deixar todos os servidores rodarem downgrade:
 ssh admin@<servidor-que-falhou>

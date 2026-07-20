@@ -13,7 +13,7 @@ Em um cluster com 3 servidores K3s, cada servidor tem a API rodando na porta 644
 
 Crie um registro DNS apontando para **todos os IPs dos servidores**:
 
-```
+```yaml
 api.seu-cluster.local.  A   10.0.0.10  ; servidor-0
 api.seu-cluster.local.  A   10.0.0.11  ; servidor-1
 api.seu-cluster.local.  A   10.0.0.12  ; servidor-2
@@ -31,7 +31,7 @@ api.seu-cluster.local.  A   10.0.0.12  ; servidor-2
 
 Coloque um load balancer (Nginx, HAProxy, ou managed LB em nuvem) na frente dos servidores:
 
-```
+```yaml
 Clientes (admin, workload, apps)
        ↓
 ┌─────────────────────────────────────┐
@@ -58,7 +58,7 @@ Clientes (admin, workload, apps)
 
 Em um host dedicado (ou em um dos servidores, se suportar):
 
-```
+```yaml
 # /etc/haproxy/haproxy.cfg
 
 global
@@ -86,7 +86,7 @@ backend servers
 
 Depois, restart HAProxy:
 
-```
+```yaml
 sudo systemctl restart haproxy
 ```
 
@@ -94,7 +94,7 @@ Clientes agora apontam para `10.0.0.5:6443` (ou DNS alias `api.seu-cluster.local
 
 ### Exemplo: Nginx simples
 
-```
+```yaml
 # /etc/nginx/sites-available/k3s-api
 
 upstream k3s_servers {
@@ -121,7 +121,7 @@ server {
 
 Se você já tem Traefik como ingress controller no cluster, pode usá-lo para balancear a API:
 
-```
+```yaml
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
@@ -145,7 +145,7 @@ spec:
 
 A API K3s vem com certificados auto-assinados para `localhost` e o nome do nó. Para múltiplos nós, você precisa de certificados que cubram:
 
-```
+```yaml
 api.seu-cluster.local
 10.0.0.5  (IP do LB)
 10.0.0.10, 10.0.0.11, 10.0.0.12  (IPs dos servidores)
@@ -155,7 +155,7 @@ api.seu-cluster.local
 
 Se tem cert-manager instalado e `api.seu-cluster.local` é um domínio público:
 
-```
+```yaml
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -172,7 +172,7 @@ spec:
 
 Para labs/teste, gerar um certificado auto-assinado que cubra todos os IPs:
 
-```
+```yaml
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
   -keyout api-key.key -out api-cert.crt \
   -subj "/CN=api.seu-cluster.local" \
@@ -188,7 +188,7 @@ Depois copiar o certificado para os clientes que acessam a API.
 
 Depois que LB/DNS está pronto, os clientes apontam para o novo endpoint. Exemplo:
 
-```
+```yaml
 # ~/.kube/config
 apiVersion: v1
 clusters:
@@ -212,7 +212,7 @@ users:
 
 Testar que o LB funciona:
 
-```
+```yaml
 # Do cliente
 curl -k https://api.seu-cluster.local:6443/healthz
 
@@ -221,7 +221,7 @@ curl -k https://api.seu-cluster.local:6443/healthz
 
 Testar que kubectl funciona:
 
-```
+```yaml
 kubectl cluster-info
 
 # Esperado: "Kubernetes master is running at https://api.seu-cluster.local:6443"

@@ -67,7 +67,7 @@ AWS (Control plane)
 VPC (Você gerencia)
   ├─ EC2 nodes (opção classic)
   └─ Fargate (opção serverless, sem nodes visíveis)
-```yaml
+```
 
 ## Worker nodes: EC2 vs. Fargate
 
@@ -89,7 +89,7 @@ aws eks update-kubeconfig --region us-east-1 --name my-cluster
 
 # 3. Deploy apps (kubectl normal)
 kubectl apply -f app.yaml
-```yaml
+```
 
 ---
 

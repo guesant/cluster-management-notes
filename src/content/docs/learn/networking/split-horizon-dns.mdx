@@ -10,7 +10,7 @@ sidebar:
 
 ## O problema que split-horizon resolve
 
-```
+```yaml
 Exemplo: seu cluster roda Grafana
 - Acesso interno: grafana.cluster.local → 10.0.0.5:3000
 - Acesso externo: grafana.example.com → 203.0.113.1 (público, com auth)
@@ -62,7 +62,7 @@ flowchart TB
 
 Porque o reverse proxy roda **no mesmo host** onde o admin está fazendo a consulta (ex.: bastion, VPN gateway, laptop com SSH tunnel).
 
-```
+```yaml
 Fluxo:
   admin@laptop conecta via SSH ao bastion
   bastion resolve grafana.cluster.local → 127.0.0.1
@@ -73,7 +73,7 @@ Fluxo:
 
 O reverse proxy usa **SNI** (TLS extension) para rotear requests de diferentes domínios internos pela mesma porta (443):
 
-```
+```yaml
 Cliente conecta a 127.0.0.1:443, informa SNI: grafana.cluster.local
 Reverse proxy vê SNI, roteia para pod Grafana
 

@@ -19,7 +19,7 @@ O instalador baixa a versão estável indicada por `dl.k8s.io` e valida o SHA-25
 
 > **Executar em:** máquina onde a CLI será instalada.
 
-```
+```yaml
 curl -sfL \
   https://raw.githubusercontent.com/guesant/infrastructure-and-cluster-notebook/refs/heads/main/scripts/install/kubectl.sh \
   | bash -
@@ -35,7 +35,7 @@ O instalador usa o script oficial da linha Helm 3:
 
 > **Executar em:** máquina onde a CLI será instalada.
 
-```
+```yaml
 curl -sfL \
   https://raw.githubusercontent.com/guesant/infrastructure-and-cluster-notebook/refs/heads/main/scripts/install/helm.sh \
   | bash -
@@ -49,7 +49,7 @@ O instalador baixa a versão do canal `stable` para `amd64` ou `arm64`:
 
 > **Executar em:** máquina onde a CLI será instalada.
 
-```
+```yaml
 curl -sfL \
   https://raw.githubusercontent.com/guesant/infrastructure-and-cluster-notebook/refs/heads/main/scripts/install/argocd.sh \
   | bash -
@@ -83,7 +83,7 @@ Depois de instalar as ferramentas, valide as versões:
 
 > **Executar em:** máquina onde as CLIs foram instaladas.
 
-```
+```yaml
 kubectl version --client
 helm version
 argocd version --client

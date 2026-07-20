@@ -18,7 +18,7 @@ docker ps -n 5
 
 # Com tamanho
 docker ps -s
-```yaml
+```
 
 **Quando usar:** verificar que container está rodando, encontrar parado.
 
@@ -29,9 +29,6 @@ docker ps -s
 - `STATUS`: Up, Exited, Paused.
 
 **Relacionado:**
-
-- [Ver logs de container](#ver-logs-de-um-container)
-- [Executar comando em container](#executar-comando-em-um-container)
 
 ---
 
@@ -49,7 +46,7 @@ docker logs -f <container>
 
 # Com timestamps
 docker logs -t <container>
-```yaml
+```
 
 **Quando usar:** debugar aplicação, ver erros.
 
@@ -60,9 +57,6 @@ docker logs -t <container>
 - `--tail N`: últimas N linhas.
 
 **Relacionado:**
-
-- [Listar containers](#listar-containers)
-- [Executar comando](#executar-comando-em-um-container)
 
 ---
 
@@ -77,7 +71,7 @@ docker exec <container> env
 
 # Como usuário específico
 docker exec -u www-data <container> whoami
-```yaml
+```
 
 **Quando usar:** debugar dentro do container, inspecionar estado.
 
@@ -88,8 +82,6 @@ docker exec -u www-data <container> whoami
 - `/bin/sh` é mais portável que `/bin/bash` (alpine, etc).
 
 **Relacionado:**
-
-- [Ver logs](#ver-logs-de-um-container)
 
 ---
 
@@ -104,7 +96,7 @@ docker inspect --format='{{.NetworkSettings.IPAddress}}' <container>
 
 # Variáveis de ambiente
 docker inspect --format='{{json .Config.Env}}' <container> | jq .
-```yaml
+```
 
 **Quando usar:** descobrir configuração, rede, volumes.
 
@@ -115,8 +107,6 @@ docker inspect --format='{{json .Config.Env}}' <container> | jq .
 - Útil para automação.
 
 **Relacionado:**
-
-- [Listar containers](#listar-containers)
 
 ---
 
@@ -131,7 +121,7 @@ docker images --digests
 
 # Dangling images (sem tag)
 docker images -f dangling=true
-```yaml
+```
 
 **Quando usar:** verificar que imagens estão disponíveis, limpeza.
 
@@ -142,8 +132,6 @@ docker images -f dangling=true
 - Imagens dangling são intermediárias não tagueadas.
 
 **Relacionado:**
-
-- [Remover imagem](#remover-imagem)
 
 ---
 
@@ -162,7 +150,7 @@ docker rmi <image>
 
 # Remover imagens dangling
 docker image prune
-```yaml
+```
 
 **Quando usar:** limpeza, liberar espaço, remover falhas.
 
@@ -173,9 +161,6 @@ docker image prune
 - `container prune`: limpa containers parados.
 
 **Relacionado:**
-
-- [Listar containers](#listar-containers)
-- [Listar imagens](#listar-imagens)
 
 ---
 
@@ -190,7 +175,7 @@ docker build -f Dockerfile.dev -t myapp:dev .
 
 # Com argumentos
 docker build --build-arg VERSION=1.0 -t myapp:1.0 .
-```yaml
+```
 
 **Quando usar:** criar imagem customizada.
 
@@ -202,9 +187,6 @@ docker build --build-arg VERSION=1.0 -t myapp:1.0 .
 - Build layers são cacheadas (melhorar se mudar deps antes de code).
 
 **Relacionado:**
-
-- [Listar imagens](#listar-imagens)
-- [Push de imagem](#push-para-registry)
 
 ---
 
@@ -222,7 +204,7 @@ docker push myregistry/myapp:1.0
 
 # Logout
 docker logout
-```yaml
+```
 
 **Quando usar:** subir imagem para registry (Docker Hub, ECR, etc).
 
@@ -234,4 +216,3 @@ docker logout
 
 **Relacionado:**
 
-- [Build de imagem](#build-de-imagem)

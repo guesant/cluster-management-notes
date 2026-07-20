@@ -13,7 +13,7 @@ CoreDNS já vem instalado no K3s. Este guia configura-o para responder a queries
 
 CoreDNS em K3s roda como deployment em `kube-system`:
 
-```
+```yaml
 kubectl get deployment -n kube-system coredns
 
 # Esperado:
@@ -23,7 +23,7 @@ kubectl get deployment -n kube-system coredns
 
 ## Passo 2: Obter IP do serviço CoreDNS
 
-```
+```yaml
 kubectl get svc -n kube-system coredns
 
 # Esperado:
@@ -37,13 +37,13 @@ kubectl get svc -n kube-system coredns
 
 CoreDNS lê configuração de um ConfigMap. Editar:
 
-```
+```yaml
 kubectl edit configmap coredns -n kube-system
 ```
 
 Procurar pela seção `Corefile`. Ela deve estar assim:
 
-```
+```yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -76,7 +76,7 @@ data:
 
 Adicionar um bloco para `.local`:
 
-```
+```yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -118,7 +118,7 @@ Salvar (`ESC` + `:wq` no vi).
 
 Criar ConfigMap com zona DNS:
 
-```
+```yaml
 cat > /tmp/local-zone.yaml <<'EOF'
 apiVersion: v1
 kind: ConfigMap
@@ -156,7 +156,7 @@ kubectl apply -f /tmp/local-zone.yaml
 
 Forçar recarregamento do deployment:
 
-```
+```yaml
 kubectl rollout restart deployment coredns -n kube-system
 
 # Aguardar ~10 segundos
@@ -167,7 +167,7 @@ kubectl rollout status deployment coredns -n kube-system
 
 De dentro de um pod:
 
-```
+```yaml
 # Criar pod teste
 kubectl run -it --rm testdns --image=alpine --restart=Never -- sh
 
@@ -187,7 +187,7 @@ exit
 
 De fora (bastion/laptop):
 
-```
+```yaml
 # Se pode alcançar CoreDNS (10.43.0.10)
 nslookup grafana.local 10.43.0.10
 
@@ -200,7 +200,7 @@ Se o reverse proxy está fora do cluster (bastion/laptop), configurar para usar 
 
 ### Em Linux/Mac:
 
-```
+```yaml
 # Adicionar CoreDNS ao /etc/resolv.conf
 sudo bash -c 'echo "nameserver 10.0.0.X  # IP do CoreDNS" >> /etc/resolv.conf'
 
@@ -216,7 +216,7 @@ sudo systemctl restart systemd-resolved
 
 ### Em Kubernetes (pods automaticamente usam CoreDNS):
 
-```
+```yaml
 # Já resolvem .local automaticamente
 # (CoreDNS é o resolver padrão de K3s)
 ```
@@ -228,7 +228,7 @@ sudo systemctl restart systemd-resolved
 **Causa:** zona não está carregada ou arquivo tem erro de sintaxe.
 
 **Solução:**
-```
+```yaml
 # Verificar logs de CoreDNS
 kubectl logs -n kube-system -l k8s-app=kube-dns | grep -i error
 
@@ -242,7 +242,7 @@ named-checkzone local /tmp/local-zone.yaml
 **Causa:** CoreDNS não está respondendo na porta 53.
 
 **Solução:**
-```
+```yaml
 # Verificar que CoreDNS está rodando
 kubectl get pods -n kube-system -l k8s-app=kube-dns
 

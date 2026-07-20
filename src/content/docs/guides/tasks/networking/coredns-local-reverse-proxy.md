@@ -11,7 +11,7 @@ Problema: Cada vez que quer acessar um serviço interno, precisa fazer:
 ```bash
 kubectl port-forward svc/api 8080:80
 # Acessa http://localhost:8080
-```yaml
+```
 
 Solução: DNS local + reverse proxy no host resolvem domínios internos automaticamente.
 
@@ -25,7 +25,7 @@ Seu host
 Cluster
   ├─ CoreDNS (resolve *.cluster.local)
   └─ Serviços (api.cluster.local, grafana.cluster.local, etc.)
-```yaml
+```
 
 ## CoreDNS setup no cluster
 
@@ -33,7 +33,7 @@ CoreDNS já vem instalado em K3s. Adicionar zona local:
 
 ```bash
 kubectl edit configmap coredns -n kube-system
-```yaml
+```
 
 Editar para:
 
@@ -53,7 +53,7 @@ Editar para:
     reload
     loadbalance
 }
-```yaml
+```
 
 ## Criar registros locais (CoreDNS)
 
@@ -79,7 +79,7 @@ EOF
 kubectl create configmap cluster-zone \
   --from-file=/tmp/cluster.local \
   -n kube-system
-```yaml
+```
 
 Ou via Ingress controller (mais simples):
 
@@ -111,7 +111,7 @@ server {
         proxy_ssl_verify off;  # Self-signed OK
     }
 }
-```yaml
+```
 
 ## Host local DNS resolution
 
@@ -125,14 +125,14 @@ Domains=~cluster.local.
 EOF
 
 sudo systemctl restart systemd-resolved
-```yaml
+```
 
 Test:
 
 ```bash
 nslookup api.cluster.local
 # → 127.0.0.1
-```yaml
+```
 
 ### macOS
 
@@ -143,7 +143,7 @@ sudo bash -c 'echo "nameserver 127.0.0.1" > /etc/resolver/cluster.local'
 
 # Se rodando dnsmasq/brew-services:
 # Aponta para 127.0.0.1
-```yaml
+```
 
 ### Windows
 
@@ -153,7 +153,7 @@ Editar `C:\Windows\System32\drivers\etc\hosts`:
 127.0.0.1 api.cluster.local
 127.0.0.1 grafana.cluster.local
 127.0.0.1 prometheus.cluster.local
-```yaml
+```
 
 ## Kubernetes Ingress (complementar)
 
@@ -182,7 +182,7 @@ spec:
             name: api-service
             port:
               number: 80
-```yaml
+```
 
 ## Acesso local
 
@@ -195,7 +195,7 @@ curl http://localhost:8080
 curl https://api.cluster.local
 # → Nginx roteia para Ingress controller
 # → Ingress roteia para serviço
-```yaml
+```
 
 ## Certificate autossinado para testing
 
@@ -206,7 +206,7 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 
 # Copiar para nginx/haproxy
 sudo cp /tmp/{cert,key}.pem /etc/ssl/certs/cluster/
-```yaml
+```
 
 ## Vantagens
 
