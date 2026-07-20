@@ -4,50 +4,39 @@ sidebar:
   order: 2
 ---
 
-Recipes de comandos organizadas por tarefa, não por ferramenta. Cada recipe é uma tarefa pequena, um ou dois comandos, com contexto sobre quando usar.
-
-Diferentes de um task guide (que tem múltiplos passos e decisões), recipes são fragmentos prontos para copiar e executar.
+Esta seção reúne recipes de comandos organizadas por tarefa, não por ferramenta. Cada recipe cobre uma tarefa pequena, com um ou dois comandos e o contexto necessário para saber quando usá-los. A diferença para um task guide (que tem múltiplos passos, decisões e validação) é que uma recipe é um fragmento pronto para copiar e executar, sem uma sequência maior por trás.
 
 ## Por categoria
 
-- [Valores aleatórios](/toolbox/commands/random-values/) — senhas, tokens, chaves.
-- [Certificados](/toolbox/commands/certificates/) — criar, inspecionar, converter certificados.
-- [Criptografia](/toolbox/commands/cryptography/) — chaves de criptografia, hashing.
-- [DNS](/toolbox/commands/dns/) — resolução, testes, troubleshooting.
-- [Rede](/toolbox/commands/networking/) — conectividade, rotas, firewall.
-- [Firewalls](/toolbox/commands/firewalls/) — UFW, firewalld, iptables.
-- [Filesystems](/toolbox/commands/filesystems/) — montagem, permissions, inodes.
-- [Discos e volumes](/toolbox/commands/disks-and-volumes/) — partições, LVM, espaço.
-- [Processos](/toolbox/commands/processes/) — listar, portas, prioridade.
-- [Systemd](/toolbox/commands/systemd/) — services, targets, logs.
-- [Logs](/toolbox/commands/logs/) — journalctl, app logs, rotação.
-- [Containers](/toolbox/commands/containers/) — Docker, buildah, inspecionar imagens.
-- [Kubernetes](/toolbox/commands/kubernetes/) — kubectl, inspeccionar resources.
-- [Helm](/toolbox/commands/helm/) — buscar charts, valores, releases.
-- [Git](/toolbox/commands/git/) — branches, commits, rebase.
-- [Troubleshooting](/toolbox/commands/troubleshooting/) — diagnóstico genérico.
+- [Valores aleatórios](../random-values/): senhas, tokens, chaves.
+- [Certificados](../certificates/): criar, inspecionar e converter certificados.
+- [DNS](../dns/): resolução, testes e troubleshooting.
+- [Rede](../networking/): conectividade, rotas e portas.
+- [Processos](../processes/): listar, encerrar e priorizar.
+- [Troubleshooting genérico](../troubleshooting/): histórico, redirecionamento, paralelismo.
+- [Filesystems](../filesystems/): montagem, permissões, inodes.
+- [Systemd](../systemd/): serviços, timers, logs.
+- [Containers (Docker)](../containers/): listar, inspecionar, build e push.
+- [Kubernetes](../kubernetes/): `kubectl`, logs, port-forward, recursos.
+- [Git](../git/): branches, commits, stash, push e pull.
+
+As categorias a seguir estão planejadas (Fase 7 do plano de conteúdo interno, `.todo/phase-7-toolbox.md`, fora do site publicado), mas ainda não foram escritas: criptografia (chaves e hashing além do já coberto em [certificados](../certificates/)), firewalls (UFW, firewalld, iptables), discos e volumes (partições, LVM), logs de aplicação (fora do escopo de [systemd](../systemd/)) e Helm (busca de charts, valores, releases).
 
 ## Formato de uma recipe
 
-```yaml
-### Tarefa
+Cada recipe segue a mesma estrutura, para que uma pessoa acostumada com uma página já saiba onde encontrar a informação nas demais:
 
-Descrição breve de quando usar (1-2 linhas).
+````markdown
+## Tarefa
 
-**Comando:**
+```bash
+comando aqui
+```
 
-\`\`\`bash
-command here
-\`\`\`
-
-**Quando usar:**
-- Situação 1
-- Situação 2
+**Quando usar:** descrição breve de uma ou duas linhas, explicando o cenário.
 
 **Considerações:**
-- Efeito colateral 1
-- Cuidado com X
 
-**Relacionado:**
-- [outra recipe](/path)
-```
+- Efeito colateral ou flag relevante.
+- Cuidado a observar antes de rodar o comando.
+````

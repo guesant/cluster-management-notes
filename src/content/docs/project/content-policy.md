@@ -10,14 +10,14 @@ pronta. Ela existe para que uma dúvida como "isso é um `guide` ou uma `operati
 resposta objetiva, em vez de depender de quem escreveu a página.
 
 Para o "como escrever", não "onde colocar", veja os templates em `templates/page-types/` (fora do
-site publicado) — cada tipo de conteúdo abaixo tem um template correspondente.
+site publicado): cada tipo de conteúdo abaixo tem um template correspondente.
 
 ## O que cada seção cobre
 
 ### `learn/`
 
 Conceitos, comparações e critérios de decisão. Responde "o que é", "qual problema resolve",
-"quais são as alternativas", "quando usar", "quando evitar". Não instala nem configura nada — se
+"quais são as alternativas", "quando usar", "quando evitar". Não instala nem configura nada: se
 a página tem um bloco de comando que muda o sistema, ela não é `learn/`.
 
 ### `guides/blueprints/`
@@ -29,7 +29,7 @@ vez de repetir os comandos.
 ### `guides/tasks/`
 
 Procedimentos focados em um único objetivo (ex.: instalar o cert-manager, adicionar um agente).
-São a fonte canônica dos comandos — blueprints e outras páginas devem linkar para cá, não copiar.
+São a fonte canônica dos comandos: blueprints e outras páginas devem linkar para cá, não copiar.
 
 ### `operations/`
 
@@ -41,12 +41,14 @@ diferença para `guides/tasks/`: um guia responde "como implementar ou configura
 
 Consulta rápida e descoberta: `tools/` (catálogo de ferramentas), `commands/` (cookbook de
 comandos organizados por tarefa, não por ferramenta), `snippets/` (fragmentos pequenos e
-reutilizáveis), `scripts/` (scripts maiores referenciados pela documentação).
+reutilizáveis). Scripts maiores referenciados pela documentação vivem em `src/scripts/` (fora do
+site publicado) e são incorporados às páginas via os componentes `ScriptHelper`/`FileWriter`, não
+como uma seção própria do `toolbox/`.
 
 ### `technologies/`
 
 Uma página central por tecnologia, funcionando como hub de navegação para quem já sabe o que está
-procurando. Não duplica `learn/` nem `guides/` — só aponta para eles.
+procurando. Não duplica `learn/` nem `guides/`: só aponta para eles.
 
 ### `resources/`
 
@@ -55,7 +57,7 @@ documentações oficiais, listas `awesome-*`, laboratórios, cursos, comunidades
 
 ### `reference/`
 
-Dados técnicos objetivos — portas, variáveis, convenções, compatibilidade. Tabelas e listas, não
+Dados técnicos objetivos: portas, variáveis, convenções, compatibilidade. Tabelas e listas, não
 narrativa. Se a página está explicando "por que", ela pertence a `learn/`, não a `reference/`.
 
 ### `getting-started/`, `contributing/`, `project/`
@@ -81,7 +83,7 @@ Antes de considerar uma página pronta, verifique:
 - rollback, quando aplicável;
 - referências;
 - links internos válidos;
-- ausência de duplicação desnecessária — se o mesmo comando aparece em duas páginas, uma delas
+- ausência de duplicação desnecessária: se o mesmo comando aparece em duas páginas, uma delas
   deveria linkar para a outra em vez de repetir;
 - páginas relacionadas;
 - próximo passo.

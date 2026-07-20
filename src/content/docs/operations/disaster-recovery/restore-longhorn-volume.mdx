@@ -7,7 +7,7 @@ sidebar:
 > **Pré-requisitos:** [backup de volume configurado](../../guides/tasks/storage/configure-volume-backup/) e um backup existente.
 > **Contexto:** esta página cobre quando usar a restauração durante um incidente real; o procedimento técnico completo está em [restaurar backup de um volume Longhorn](../../guides/tasks/storage/restore-volume-backup/).
 
-Use esta página para decidir **quando** restaurar um volume a partir de backup, como parte de uma resposta a incidente maior — não repete os comandos, já documentados na página procedural.
+Use esta página para decidir **quando** restaurar um volume a partir de backup, como parte de uma resposta a incidente maior; ela não repete os comandos, já documentados na página procedural.
 
 ## Quando restaurar a partir de backup
 
@@ -17,15 +17,15 @@ Use esta página para decidir **quando** restaurar um volume a partir de backup,
 
 ## Quando NÃO restaurar a partir de backup
 
-Se apenas uma réplica falhou e outras réplicas saudáveis existem, o Longhorn já reconstrói automaticamente — restaurar de um backup externo nesse caso é desnecessário e reintroduz um ponto mais antigo dos dados sem motivo.
+Se apenas uma réplica falhou e outras réplicas saudáveis existem, o Longhorn já reconstrói automaticamente: restaurar de um backup externo nesse caso é desnecessário e reintroduz um ponto mais antigo dos dados sem motivo.
 
 ## Procedimento
 
-Siga [restaurar backup de um volume Longhorn](../../guides/tasks/storage/restore-volume-backup/) — o procedimento cria um novo volume a partir do backup, permitindo validar antes de substituir o original.
+Siga [restaurar backup de um volume Longhorn](../../guides/tasks/storage/restore-volume-backup/): o procedimento cria um novo volume a partir do backup, permitindo validar antes de substituir o original.
 
 ## Validação
 
-Depois de restaurar, siga a validação funcional descrita na página procedural — não considere a restauração completa apenas porque o volume aparece `attached`.
+Depois de restaurar, siga a validação funcional descrita na página procedural; não considere a restauração completa apenas porque o volume aparece `attached`.
 
 ## Próximo passo
 

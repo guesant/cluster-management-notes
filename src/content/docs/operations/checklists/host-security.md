@@ -6,7 +6,7 @@ sidebar:
 
 > **Para quem é:** quem precisa confirmar ou auditar a postura de segurança de um host que executa K3s.
 
-Checklist especializado referenciado pelo [checklist central](../cluster-operational-checklist/). Cada item aponta para a explicação, a configuração e um comando de verificação real — copie os itens aplicáveis para um runbook ou issue de auditoria.
+Checklist especializado referenciado pelo [checklist central](../cluster-operational-checklist/). Cada item aponta para a explicação, a configuração e um comando de verificação real: copie os itens aplicáveis para um runbook ou issue de auditoria.
 
 - [ ] Atualizações de segurança do sistema operacional aplicadas automaticamente
   - Explicação e configuração: [atualizações automáticas de segurança](../../guides/tasks/host/configure-automatic-security-updates/)

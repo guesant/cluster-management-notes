@@ -25,8 +25,8 @@ Como há apenas um nó, "nenhum nó disponível" quase sempre significa que o ú
 
 | Causa | Verificação |
 | --- | --- |
-| `requests` maiores que a capacidade livre do nó | `kubectl describe node` — seção `Allocated resources` |
-| Taint no nó sem toleration no Pod | `kubectl describe node` — campo `Taints` |
+| `requests` maiores que a capacidade livre do nó | `kubectl describe node` (seção `Allocated resources`) |
+| Taint no nó sem toleration no Pod | `kubectl describe node` (campo `Taints`) |
 | `nodeSelector`/`affinity` que não corresponde ao único nó | Comparar labels do nó com o seletor do Pod |
 | PVC pendente (sem StorageClass ou sem capacidade) | `kubectl get pvc --namespace <namespace>` |
 | `PodDisruptionBudget` ou `ResourceQuota` do namespace | `kubectl get resourcequota --namespace <namespace>` |
@@ -37,7 +37,7 @@ Como há apenas um nó, "nenhum nó disponível" quase sempre significa que o ú
 kubectl describe node <nome-do-nó> | grep -A5 "Allocated resources"
 ```
 
-Se `requests.cpu`/`requests.memory` já estão perto de 100% alocados, o novo Pod não cabe mesmo que o nó tenha uso real baixo — `requests` reservam capacidade, não medem consumo atual.
+Se `requests.cpu`/`requests.memory` já estão perto de 100% alocados, o novo Pod não cabe mesmo que o nó tenha uso real baixo: `requests` reservam capacidade, não medem consumo atual.
 
 ## Verificar volumes pendentes
 
@@ -46,11 +46,11 @@ kubectl get pvc --namespace <namespace>
 kubectl describe pvc <nome> --namespace <namespace>
 ```
 
-Um PVC `Pending` por falta de `StorageClass` padrão é esperado neste notebook — a instalação do primeiro servidor desabilita `local-storage` intencionalmente (veja [decisões do blueprint](../../../guides/blueprints/k3s-single-node-gitops/#decisões-adotadas)). Instale o [Longhorn](../../../guides/tasks/storage/install-longhorn/) ou revise a decisão de armazenamento.
+Um PVC `Pending` por falta de `StorageClass` padrão é esperado neste notebook: a instalação do primeiro servidor desabilita `local-storage` intencionalmente (veja [decisões do blueprint](../../../guides/blueprints/k3s-single-node-gitops/#decisões-adotadas)). Instale o [Longhorn](../../../guides/tasks/storage/install-longhorn/) ou revise a decisão de armazenamento.
 
 ## Recuperação
 
-Depois de identificar a causa pelo `describe`, corrija o requisito correspondente — reduza `requests`, remova um taint incompatível, ajuste o `nodeSelector`, ou resolva o PVC pendente. Reaplicar o mesmo manifesto sem corrigir a causa apenas reproduz o mesmo `Pending`.
+Depois de identificar a causa pelo `describe`, corrija o requisito correspondente: reduza `requests`, remova um taint incompatível, ajuste o `nodeSelector`, ou resolva o PVC pendente. Reaplicar o mesmo manifesto sem corrigir a causa apenas reproduz o mesmo `Pending`.
 
 ## Fontes e leitura adicional
 

@@ -21,7 +21,7 @@ flowchart LR
 
 ## Como o proxy decide o destino
 
-O reverse proxy precisa de algum critério para associar uma requisição recebida a um backend específico. Os três critérios mais comuns not são mutuamente exclusivos e frequentemente aparecem combinados na mesma instalação.
+O reverse proxy precisa de algum critério para associar uma requisição recebida a um backend específico. Os três critérios mais comuns não são mutuamente exclusivos e frequentemente aparecem combinados na mesma instalação.
 
 O **roteamento por path** usa o caminho da URL para escolher o destino: uma requisição para `/grafana` vai para o serviço Grafana, uma requisição para `/prometheus` vai para o serviço Prometheus. Em Nginx, isso é expresso com blocos `location`:
 

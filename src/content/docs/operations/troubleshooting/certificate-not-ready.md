@@ -7,7 +7,7 @@ sidebar:
 > **Sintoma:** um recurso `Certificate` permanece com `READY: False`.
 > **Versões testadas:** cert-manager v1.21.0.
 
-Um `Certificate` que não fica `Ready` significa que o cert-manager ainda não conseguiu completar a emissão ou renovação — o serviço que depende desse certificado (via `Gateway` ou Ingress) continua servindo o certificado anterior, ou nenhum, até que isso se resolva.
+Um `Certificate` que não fica `Ready` significa que o cert-manager ainda não conseguiu completar a emissão ou renovação: o serviço que depende desse certificado (via `Gateway` ou Ingress) continua servindo o certificado anterior, ou nenhum, até que isso se resolva.
 
 ## Diagnóstico inicial
 
@@ -29,7 +29,7 @@ kubectl --namespace <namespace> \
   get certificates,certificaterequests,orders.acme.cert-manager.io,challenges.acme.cert-manager.io
 ```
 
-Um `Challenge` preso em `pending` é a causa mais comum — normalmente indica que o registro DNS TXT do desafio DNS-01 não propagou ainda, ou que a credencial do provedor DNS não tem permissão de escrita na zona.
+Um `Challenge` preso em `pending` é a causa mais comum: normalmente indica que o registro DNS TXT do desafio DNS-01 não propagou ainda, ou que a credencial do provedor DNS não tem permissão de escrita na zona.
 
 ## Causas comuns
 
@@ -38,7 +38,7 @@ Um `Challenge` preso em `pending` é a causa mais comum — normalmente indica q
 | `Challenge` preso em `pending` por muito tempo | Propagação DNS lenta, resolvers configurados incorretamente, credencial sem permissão |
 | `ClusterIssuer` referenciado não existe ou não é `Ready` | Veja [criar um ClusterIssuer ACME](../../../guides/tasks/certificates/create-acme-clusterissuer/) |
 | Erro de rate limit do Let's Encrypt | Muitas tentativas de emissão para o mesmo domínio; aguarde o reset do limite ou use staging |
-| `CertificateRequest` falha imediatamente | `ClusterIssuer` ou credencial DNS inválida — revise o Secret referenciado |
+| `CertificateRequest` falha imediatamente | `ClusterIssuer` ou credencial DNS inválida; revise o Secret referenciado |
 
 ## Verificar o ClusterIssuer
 
@@ -47,7 +47,7 @@ kubectl get clusterissuer
 kubectl describe clusterissuer <nome>
 ```
 
-Se o próprio `ClusterIssuer` não estiver `Ready`, nenhum `Certificate` que o referencia vai emitir com sucesso — corrija o Issuer primeiro.
+Se o próprio `ClusterIssuer` não estiver `Ready`, nenhum `Certificate` que o referencia vai emitir com sucesso: corrija o Issuer primeiro.
 
 ## Recuperação
 

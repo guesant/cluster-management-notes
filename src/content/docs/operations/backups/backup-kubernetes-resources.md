@@ -7,9 +7,9 @@ sidebar:
 > **Pré-requisitos:** kubeconfig com acesso de leitura aos recursos que serão exportados.
 > **Versões testadas:** Kubernetes 1.36.
 
-Um snapshot do etcd (veja [backup do etcd](../backup-k3s-etcd/)) protege o estado inteiro do cluster, mas restaurá-lo significa substituir o datastore inteiro — não é adequado para recuperar um namespace ou um recurso específico sem afetar o resto do cluster. Esta página cobre a exportação seletiva de recursos como complemento, não substituto, do snapshot do etcd.
+Um snapshot do etcd (veja [backup do etcd](../backup-k3s-etcd/)) protege o estado inteiro do cluster, mas restaurá-lo significa substituir o datastore inteiro: não é adequado para recuperar um namespace ou um recurso específico sem afetar o resto do cluster. Esta página cobre a exportação seletiva de recursos como complemento, não substituto, do snapshot do etcd.
 
-Neste notebook, o estado desejado das aplicações já vive no Git via GitOps (veja [estruturar o repositório GitOps](../../../guides/tasks/gitops/structure-gitops-repository/)) — para recursos gerenciados pelo Argo CD, o próprio repositório já é o backup declarativo. Esta página é útil principalmente para recursos criados fora do fluxo GitOps ou para uma cópia adicional do estado observado.
+Neste notebook, o estado desejado das aplicações já vive no Git via GitOps (veja [estruturar o repositório GitOps](../../../guides/tasks/gitops/structure-gitops-repository/)): para recursos gerenciados pelo Argo CD, o próprio repositório já é o backup declarativo. Esta página é útil principalmente para recursos criados fora do fluxo GitOps ou para uma cópia adicional do estado observado.
 
 ## Exportar recursos de um namespace
 
@@ -24,7 +24,7 @@ kubectl get all,configmap,secret,ingress,pvc \
   -o yaml > "backup-${BACKUP_NAMESPACE}-$(date +%Y%m%d)/resources.yaml"
 ```
 
-O export inclui campos gerenciados pelo cluster (`resourceVersion`, `uid`, status) que não devem ser reaplicados diretamente — trate o arquivo como referência para reconstrução manual ou para comparação, não como um manifesto pronto para `kubectl apply`.
+O export inclui campos gerenciados pelo cluster (`resourceVersion`, `uid`, status) que não devem ser reaplicados diretamente. Trate o arquivo como referência para reconstrução manual ou para comparação, não como um manifesto pronto para `kubectl apply`.
 
 :::caution
 O comando acima inclui Secrets em texto claro no arquivo exportado. Proteja o destino do backup com o mesmo cuidado usado para as credenciais originais, e nunca versione esse arquivo em um repositório Git comum.
@@ -52,11 +52,11 @@ Confirme que o arquivo exportado contém os recursos esperados e pode ser lido:
 kubectl apply --dry-run=client --filename resources.yaml
 ```
 
-Um erro de parsing nesta etapa indica um export corrompido ou incompleto — detecte isso no momento do backup, não durante uma restauração real.
+Um erro de parsing nesta etapa indica um export corrompido ou incompleto: detecte isso no momento do backup, não durante uma restauração real.
 
 ## Troubleshooting
 
-Se o `dry-run=client` falhar por campos imutáveis ou `resourceVersion` desatualizado, isso é esperado para um arquivo de export — ele não foi desenhado para reaplicação direta. Edite manualmente os campos gerenciados pelo cluster antes de reaplicar em um cenário de recuperação real.
+Se o `dry-run=client` falhar por campos imutáveis ou `resourceVersion` desatualizado, isso é esperado para um arquivo de export: ele não foi desenhado para reaplicação direta. Edite manualmente os campos gerenciados pelo cluster antes de reaplicar em um cenário de recuperação real.
 
 ## Próximo passo
 

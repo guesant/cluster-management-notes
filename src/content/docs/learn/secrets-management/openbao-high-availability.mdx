@@ -1,160 +1,63 @@
 ---
 title: OpenBao em modo de alta disponibilidade
+description: Explica o modelo de líder e standbys do OpenBao em HA, como o quorum decide o número de réplicas, e o que muda operacionalmente em relação a uma instância única.
 sidebar:
-  order: 8
+  order: 7.6
 ---
 
-> **Para quem é:** operadores que querem OpenBao redundante — múltiplas instâncias sem perda de acesso a secrets.
+> **Para quem é:** operadores que já rodam OpenBao e precisam eliminar a perda total de acesso a segredos quando a única instância cai.
 
-Um OpenBao único é um **SPOF** (single point of failure): se cai, nenhum secret é acessível. Em produção, é comum rodar múltiplas réplicas com storage compartilhado (Postgres, Consul, etc.), permitindo failover automático.
+Uma instância única de OpenBao é um ponto único de falha: se o processo para, por crash, atualização ou qualquer outro motivo, nenhum segredo fica acessível até que ela volte. O modo de alta disponibilidade resolve isso rodando múltiplas réplicas que compartilham o mesmo estado, permitindo que uma assuma o papel de líder automaticamente quando a anterior falha.
 
-## Arquitetura de HA
+## Como funciona
+
+Em um cluster HA, apenas uma réplica é o **líder** a qualquer momento; é ela que processa as escritas (emissão de novas credenciais, rotação, alterações de política). As demais réplicas são **standbys**: podem atender leituras a partir do mesmo estado replicado, mas redirecionam qualquer escrita recebida para o líder atual. A eleição do líder segue o mesmo modelo de consenso Raft usado pelo etcd do próprio K3s (veja [arquitetura do K3s](../../clusters/k3s-architecture/)); quando o líder para de responder, as réplicas restantes elegem uma nova entre si em segundos, sem intervenção manual, desde que o número de réplicas disponíveis ainda satisfaça o quorum mínimo.
 
 ```mermaid
 flowchart TB
-    accTitle: Topologia HA do OpenBao
-    accDescr: Múltiplas réplicas compartilham storage externo, um líder por vez.
+    accTitle: Topologia de OpenBao em alta disponibilidade
+    accDescr: Um load balancer distribui requisições entre múltiplas réplicas do OpenBao. Apenas o líder processa escritas; standbys redirecionam escritas ao líder e podem atender leituras. Todas as réplicas compartilham o mesmo estado replicado.
 
-    Clients["Clientes<br/>(aplicações, admins)"]
-    LB["Load Balancer<br/>(DNS ou HAProxy)"]
-    
-    Bao1["OpenBao 1<br/>(líder)"]
-    Bao2["OpenBao 2<br/>(standby)"]
-    Bao3["OpenBao 3<br/>(standby)"]
-    
-    Storage["Storage Compartilhado<br/>(Postgres, Consul, etcd)"]
-    KMS["KMS Externo<br/>(auto-unseal)"]
-    
-    Clients --> LB
-    LB --> Bao1
-    LB --> Bao2
-    LB --> Bao3
-    
-    Bao1 --> Storage
-    Bao2 --> Storage
-    Bao3 --> Storage
-    
-    Bao1 --> KMS
-    Bao2 --> KMS
-    Bao3 --> KMS
-    
-    note["Líder: recebe escritas<br/>Standbys: redirecionam<br/>ao líder (read-only)"]
+    Clients["Clientes (aplicações, operadores)"] --> LB["Load balancer"]
+    LB --> Lider["OpenBao (líder)"]
+    LB --> Standby1["OpenBao (standby)"]
+    LB --> Standby2["OpenBao (standby)"]
+
+    Lider <-->|"replicação"| Standby1
+    Lider <-->|"replicação"| Standby2
 ```
 
-## Conceitos-chave
+O quorum é o número mínimo de réplicas que precisa concordar para eleger um líder ou confirmar uma escrita, calculado como `floor(N/2) + 1` para um total de `N` réplicas. Esse cálculo é o motivo pelo qual topologias de HA usam sempre um número ímpar de réplicas: três réplicas toleram a perda de uma sem perder quorum (quorum = 2); cinco toleram a perda de duas (quorum = 3). Duas réplicas não oferecem vantagem sobre três, porque perder qualquer uma delas já derruba o quorum (que seria 2 de 2), eliminando o benefício de tolerância a falhas que justifica operar HA.
 
-### Líder vs. Standby
+Cada réplica precisa passar pelo próprio processo de unseal antes de participar do cluster; em uma topologia HA, isso normalmente é combinado com [auto-unseal via KMS externo](../openbao-auto-unseal/), porque exigir a apresentação manual de chaves de unseal em cada réplica, a cada reinicialização, elimina boa parte do ganho de disponibilidade automática que a própria HA deveria proporcionar.
 
-- **Líder:** única instância que executa escritas (rotação de secrets, concessão de tokens)
-- **Standbys:** réplicas que podem ler (retornam dados do storage) mas redirecionam escritas ao líder
+## Armazenamento compartilhado
 
-### Eleição de líder
+Todas as réplicas de um cluster HA precisam enxergar o mesmo estado, o que exige um backend de armazenamento compartilhado entre elas. O caminho recomendado atualmente pelo próprio OpenBao é o **Integrated Storage**, baseado em Raft: cada réplica participa diretamente do consenso e mantém sua própria cópia replicada dos dados, sem depender de um serviço de armazenamento externo adicional. A alternativa mais estabelecida antes do Integrated Storage era usar o **Consul** como backend externo, que também implementa Raft internamente e serve como fonte de verdade compartilhada para as réplicas do OpenBao.
 
-Se o líder cai, os standbys elegem um novo líder automaticamente (similar a Raft em etcd). Downtime é de segundos.
+## Alternativas
 
-### Storage compartilhado
-
-Todas as réplicas apontam para o mesmo backend de storage (Postgres, Consul, etc.). O storage é a fonte de verdade.
-
-```yaml
-Bao1 escreve secret X em Postgres
-Bao2 lê secret X de Postgres (mesmo valor)
-Líder cai → Bao2 vira líder → continua escrevendo em Postgres
-```
-
-## Topologias recomendadas
-
-| Topologia | Réplicas | Quando usar |
-| --- | --- | --- |
-| Single-node | 1 | Dev/test (sem HA) |
-| 2 réplicas | 2 | Redundância simples; perda de 1 = continua |
-| 3 réplicas | 3 | Recomendado para produção; perda de 1 = quorum ok |
-| 5+ réplicas | 5+ | Escala grande; múltiplas regiões/AZs |
-
-**Regra:** sempre número ímpar para eleição de líder (quorum = floor(N/2)+1).
-
-## Storage backends para HA
-
-OpenBao suporta:
-
-| Backend | Melhor para | Trade-offs |
-| --- | --- | --- |
-| Consul | HA nativa (Consul já é distribuído) | Componente extra para gerenciar |
-| PostgreSQL | Já temos DBA | Requer configuração de replicação no Postgres |
-| etcd | Kubernetes (já temos etcd) | Acoplamento com K3s |
-| S3 + DynamoDB | AWS-only | Serverless, sem gerenciar infra |
-| MySQL | Compatibilidade | Similar a Postgres |
-
-## Fluxo operacional
-
-```yaml
-1. Inicializar primeira réplica (Bao1)
-   - Gera chaves de unseal
-   - Cria primeiro secret (ex.: database password)
-   - Status: LEADER, UNSEALED
-
-2. Adicionar segunda réplica (Bao2)
-   - Apontar para mesmo storage (Postgres/Consul)
-   - Auto-unseal via KMS
-   - Status: STANDBY, UNSEALED
-   - Bao2 pode ler todos os secrets que Bao1 criou
-
-3. Teste de failover
-   - Derrubar Bao1
-   - Bao2 detecta perda, vira LEADER em ~10 seg
-   - Clientes reconectam ao LB, agora recebem Bao2
-   - Continua funcionando
-
-4. Bao1 volta online
-   - Rejunta ao cluster como STANDBY
-   - Sincroniza com Bao2 via storage
-   - Pronto para failover reverso
-```
-
-## Auto-unseal em HA
-
-Cada réplica se unseala independentemente via KMS:
-
-```yaml
-Bao1, Bao2, Bao3 reiniciam
-  ↓
-Todas comunicam ao KMS
-  ↓
-KMS valida IAM de cada um (mesma role/service account)
-  ↓
-Todas desencriptam e UNSEALED em paralelo
-  ↓
-Bao1 eleita líder (eleição rápida)
-  ↓
-Cluster HA pronto em ~5 seg
-```
+Para uma topologia sem exigência de disponibilidade contínua, uma instância única (sem HA) é a opção mais simples de operar, aceitando que uma reinicialização causa uma janela de indisponibilidade até o processo voltar e ser unsealed novamente, como descrito em [OpenBao e Vault](../openbao-and-vault/).
 
 ## Quando usar HA
 
-- ✅ **Produção:** zero downtime exigido
-- ✅ **Multi-AZ/região:** distribuição geográfica
-- ✅ **Cargas críticas:** muitas aplicações dependem de OpenBao
-- ❌ **Dev/test:** simplicidade mais importante
-- ❌ **Single datacenter:** sem benefício de AZ distintos
+HA se justifica quando aplicações em produção dependem do OpenBao para operar (autenticação, credenciais de banco de dados emitidas dinamicamente, e outras integrações que falham sem acesso ao cofre) e uma indisponibilidade, mesmo breve, tem impacto real. Também se justifica em topologias distribuídas entre múltiplas zonas de disponibilidade, onde a perda de uma zona inteira não deve derrubar o acesso a segredos.
 
-## Trade-offs vs. single-node
+## Quando evitar
 
-| Aspecto | Single-node | HA |
-| --- | --- | --- |
-| **Downtime possível** | Sim (segundos a minutos) | Não (failover automático) |
-| **Complexidade** | Baixa (1 serviço) | Alta (múltiplos serviços + storage) |
-| **Custo** | Baixo | Médio-Alto (3+ máquinas, storage gerenciado) |
-| **Operação** | Manual (unseal, backups) | Automática (auto-unseal, replicação) |
+Em ambientes de desenvolvimento, teste, ou clusters pessoais de nó único, a complexidade adicional de operar múltiplas réplicas, um mecanismo de auto-unseal e um load balancer à frente delas raramente se justifica frente ao benefício. Uma instância única com backup regular de configuração e um procedimento documentado de unseal manual é suficiente nesse contexto.
 
-## Tópicos relacionados
+## Decisões que isso implica
 
-- [OpenBao auto-unseal](./openbao-auto-unseal/): eliminar unseal manual
-- [OpenBao e Vault](./openbao-and-vault/): fundamentos
-- [Configurar OpenBao com HA](../../guides/tasks/secrets/configure-openbao-high-availability/): task guide
-- [Secrets management overview](./overview/): comparação de estratégias
+Habilitar HA sem também habilitar auto-unseal reduz boa parte do ganho de disponibilidade automática, porque uma reinicialização de qualquer réplica ainda exige intervenção manual antes que ela volte a participar do cluster. Trate as duas decisões (HA e auto-unseal) como uma unidade ao planejar uma topologia de produção.
 
-## Fontes e leitura adicional
+## Páginas relacionadas
 
-- [OpenBao — High Availability](https://openbao.org/docs/concepts/ha): arquitetura de HA.
-- [OpenBao — Storage Backends](https://openbao.org/docs/configuration/storage): backends suportados.
-- [Consul — Consistency Model](https://www.consul.io/docs/internals/consensus): se usar Consul como storage.
+- [OpenBao e Vault](../openbao-and-vault/)
+- [OpenBao auto-unseal com KMS externo](../openbao-auto-unseal/)
+- [Configurar OpenBao em alta disponibilidade](../../../guides/tasks/secrets/configure-openbao-high-availability/)
+
+## Referências
+
+- [OpenBao: High Availability](https://openbao.org/docs/internals/high-availability/): documentação oficial do modelo de líder, standbys e eleição.
+- [OpenBao: Integrated Storage](https://openbao.org/docs/internals/integrated-storage/): documentação oficial do backend de armazenamento baseado em Raft.

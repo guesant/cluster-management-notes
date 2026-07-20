@@ -7,7 +7,7 @@ sidebar:
 > **Pré-requisitos:** [backup de volume configurado](../../guides/tasks/storage/configure-volume-backup/).
 > **Frequência sugerida:** revisão semanal; execução conforme o `RecurringJob` configurado.
 
-Esta página cobre a rotina de verificação periódica dos backups de volumes Longhorn — a configuração inicial está em [configurar backup de volumes do Longhorn](../../guides/tasks/storage/configure-volume-backup/); esta página não repete os comandos de configuração.
+Esta página cobre a rotina de verificação periódica dos backups de volumes Longhorn. A configuração inicial está em [configurar backup de volumes do Longhorn](../../guides/tasks/storage/configure-volume-backup/); esta página não repete os comandos de configuração.
 
 ## Verificação de rotina
 
@@ -32,7 +32,7 @@ Um backupstore cheio falha silenciosamente para novos backups sem necessariament
 kubectl --namespace longhorn-system get settings.longhorn.io backup-target
 ```
 
-Revise a capacidade do destino diretamente no provedor (S3, NFS) — o Longhorn não impõe um limite próprio além do que o destino permite.
+Revise a capacidade do destino diretamente no provedor (S3, NFS): o Longhorn não impõe um limite próprio além do que o destino permite.
 
 ## Checklist de rotina
 
@@ -44,7 +44,7 @@ Revise a capacidade do destino diretamente no provedor (S3, NFS) — o Longhorn 
 
 ## Troubleshooting
 
-Se um backup falhar recorrentemente, revise `kubectl --namespace longhorn-system describe backups.longhorn.io <nome>` para a mensagem de erro — credencial expirada e destino sem espaço são as causas mais comuns.
+Se um backup falhar recorrentemente, revise `kubectl --namespace longhorn-system describe backups.longhorn.io <nome>` para a mensagem de erro: credencial expirada e destino sem espaço são as causas mais comuns.
 
 ## Próximo passo
 

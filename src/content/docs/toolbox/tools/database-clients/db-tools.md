@@ -1,156 +1,100 @@
 ---
 title: Clientes de banco de dados
+description: Catálogo de clientes de linha de comando, GUIs e IDEs para PostgreSQL, MySQL e outros bancos, com o que avaliar antes de adotar cada um.
 sidebar:
   order: 1
 ---
 
-> **Para quem é:** operadores que precisam gerenciar bancos de dados PostgreSQL, MySQL, etc.
+> **Para quem é:** operadores que precisam conectar, consultar e administrar bancos de dados PostgreSQL, MySQL e equivalentes.
 
-Ferramentas para conectar, executar queries, e gerenciar schemas.
+Este catálogo cobre ferramentas genéricas de conexão a bancos de dados. Para conectar um desses clientes especificamente ao PostgreSQL gerenciado por este notebook (via CloudNativePG), veja o procedimento já pronto em [acessar o PostgreSQL com um cliente gráfico](../../../../guides/tasks/databases/access-postgresql-with-gui-client/); esta página não repete os dados de conexão específicos do projeto.
 
-## CLI nativa
+## CLI nativa: psql (PostgreSQL)
 
-### psql (PostgreSQL)
-
-Cliente nativo de linha de comando.
-
-**Instalação:**
+O cliente de linha de comando oficial do PostgreSQL.
 
 ```bash
 sudo apt install postgresql-client
 ```
 
-**Uso:**
-
 ```bash
 psql -h localhost -U postgres -d mydb
-# Dentro do psql:
-# \dt              → listar tabelas
-# \du              → listar usuários
-# SELECT * FROM users;  → query
-# \q               → sair
 ```
 
-**Vantagens:**
+Dentro do `psql`, os comandos internos mais usados são `\dt` (listar tabelas), `\du` (listar usuários/roles), `\q` (sair), além de qualquer instrução SQL padrão como `SELECT * FROM users;`.
 
-- Direto, sem UI
-- Perfeito para scripts
-- Leve
+**Quando usar:** scripts, automação e qualquer situação em que uma interface gráfica seria desnecessária. É a opção mais leve das listadas aqui, sem dependências além do próprio pacote cliente.
 
----
-
-## GUI — DBeaver (Recomendado)
-
-Cliente universal para múltiplos bancos (PostgreSQL, MySQL, Oracle, etc).
-
-**Instalação:**
-
-```bash
-# Download: https://dbeaver.io/download/
-# Ou via package manager
-```
-
-**Funcionalidade:**
-
-- Navegação de schema visual
-- Query builder
-- Import/export
-- ERD (Entity Relationship Diagram)
-- Sync entre bancos
-
-**Versões:**
-
-- Community (free)
-- Enterprise (pago, mais recursos)
-
----
-
-## GUI — pgAdmin (PostgreSQL)
-
-Web-based admin para PostgreSQL.
-
-**Setup:**
-
-```bash
-docker run -p 80:80 dpage/pgadmin4
-# Acessa em http://localhost
-# User: admin@pgadmin.org, password: admin
-```
-
-**Funcionalidade:**
-
-- Criar/deletar databases, roles
-- Query executor
-- Backup/restore
-- Server monitoring
-
----
-
-## CLI — MySQL
-
-Cliente nativo de MySQL.
-
-**Uso:**
+## CLI: cliente MySQL
 
 ```bash
 mysql -h localhost -u root -p -D mydb
 ```
 
-### Alternativa: mycli
+Alternativa com destaque de sintaxe e autocompletar, útil para uso interativo:
 
 ```bash
 mycli -h localhost -u root -p
-# Syntax highlighting, auto-complete
 ```
 
----
+## GUI multi-banco: DBeaver
 
-## DataGrip (JetBrains)
+Cliente universal com suporte a PostgreSQL, MySQL, Oracle e diversos outros bancos através de drivers JDBC.
 
-IDE profissional para bancos (pago, mas poderoso).
+Instalação: baixe em [dbeaver.io/download](https://dbeaver.io/download/), ou instale via gerenciador de pacotes da distribuição, quando disponível.
 
-**Funcionalidade:**
+Funcionalidades principais: navegação visual de schema, construtor de queries, importação/exportação de dados, geração de diagrama entidade-relacionamento (ERD) e comparação/sincronização entre bancos.
 
-- Autocomplete inteligente
-- Profiling de queries
-- Refactoring de schemas
-- Integração Git
+**Quando usar:** administração de múltiplos tipos de banco com uma única ferramenta. A edição Community é gratuita e cobre a maior parte do uso comum; a edição Enterprise adiciona recursos pagos (colaboração em equipe, alguns drivers adicionais). Confira o [comparativo oficial de edições](https://dbeaver.io/edition/) antes de decidir, já que a divisão exata entre gratuito e pago muda entre versões.
 
-**Custo:** ~$200/ano ou incluído em IntelliJ Ultimate.
+## GUI web: pgAdmin
 
----
+Interface de administração do PostgreSQL, servida via navegador.
+
+```bash
+docker run -p 127.0.0.1:80:80 \
+  -e PGADMIN_DEFAULT_EMAIL=admin@example.com \
+  -e PGADMIN_DEFAULT_PASSWORD=troque-esta-senha \
+  dpage/pgadmin4
+```
+
+A imagem oficial exige `PGADMIN_DEFAULT_EMAIL` e `PGADMIN_DEFAULT_PASSWORD` definidos; sem essas variáveis, o container não inicia. Publique a porta apenas em `127.0.0.1` (como no exemplo) a menos que o acesso remoto seja um requisito explícito; publicar em todas as interfaces expõe uma interface administrativa completa do banco a qualquer coisa que alcance a rede do host.
+
+Funcionalidades principais: criação e remoção de databases e roles, execução de queries, backup e restauração pela interface, e monitoramento básico do servidor.
+
+## IDE profissional: DataGrip (JetBrains)
+
+IDE dedicada a bancos de dados, paga, com autocompletar orientado a schema, profiling de queries, refatoração de schema e integração com Git.
+
+**Quando usar:** quem já trabalha com outras ferramentas JetBrains (IntelliJ, PyCharm) e quer a mesma experiência de edição aplicada a SQL, ou equipes que precisam de refatoração de schema assistida. Consulte o [preço atual](https://www.jetbrains.com/datagrip/buy/) diretamente na JetBrains antes de decidir: o modelo de licenciamento (standalone ou incluído em um plano All Products) muda com frequência.
 
 ## Situações comuns
 
-### Conectar via SSH tunnel
+### Conectar a um banco em rede privada via túnel SSH
 
-Se banco está em rede privada:
+Quando o banco não está diretamente acessível, mas um bastion host tem acesso à rede onde ele está:
 
 ```bash
-# Forward porta 5432 via SSH
 ssh -L 5432:db-server:5432 bastion-host
-
-# Depois, no DBeaver/psql:
-psql -h localhost -p 5432 -U postgres
 ```
 
-### Backup/Restore
+Depois, conecte qualquer cliente (DBeaver, `psql`, etc.) em `localhost:5432`, como se o banco estivesse na própria máquina.
+
+### Backup e restauração via linha de comando
 
 ```bash
-# PostgreSQL backup
+# PostgreSQL
 pg_dump -h localhost -U postgres mydb > backup.sql
-
-# Restore
 psql -h localhost -U postgres mydb < backup.sql
 
-# MySQL backup
+# MySQL
 mysqldump -h localhost -u root -p mydb > backup.sql
 ```
 
----
+Um dump gerado dessa forma é um backup lógico, não um backup físico com PITR; para o procedimento usado pelo PostgreSQL deste notebook (gerenciado pelo CloudNativePG, com backup contínuo em object storage), veja [configurar backups do PostgreSQL](../../../../guides/tasks/databases/configure-postgresql-backups/) em vez de depender apenas de `pg_dump` manual.
 
 ## Referências
 
-- [DBeaver](https://dbeaver.io/): download e documentação.
-- [pgAdmin](https://www.pgadmin.org/): PostgreSQL admin web.
-- [DataGrip](https://www.jetbrains.com/datagrip/): IDE JetBrains.
+- [DBeaver](https://dbeaver.io/): download e documentação oficial.
+- [pgAdmin](https://www.pgadmin.org/): documentação oficial, incluindo a imagem Docker.
+- [DataGrip](https://www.jetbrains.com/datagrip/): página oficial da IDE JetBrains.

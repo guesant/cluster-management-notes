@@ -4,29 +4,19 @@ sidebar:
   order: 10
 ---
 
-> **Para quem é:** operadores que querem automatizar verificações de health e gerar relatórios.
+> **Para quem é:** operadores que já percorrem os checklists deste notebook manualmente e querem transformar parte da verificação em script, para rodar sob demanda ou integrar ao CI.
 
-Este documento cobre como executar checklists via scripts em vez de manualmente.
+Os checklists especializados deste notebook (segurança do host, segurança do cluster, prontidão de workloads, observabilidade, backup) descrevem cada item como uma pergunta, uma explicação e um comando de verificação. Essa estrutura já é, por si só, um roteiro para automação: qualquer item cujo comando de verificação produza uma saída objetiva (zero linhas, um valor esperado, um código de saída) pode virar uma função de script em vez de uma etapa manual. Esta página documenta o único script de verificação já implementado no repositório e o padrão a seguir para os demais, que ainda não existem.
 
-## Health check automatizado
+## O script existente: verificação de saúde básica
 
-Script: `src/scripts/check-cluster-health.sh`
-
-**Uso:**
+`src/scripts/check-cluster-health.sh` cobre um subconjunto pequeno e genérico de verificações, útil como smoke test rápido antes de investir tempo em um diagnóstico manual mais profundo: confirma que `kubectl`, `helm` e `jq` estão disponíveis, que o cluster responde, que todos os nós estão `Ready`, que não há Pods fora de `Running`/`Succeeded` e que a API responde a `kubectl api-resources`.
 
 ```bash
 ./src/scripts/check-cluster-health.sh
 ```
 
-**Saída:** JSON com status de:
-
-- Comandos disponíveis (kubectl, helm, jq)
-- Cluster acessível
-- Nós em estado Ready
-- Pods rodando (sem falhas)
-- API responsiva
-
-**Exemplo:**
+A saída inclui um resumo legível no terminal e, ao final, um relatório em JSON:
 
 ```json
 {
@@ -39,6 +29,7 @@ Script: `src/scripts/check-cluster-health.sh`
   "checks": {
     "cmd_kubectl": "pass",
     "cmd_helm": "pass",
+    "cmd_jq": "pass",
     "cluster_accessible": "pass",
     "nodes_ready": "pass",
     "pods_running": "pass",
@@ -47,105 +38,43 @@ Script: `src/scripts/check-cluster-health.sh`
 }
 ```
 
+Esse script não substitui os checklists especializados: ele confirma que o cluster está minimamente acessível e saudável, não que RBAC, NetworkPolicies, probes ou backups estão corretos. Trate-o como um pré-requisito rápido antes de investir tempo em uma verificação mais profunda, não como prova de prontidão.
+
 ## Integração no CI
 
-`.github/workflows/scripts.yml` roda automaticamente:
+`.github/workflows/scripts.yml` roda automaticamente a cada push ou pull request que altere algo em `src/scripts/`, com três jobs: `shellcheck` valida a sintaxe e os problemas comuns de todos os scripts do diretório; `smoke-test` confirma que cada script tem sintaxe válida (`bash -n`) e que as funções principais da biblioteca compartilhada (`src/scripts/lib/common.sh`) existem e respondem como esperado; `lint` verifica se os scripts são executáveis e faz uma busca simples por padrões que sugerem segredos hardcoded (`password`, `secret`, `token`, `key`), emitindo um aviso sem falhar o pipeline. Esse workflow valida os scripts do repositório, não o estado de um cluster real; ele não substitui a execução de `check-cluster-health.sh` contra um cluster específico.
 
-1. **Shellcheck** — valida sintaxe de todos os scripts
-2. **Smoke test** — testa sintaxe + carrega library
-3. **Lint** — verifica permissions, busca possíveis secrets
+## Padrão para novos scripts de validação
 
-Executado em cada push/PR que toque `src/scripts/`.
-
----
-
-## Automação de checklists
-
-### Padrão proposto
-
-Para cada checklist em `operations/checklists/`, criar script correspondente:
-
-```yaml
-operations/checklists/cluster-operational-checklist.md
-↓
-src/scripts/validate-cluster-operational.sh
-```
-
-**Estrutura do script:**
-
-```bash
-#!/bin/bash
-# Validação de cluster-operational-checklist.md
-
-source src/scripts/lib/common.sh
-
-check_item_1() {
-  # Verificar item 1
-}
-
-check_item_2() {
-  # Verificar item 2
-}
-
-generate_report() {
-  # Retornar JSON ou texto
-}
-```
-
-### Checklists candidatos a automação
-
-| Checklist | Script | Verificações |
-| ----------- | -------- | ------------- |
-| Post-install | `validate-post-install.sh` | Nós, services, network |
-| Cluster operational | `validate-cluster-operational.sh` | Quorum, storage, logs |
-| Application readiness | `validate-app-readiness.sh` | Resources, probes, security |
-| Security | `validate-cluster-security.sh` | RBAC, network policies, PSP |
-
----
-
-## Relatórios estruturados
-
-Todos os scripts retornam JSON para:
-
-- Consumir por CI/CD
-- Agregar em dashboard
-- Armazenar histórico
-
-**Formato padrão:**
+Os demais checklists especializados ainda não têm um script correspondente. Quando um for criado, o padrão sugerido é nomear o script a partir do checklist que ele valida e devolver o mesmo formato de relatório já usado por `check-cluster-health.sh`, para que os resultados possam ser agregados de forma consistente:
 
 ```json
 {
   "timestamp": "ISO 8601",
-  "checklist": "name",
+  "checklist": "nome do checklist validado",
   "summary": {
-    "total": N,
-    "passed": N,
-    "failed": N,
-    "warnings": N
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "warnings": 0
   },
   "results": [
     {
-      "name": "check name",
+      "name": "nome do item verificado",
       "status": "pass|fail|warning",
-      "message": "..."
+      "message": "detalhe da verificação"
     }
   ]
 }
 ```
 
----
+Nem todo item de um checklist é automatizável dessa forma. Itens que exigem revisão manual de um documento, confirmação de um processo humano (como um responsável de escalonamento definido) ou julgamento sobre um trade-off não têm um comando de verificação objetivo e devem continuar como itens manuais do checklist, não como uma função de script forçada a devolver `pass`/`fail` sem sentido real. Os candidatos mais diretos a automação são os itens de [segurança do host](../host-security/), [segurança do cluster](../cluster-security/) e [prontidão de workloads](../application-readiness/), porque a maioria de seus comandos de verificação já produz uma saída objetiva (estado de um serviço, presença de uma label, ausência de uma tag de imagem flutuante) sem depender de julgamento humano.
 
-## Próximos passos
+## Próximo passo
 
-1. Criar script para cada checklist crítico
-2. Integrar ao CI (rodar em cada deployment)
-3. Agregar resultados em dashboard (opcional: Prometheus + Grafana)
-4. Alertar se validações falham
+Antes de escrever um novo script de validação, escolha um checklist especializado e confirme quantos dos seus itens realmente têm um comando de verificação objetivo o suficiente para virar uma função automatizável; os demais permanecem como itens manuais no mesmo checklist.
 
----
+## Fontes e leitura adicional
 
-## Referências
-
-- [check-cluster-health.sh](../../../scripts/check-cluster-health.sh): exemplo implementado.
-- [quality-criteria.md](../../../project/quality-criteria/): critérios de validação.
-- [cluster-operational-checklist.md](./cluster-operational-checklist/): checklist fonte.
+- [check-cluster-health.sh (código-fonte no repositório)](https://github.com/guesant/infrastructure-and-cluster-notebook/blob/main/src/scripts/check-cluster-health.sh): implementação de referência do padrão de saída em JSON usado por este script.
+- [Guia de operação contínua](../cluster-operational-checklist/): índice dos checklists especializados candidatos a automação.

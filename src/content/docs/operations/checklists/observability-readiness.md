@@ -45,7 +45,7 @@ Checklist especializado referenciado pelo [checklist central](../cluster-operati
 
 - [ ] Monitoramento externo capaz de detectar indisponibilidade do próprio cluster
   - Explicação: [observabilidade e alertas](../../observability/observability-and-alerting/)
-  - Verificação: teste manual — desligar o acesso ao Prometheus e confirmar que um monitor externo detecta
+  - Verificação: teste manual, desligar o acesso ao Prometheus e confirmar que um monitor externo detecta
   - Frequência: trimestral
 
 - [ ] Capacidade (CPU/memória/disco/rede) com limites operacionais conhecidos

@@ -8,6 +8,7 @@ documentação: projetos relacionados, alternativas a ferramentas usadas, docume
 listas `awesome-*`, laboratórios, playgrounds, cursos, livros, canais e comunidades.
 
 Ainda não existe conteúdo aqui. A criação dessas páginas é escopo das Fases 7 e 10 do plano de
-conteúdo interno do projeto — ver `.todo/phase-7-toolbox.md`, fora do site publicado. Parte do
-conteúdo inicial virá da extração da seção "Catálogos e listas `awesome-*`" de
-`toolbox/tools/overview.md`, hoje ainda misturada com o catálogo de ferramentas.
+conteúdo interno do projeto (veja `.todo/phase-7-toolbox.md`, fora do site publicado). Parte do
+conteúdo inicial virá da extração da seção ["Catálogos e listas `awesome-*`"](../toolbox/tools/overview/#catálogos-e-listas-awesome-)
+de [catálogo de ferramentas](../toolbox/tools/overview/), hoje ainda misturada com o restante do
+catálogo.

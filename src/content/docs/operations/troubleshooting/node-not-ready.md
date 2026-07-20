@@ -7,7 +7,7 @@ sidebar:
 > **Sintoma:** `kubectl get nodes` mostra um nó como `NotReady`.
 > **Versões testadas:** K3s v1.36.1+k3s1.
 
-Um nó `NotReady` deixou de reportar heartbeats saudáveis ao control plane. Em um cluster single-node, isso significa que o cluster inteiro está efetivamente indisponível — trate como incidente imediato, não como item de rotina.
+Um nó `NotReady` deixou de reportar heartbeats saudáveis ao control plane. Em um cluster single-node, isso significa que o cluster inteiro está efetivamente indisponível: trate como incidente imediato, não como item de rotina.
 
 ## Diagnóstico inicial
 
@@ -60,7 +60,7 @@ Na maioria dos casos, reiniciar o serviço resolve um estado travado:
 systemctl restart k3s
 ```
 
-Se o problema persistir após reinício e a causa não for óbvia pelos logs, considere [drenar e reintegrar o nó](../../maintenance/drain-and-uncordon-node/) — mas em nó único não há para onde drenar; priorize corrigir o host diretamente.
+Se o problema persistir após reinício e a causa não for óbvia pelos logs, considere [drenar e reintegrar o nó](../../maintenance/drain-and-uncordon-node/). Em nó único, porém, não há para onde drenar; priorize corrigir o host diretamente.
 
 ## Quando escalar para disaster recovery
 

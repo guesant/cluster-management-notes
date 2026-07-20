@@ -1,206 +1,127 @@
 ---
-title: Automação de backups com Velero
+title: Automatizar backups com Velero
 sidebar:
   order: 3
 ---
 
-> **Para quem é:** operadores com Velero já instalado que querem automatizar e monitorar backups.
+> **Pré-requisitos:** Velero instalado e avaliado conforme [Velero como ferramenta a avaliar](../backup-and-recovery/#velero-como-ferramenta-a-avaliar); um `BackupStorageLocation` já configurado e testado com um backup manual.
+> **Versões testadas:** Velero v1.18.
 
-Velero oferece agendamentos, políticas de retenção e hooks para validar backups.
+Esta página cobre a automação de backups já decididos, não a escolha inicial de Velero como ferramenta. A avaliação de versão, provider, plugins, suporte a CSI e política de retenção continua sendo tratada em [backup e recuperação](../backup-and-recovery/#velero-como-ferramenta-a-avaliar): confirme ali os pré-requisitos antes de tratar os agendamentos abaixo como definitivos.
 
-## Agendamentos básicos
+## Agendamentos recorrentes
 
-Criar um backup diário às 2h da manhã:
+> **Executar em:** estação administrativa com o CLI `velero` configurado.
+
+Um `Schedule` do Velero cria um novo `Backup` automaticamente a cada execução do cron informado. O exemplo abaixo agenda um backup diário às 2h, retendo cada backup por 30 dias (`720h`):
 
 ```bash
 velero schedule create daily-backup \
   --schedule="0 2 * * *" \
-  --include-namespaces='*' \
+  --include-namespaces '*' \
   --ttl 720h
 ```
 
-Variações:
+O campo `--schedule` usa a sintaxe padrão de cron com cinco campos (minuto, hora, dia do mês, mês, dia da semana); não use o formato de seis campos de algumas ferramentas de nuvem, que insere um campo de segundos e produz um agendamento inválido no Velero. Um backup semanal aos domingos às 4h, por exemplo, se escreve `0 4 * * 0`, não `0 4 0 * * 0`.
+
+O `--ttl` define quando o Velero pode expirar o backup e liberar o espaço correspondente no object storage; ele não é, por si só, uma política de retenção com granularidade por período (manter N diários, M semanais). Para isso, crie `Schedules` separados com TTLs diferentes, como no exemplo abaixo, em vez de tentar expressar toda a política em um único agendamento:
 
 ```bash
-# Backup de um namespace específico
-velero schedule create app-backup \
-  --schedule="0 3 * * *" \
-  --include-namespaces myapp
-
-# Backup a cada 6 horas
-velero schedule create frequent \
-  --schedule="0 */6 * * *" \
-  --ttl 360h  # Retenção: 15 dias
-
-# Backup semanal com mais retenção
-velero schedule create weekly \
-  --schedule="0 4 0 * * 0" \
-  --ttl 2160h  # 90 dias
+velero schedule create weekly-backup \
+  --schedule="0 4 * * 0" \
+  --include-namespaces '*' \
+  --ttl 2160h
 ```
 
-## Filtros granulares
+## Filtrar namespaces e recursos
 
-Incluir/excluir namespaces:
+`--include-namespaces` e `--exclude-namespaces` recebem uma lista de nomes exatos de namespace, separados por vírgula; não há suporte a padrões glob como `prod-*`. Quando o critério de seleção depende de um padrão de nome em vez de uma lista fixa, rotule os namespaces relevantes e filtre por label:
 
 ```bash
-velero schedule create prod-only \
+velero schedule create prod-backup \
   --schedule="0 2 * * *" \
-  --include-namespaces 'prod-*,default' \
-  --exclude-namespaces 'test,dev'
+  --selector environment=production
 ```
 
-Incluir/excluir resources:
+Esse `--selector` aplica-se aos recursos dentro dos namespaces incluídos, não à seleção dos namespaces em si; um backup completo de um subconjunto de namespaces com nomes irregulares ainda depende de listar os nomes explicitamente ou de organizar o cluster de forma que um label identifique o conjunto desejado de recursos.
+
+`--include-resources` e `--exclude-resources` funcionam de forma equivalente para tipos de recurso, usando o nome plural em minúsculas (`deployments`, `services`, `configmaps`). Excluir `secrets` de um backup, por exemplo, evita duplicar segredos que já têm uma fonte externa e uma estratégia de backup própria (veja [credenciais, configuração e fonte de segredos](../backup-and-recovery/#credenciais-configuração-e-fonte-de-segredos)):
 
 ```bash
 velero schedule create app-backup \
   --schedule="0 2 * * *" \
-  --include-resources 'deployments,services,configmaps' \
-  --exclude-resources 'secrets'
+  --include-namespaces myapp \
+  --exclude-resources secrets
 ```
 
-## Políticas de retenção
+## Hooks de pré e pós-backup
 
-```bash
-# TTL automático (delete after N hours)
-velero schedule create daily \
-  --schedule="0 2 * * *" \
-  --ttl 720h  # 30 dias
+Hooks executam um comando dentro de um container antes ou depois do backup de um Pod, úteis para aplicações que precisam ser colocadas em um estado consistente antes da cópia (liberar um lock, sincronizar um buffer em memória). Eles se declaram como anotações no próprio Pod, não como parte do `BackupStorageLocation`, que descreve apenas o destino do backup:
 
-# Listar scheduled backups
-velero schedule get
-
-# Desabilitar schedule sem deletar backups
-velero schedule delete daily --confirm
-
-# Ver próxima execução
-velero schedule describe daily
-```
-
-## Hooks de validação
-
-Executar comando antes/depois de backup (ex: congelar banco de dados):
-
-```bash
-cat > backup-hook.yaml << EOF
-apiVersion: velero.io/v1
-kind: BackupStorageLocation
+```yaml
+apiVersion: v1
+kind: Pod
 metadata:
-  name: default
-spec:
-  provider: aws
-  objectStorage:
-    bucket: my-bucket
-  hooks:
-    resources:
-    - name: pre-backup-hook
-      includedNamespaces:
-      - mydb
-      execOnPod:
-        container: postgres
-        command:
-        - /bin/sh
-        - -c
-        - pg_dump -U postgres mydb | gzip > /tmp/backup.sql.gz
-EOF
-
-kubectl apply -f backup-hook.yaml
+  annotations:
+    pre.hook.backup.velero.io/container: minha-aplicacao
+    pre.hook.backup.velero.io/command: '["/bin/sh", "-c", "meu-comando-de-preparo"]'
+    pre.hook.backup.velero.io/timeout: 30s
 ```
+
+Para bancos de dados gerenciados por um operator, como o CloudNativePG usado neste notebook, prefira o mecanismo de backup nativo do operator (veja [backup do PostgreSQL](../backup-postgresql/)) em vez de um hook do Velero executando `pg_dump` manualmente: o operator já coordena WAL, consistência e retenção especificamente para o banco, enquanto um hook genérico de Velero replicaria essa lógica sem as mesmas garantias.
 
 ## Monitoramento
 
-Ver status dos backups:
-
 ```bash
-# Backups recentes
 velero backup get
-
-# Detalhes de um backup
-velero backup describe daily-backup-20260719 --details
-
-# Ver logs
-velero backup logs daily-backup-20260719
-
-# Listar restores
-velero restore get
+velero backup describe <nome-do-backup> --details
+velero backup logs <nome-do-backup>
+velero schedule get
 ```
 
-## Alertas
+`velero backup describe` mostra o resultado (`Completed`, `PartiallyFailed`, `Failed`), os itens processados e quaisquer avisos; um backup `Completed` com avisos pode ainda assim ter deixado recursos de fora, então revise a seção `Warnings` antes de considerar o backup íntegro. Integre esses comandos à mesma rotina de monitoramento e alertas descrita em [monitoramento e backups desatualizados](../backup-and-recovery/#monitoramento-e-backups-desatualizados).
 
-Configurar alertas (com Prometheus):
+Quando o Velero expõe métricas Prometheus (veja [instalar o Prometheus stack](../../../guides/tasks/observability/install-prometheus-stack/) e [configurar um `PodMonitor`](../../../guides/tasks/observability/configure-pod-monitor/)), confirme os nomes exatos das métricas expostas pela versão instalada antes de escrever regras de alerta; os nomes de métrica variam entre versões do Velero e não são fixados por este notebook.
 
-```yaml
-groups:
-- name: velero
-  rules:
-  - alert: VeleroBackupFailed
-    expr: increase(velero_backup_failure_total[1h]) > 0
-    annotations:
-      summary: "Velero backup falhou"
-  
-  - alert: VeleroBackupSlow
-    expr: velero_backup_duration_seconds > 3600
-    annotations:
-      summary: "Velero backup demorando >1h"
-```
+## Teste de restauração
 
-## Teste de recuperação regular
-
-Validar que backups são realmente restauráveis:
+Restaurar em um namespace isolado, sem sobrescrever o original, é a forma mais direta de validar que um backup é utilizável:
 
 ```bash
-# Criar namespace de teste
-kubectl create namespace velero-test
+kubectl create namespace velero-restore-test
 
-# Restaurar um backup ali
 velero restore create \
-  --from-backup daily-backup-20260719 \
-  --namespace-mappings myapp:velero-test \
+  --from-backup <nome-do-backup> \
+  --namespace-mappings myapp:velero-restore-test \
   --wait
 
-# Validar que recursos foram restaurados
-kubectl get all -n velero-test
+kubectl get all --namespace velero-restore-test
 
-# Limpar teste
-kubectl delete namespace velero-test
+kubectl delete namespace velero-restore-test
 ```
 
-## Backup de PVCs com Velero Uploader
+`--namespace-mappings origem:destino` redireciona os recursos do namespace original para o namespace de teste durante a restauração, evitando qualquer conflito com o ambiente em produção. Depois de validar os recursos restaurados, descarte o namespace de teste; não o deixe como um segundo ambiente esquecido.
 
-Se volumes não suportam snapshots nativos:
+## Checklist
 
-```bash
-# Configurar uploader (alternativa a snapshot)
-helm upgrade velero velero/velero \
-  --set configuration.volumeSnapshotLocation.provider=none \
-  --set nodeAgent.enabled=true
-```
+- [ ] Cada `Schedule` usa cron de cinco campos e foi conferido com `velero schedule describe <nome>` antes de considerar o agendamento ativo.
+- [ ] `--ttl` de cada `Schedule` reflete a retenção decidida na [matriz de proteção](../backup-and-recovery/#modelo-de-matriz-de-proteção), não um valor arbitrário.
+- [ ] Nenhum backup depende de filtro glob em `--include-namespaces`/`--exclude-namespaces`; namespaces são listados explicitamente ou selecionados por label.
+- [ ] Hooks de pré/pós-backup (quando existirem) estão anotados no Pod, não em `BackupStorageLocation`.
+- [ ] Bancos gerenciados por operator usam o backup nativo do operator, não um hook genérico do Velero.
+- [ ] Um teste de restauração em namespace isolado foi executado dentro do prazo definido em [prontidão de backup](../../checklists/backup-readiness/).
 
-Então volumes serão copiados via uploader (mais lento, mas mais portável).
+## Troubleshooting
 
-## Disaster recovery checklist
+Se `velero backup describe` mostrar `PartiallyFailed` ou avisos na seção `Warnings`, o backup não deve ser tratado como equivalente a `Completed`: investigue os itens listados antes de assumir que a restauração recuperaria o estado completo. Se um `Schedule` não estiver gerando novos `Backups` no horário esperado, confirme que o controller do Velero está `Running` (`kubectl --namespace velero get pods`) e que a sintaxe do cron tem exatamente cinco campos.
 
-```yaml
-☐ Backups agendados e executo regularmente
-  # velero schedule get
+## Próximo passo
 
-☐ Retenção está adequada (não muito curta)
-  # velero backup describe <nome> | grep -i ttl
+[Backup e recuperação (política geral)](../backup-and-recovery/) para o inventário completo, a matriz de proteção e o roteiro de restore drill que este agendamento deve alimentar.
 
-☐ Teste de recuperação feito no último mês
-  # Documentar resultado
+## Fontes e leitura adicional
 
-☐ Storage location é verificável
-  # velero backup-location get
-
-☐ Alertas configurados no monitoramento
-  # Ver integration com Prometheus
-
-☐ Procedures de restauração documentados
-  # Exemplo: restaurar namespace X sem downtime de Y
-```
-
-## Referências
-
-- [Velero Schedules](https://velero.io/docs/main/disaster-recovery/): agendamentos.
-- [Velero Backup Hooks](https://velero.io/docs/main/backup-hooks/): hooks customizados.
-- [Velero Restore](https://velero.io/docs/main/restore-reference/): opções de restauração.
+- [Velero — How Velero Works](https://velero.io/docs/v1.18/how-velero-works/): explica o modelo de `Backup`, `Schedule`, `Restore` e `BackupStorageLocation`.
+- [Velero — Schedule a Backup](https://velero.io/docs/v1.18/backup-reference/#schedule-a-backup): referência de `velero schedule create` e sintaxe de cron aceita.
+- [Velero — Backup Hooks](https://velero.io/docs/v1.18/backup-hooks/): documenta anotações de hook em Pods e hooks declarados no `Backup`/`Schedule`.
+- [Velero — Resource Filtering](https://velero.io/docs/v1.18/resource-filtering/): documenta `--include-namespaces`, `--exclude-namespaces`, `--include-resources`, `--exclude-resources` e seletores por label.

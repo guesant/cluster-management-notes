@@ -6,10 +6,11 @@ sidebar:
 ---
 
 :::note
-As anotações deste guia foram elaboradas e revisadas com o apoio de inteligência artificial,
-especificamente o ChatGPT. Alguns scripts e outros conteúdos deste repositório também podem ter
-sido criados ou modificados com auxílio de IA. Valide o código, os comandos, as versões e as
-decisões de segurança de acordo com o seu ambiente antes de utilizá-los.
+As anotações deste guia foram elaboradas e revisadas com o apoio de assistentes de inteligência
+artificial (incluindo, ao longo do desenvolvimento do projeto, ferramentas como ChatGPT e Claude).
+Alguns scripts e outros conteúdos deste repositório também podem ter sido criados ou modificados
+com auxílio de IA. Valide o código, os comandos, as versões e as decisões de segurança de acordo
+com o seu ambiente antes de utilizá-los.
 :::
 
 ## O que este aviso cobre
@@ -20,7 +21,7 @@ texto explicativo, comandos, exemplos de configuração, scripts em `scripts/` e
 projeto.
 
 Isso não significa que todo trecho tenha sido gerado por IA, nem que o conteúdo esteja
-necessariamente incorreto — significa que a fonte editorial do projeto usa essa ferramenta como
+necessariamente incorreto: significa que a fonte editorial do projeto usa essa ferramenta como
 apoio, e que o processo de revisão humana não substitui a validação técnica do leitor.
 
 ## O que não está coberto

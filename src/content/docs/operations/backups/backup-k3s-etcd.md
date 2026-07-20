@@ -7,9 +7,9 @@ sidebar:
 > **Pré-requisitos:** acesso root a um nó manager com etcd embarcado.
 > **Versões testadas:** K3s v1.36.1+k3s1.
 
-Esta página cobre o procedimento de criar, copiar e restaurar um snapshot do etcd embarcado do K3s. Para inventário completo de ativos, matriz de proteção, RPO/RTO e o roteiro de restore drill, veja a política geral em [backup e recuperação](../backup-and-recovery/) — esta página é a referência procedural que ela cita.
+Esta página cobre o procedimento de criar, copiar e restaurar um snapshot do etcd embarcado do K3s. Para inventário completo de ativos, matriz de proteção, RPO/RTO e o roteiro de restore drill, veja a política geral em [backup e recuperação](../backup-and-recovery/): esta página é a referência procedural que ela cita.
 
-Um snapshot do etcd protege o estado da API Kubernetes (objetos, ConfigMaps, Secrets, metadados). Ele não contém dados gravados em volumes persistentes, arquivos externos aos nós nem imagens de containers — veja [limites do snapshot K3s](../backup-and-recovery/#limites-do-snapshot-k3s).
+Um snapshot do etcd protege o estado da API Kubernetes (objetos, ConfigMaps, Secrets, metadados). Ele não contém dados gravados em volumes persistentes, arquivos externos aos nós nem imagens de containers; veja [limites do snapshot K3s](../backup-and-recovery/#limites-do-snapshot-k3s).
 
 ## Criar um snapshot
 
@@ -24,7 +24,7 @@ Crie um snapshot manual antes de qualquer atualização ou mudança de configura
 
 ## Copiar para fora do host
 
-Um snapshot que permanece apenas no disco local não protege contra a perda do host — é a mesma falha que ele deveria mitigar. Copie o snapshot e o token do servidor (`/var/lib/rancher/k3s/server/token`) para um destino externo:
+Um snapshot que permanece apenas no disco local não protege contra a perda do host: é a mesma falha que ele deveria mitigar. Copie o snapshot e o token do servidor (`/var/lib/rancher/k3s/server/token`) para um destino externo:
 
 > **Executar em:** o mesmo nó manager, ou a partir de uma estação com acesso SSH a ele.
 
@@ -34,7 +34,7 @@ scp "/var/lib/rancher/k3s/server/db/snapshots/${LATEST_SNAPSHOT}" \
   usuario@destino-externo:/caminho/de/backup/
 ```
 
-Ajuste o comando ao destino real (outro host, object storage, etc.) — o essencial é que o destino esteja fora do mesmo disco e, idealmente, fora do mesmo domínio de falha físico do host original.
+Ajuste o comando ao destino real (outro host, object storage, etc.): o essencial é que o destino esteja fora do mesmo disco e, idealmente, fora do mesmo domínio de falha físico do host original.
 
 ## Agendamento automático
 
@@ -45,12 +45,12 @@ etcd-snapshot-schedule-cron: "0 */12 * * *"
 etcd-snapshot-retention: 5
 ```
 
-O agendamento automático não copia os snapshots para fora do host sozinho — combine com uma rotina externa (cron, systemd timer) que sincronize o diretório de snapshots para o destino externo, ou configure `etcd-s3` para enviar diretamente a um storage compatível com S3.
+O agendamento automático não copia os snapshots para fora do host sozinho: combine com uma rotina externa (cron, systemd timer) que sincronize o diretório de snapshots para o destino externo, ou configure `etcd-s3` para enviar diretamente a um storage compatível com S3.
 
 ## Restaurar um snapshot
 
 :::danger
-Restaurar um snapshot substitui o estado atual do datastore. Faça isso apenas em um ambiente isolado de teste ou durante um incidente aprovado — nunca como teste em um cluster de produção ativo.
+Restaurar um snapshot substitui o estado atual do datastore. Faça isso apenas em um ambiente isolado de teste ou durante um incidente aprovado; nunca como teste em um cluster de produção ativo.
 :::
 
 > **Executar em:** o nó manager que se tornará o novo (ou único) membro do cluster restaurado, como `root`.
@@ -65,7 +65,7 @@ k3s server \
 systemctl start k3s
 ```
 
-Em um cluster com múltiplos managers, restaure em apenas um deles com `--cluster-reset`; os demais precisam ser removidos e reintegrados como servidores novos depois que o restaurado estiver `Ready` — não inicie os outros managers antigos apontando para o mesmo datastore restaurado.
+Em um cluster com múltiplos managers, restaure em apenas um deles com `--cluster-reset`; os demais precisam ser removidos e reintegrados como servidores novos depois que o restaurado estiver `Ready`. Não inicie os outros managers antigos apontando para o mesmo datastore restaurado.
 
 ## Validação
 
@@ -77,15 +77,15 @@ k3s kubectl get nodes
 k3s kubectl get pods --all-namespaces
 ```
 
-Compare os recursos restaurados com o que era esperado no ponto do snapshot. Lembre que controllers, volumes ou endpoints externos referenciados pelos objetos restaurados podem não estar automaticamente disponíveis — veja a [ordem de recuperação completa](../backup-and-recovery/#ordem-de-recuperação).
+Compare os recursos restaurados com o que era esperado no ponto do snapshot. Lembre que controllers, volumes ou endpoints externos referenciados pelos objetos restaurados podem não estar automaticamente disponíveis; veja a [ordem de recuperação completa](../backup-and-recovery/#ordem-de-recuperação).
 
 ## Troubleshooting
 
-Se `k3s server --cluster-reset` falhar por diretório de dados já existente, confirme que o serviço foi parado (`systemctl stop k3s`) antes do comando — o etcd não pode estar em uso durante o reset.
+Se `k3s server --cluster-reset` falhar por diretório de dados já existente, confirme que o serviço foi parado (`systemctl stop k3s`) antes do comando: o etcd não pode estar em uso durante o reset.
 
 ## Rollback
 
-Não há rollback de uma restauração — ela substitui o estado. Se a restauração usar o ambiente isolado recomendado, simplesmente descarte esse ambiente sem afetar produção.
+Não há rollback de uma restauração: ela substitui o estado. Se a restauração usar o ambiente isolado recomendado, simplesmente descarte esse ambiente sem afetar produção.
 
 ## Próximo passo
 

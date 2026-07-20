@@ -10,9 +10,9 @@ import cordonAndDrainScript from '../../../../scripts/cordon-and-drain-node.sh?r
 > **Pré-requisitos:** kubeconfig administrativo.
 > **Versões testadas:** K3s v1.36.1+k3s1.
 
-Esta página cobre a manutenção temporária de um nó que continuará no cluster — reiniciar o host, aplicar uma atualização de kernel, trocar hardware. Para remover um nó permanentemente do cluster, veja [remover um nó do K3s](../../../guides/tasks/kubernetes/remove-k3s-node/) em vez desta página.
+Esta página cobre a manutenção temporária de um nó que continuará no cluster: reiniciar o host, aplicar uma atualização de kernel, trocar hardware. Para remover um nó permanentemente do cluster, veja [remover um nó do K3s](../../../guides/tasks/kubernetes/remove-k3s-node/) em vez desta página.
 
-Em um cluster de nó único, drenar o único nó esvazia todos os workloads sem ter para onde reagendá-los — eles ficam `Pending` até o nó voltar e ser reintegrado. Planeje essa janela como indisponibilidade total, não como uma manutenção transparente.
+Em um cluster de nó único, drenar o único nó esvazia todos os workloads sem ter para onde reagendá-los: eles ficam `Pending` até o nó voltar e ser reintegrado. Planeje essa janela como indisponibilidade total, não como uma manutenção transparente.
 
 ## Drenar o nó
 
@@ -51,7 +51,7 @@ O nó deve voltar a `Ready` sem `SchedulingDisabled`, e os workloads que estavam
 
 ## Troubleshooting
 
-Se `uncordon` não fizer os Pods pendentes serem agendados, verifique se há taints residuais ou se o nó ainda reporta pressão de recursos (`kubectl describe node`) — `uncordon` só reabre o agendamento, não força a reconciliação imediata de Pods já em `Pending` por outro motivo.
+Se `uncordon` não fizer os Pods pendentes serem agendados, verifique se há taints residuais ou se o nó ainda reporta pressão de recursos (`kubectl describe node`): `uncordon` só reabre o agendamento, não força a reconciliação imediata de Pods já em `Pending` por outro motivo.
 
 ## Rollback
 

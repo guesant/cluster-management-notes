@@ -392,13 +392,13 @@ Inclua versão ou commit do manifesto, ambiente, data, executor e conclusão. Sa
 
 ## Fontes e leitura adicional
 
-- [Kubernetes — Resource Management for Pods and Containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/) — Define requests, limits, agendamento, throttling de CPU e aplicação de limites de memória.
-- [Kubernetes — Pod Quality of Service Classes](https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/) — Explica os critérios de `Guaranteed`, `Burstable` e `BestEffort` e sua relação com eviction.
-- [Kubernetes — Pod Topology Spread Constraints](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/) — Documenta distribuição por domínios, `maxSkew` e políticas de agendamento.
-- [Kubernetes — Disruptions](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/) — Delimita disrupções voluntárias e involuntárias e o comportamento dos PodDisruptionBudgets.
-- [Kubernetes — Liveness, Readiness, and Startup Probes](https://kubernetes.io/docs/concepts/workloads/pods/probes/) — Define a finalidade, configuração e consequências de cada probe.
-- [Kubernetes — Pod Lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination-flow) — Descreve o fluxo de terminação, o período de graça e o encerramento forçado.
-- [Kubernetes — Jobs](https://kubernetes.io/docs/concepts/workloads/controllers/job/) — Referência de retries, deadlines, paralelismo, conclusões e limpeza de Jobs.
-- [Kubernetes — CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) — Documenta agendamento, concorrência, deadlines, histórico e limitações de execução.
-- [Kubernetes — Service Accounts](https://kubernetes.io/docs/concepts/security/service-accounts/) — Explica identidades de workloads e a montagem de credenciais para acesso à API.
-- [Kubernetes — Configure a Security Context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) — Detalha usuários, grupos, capabilities, seccomp e privilégios de containers.
+- [Kubernetes — Resource Management for Pods and Containers](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/): define requests, limits, agendamento, throttling de CPU e aplicação de limites de memória.
+- [Kubernetes — Pod Quality of Service Classes](https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/): explica os critérios de `Guaranteed`, `Burstable` e `BestEffort` e sua relação com eviction.
+- [Kubernetes — Pod Topology Spread Constraints](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/): documenta distribuição por domínios, `maxSkew` e políticas de agendamento.
+- [Kubernetes — Disruptions](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/): delimita disrupções voluntárias e involuntárias e o comportamento dos PodDisruptionBudgets.
+- [Kubernetes — Liveness, Readiness, and Startup Probes](https://kubernetes.io/docs/concepts/workloads/pods/probes/): define a finalidade, configuração e consequências de cada probe.
+- [Kubernetes — Pod Lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination-flow): descreve o fluxo de terminação, o período de graça e o encerramento forçado.
+- [Kubernetes — Jobs](https://kubernetes.io/docs/concepts/workloads/controllers/job/): referência de retries, deadlines, paralelismo, conclusões e limpeza de Jobs.
+- [Kubernetes — CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/): documenta agendamento, concorrência, deadlines, histórico e limitações de execução.
+- [Kubernetes — Service Accounts](https://kubernetes.io/docs/concepts/security/service-accounts/): explica identidades de workloads e a montagem de credenciais para acesso à API.
+- [Kubernetes — Configure a Security Context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/): detalha usuários, grupos, capabilities, seccomp e privilégios de containers.

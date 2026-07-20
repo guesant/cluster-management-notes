@@ -20,11 +20,11 @@ Um PVC mal configurado costuma falhar de duas formas: fica `Pending` porque nenh
 | `ReadWriteMany` (RWX) | Vários nós podem montar para leitura e escrita simultaneamente. |
 | `ReadWriteOncePod` | Um único Pod (não apenas um nó) pode montar para leitura e escrita. |
 
-Nem todo provisionador suporta todos os modos. O Longhorn, usado neste notebook, oferece RWO nativamente; RWX depende de um componente adicional (`share-manager`) e tem características de desempenho diferentes — não assuma RWX disponível sem verificar.
+Nem todo provisionador suporta todos os modos. O Longhorn, usado neste notebook, oferece RWO nativamente; RWX depende de um componente adicional (`share-manager`) e tem características de desempenho diferentes: não assuma RWX disponível sem verificar.
 
 **Política de reclamação** (`reclaimPolicy`) decide o que acontece com o PV quando o PVC associado é excluído:
 
-- `Delete`: o PV e os dados subjacentes são removidos junto com o PVC — a política padrão da maioria dos provisionadores dinâmicos.
+- `Delete`: o PV e os dados subjacentes são removidos junto com o PVC (a política padrão da maioria dos provisionadores dinâmicos).
 - `Retain`: o PV permanece após a exclusão do PVC, em estado `Released`, exigindo limpeza manual antes de ser reutilizado.
 
 ```mermaid
@@ -47,11 +47,11 @@ Para dados que não precisam sobreviver à exclusão do workload que os criou (c
 
 ## Quando usar `Retain`
 
-Bancos de dados e qualquer volume cuja perda acidental seria grave. Combine com um processo de revisão periódica de PVs `Released` — eles não aparecem como "problema" em um `kubectl get pvc` porque o PVC já não existe mais.
+Bancos de dados e qualquer volume cuja perda acidental seria grave. Combine com um processo de revisão periódica de PVs `Released`: eles não aparecem como "problema" em um `kubectl get pvc` porque o PVC já não existe mais.
 
 ## Quando evitar
 
-Não use `ReadWriteMany` como padrão "por segurança" quando a aplicação só precisa de RWO — RWX geralmente tem overhead maior e nem todo provisionador o suporta igualmente bem.
+Não use `ReadWriteMany` como padrão "por segurança" quando a aplicação só precisa de RWO: RWX geralmente tem overhead maior e nem todo provisionador o suporta igualmente bem.
 
 ## Decisões que isso implica
 

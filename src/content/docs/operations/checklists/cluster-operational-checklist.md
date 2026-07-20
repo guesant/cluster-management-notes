@@ -3,7 +3,7 @@ title: Guia de operação contínua
 description: Índice dos checklists especializados usados para manter um cluster K3s seguro, observável, recuperável e atualizado ao longo do tempo.
 ---
 
-Este guia funciona como **índice**, não como uma página única contendo todas as explicações — cada categoria abaixo aponta para o checklist especializado correspondente, que detalha explicação, configuração, comando de verificação e frequência de cada item. Ele complementa a [validação pós-instalação](../post-install-checklist/): a validação confirma que o cluster terminou o bootstrap em condições conhecidas; este índice ajuda a mantê-lo assim ao longo do tempo.
+Este guia funciona como **índice**, não como uma página única contendo todas as explicações: cada categoria abaixo aponta para o checklist especializado correspondente, que detalha explicação, configuração, comando de verificação e frequência de cada item. Ele complementa a [validação pós-instalação](../post-install-checklist/): a validação confirma que o cluster terminou o bootstrap em condições conhecidas; este índice ajuda a mantê-lo assim ao longo do tempo.
 
 ## Como usar este guia
 
@@ -31,9 +31,9 @@ Este guia funciona como **índice**, não como uma página única contendo todas
 
 Para uma visão consolidada por situação, em vez de por categoria:
 
-- [Prontidão para produção](../production-readiness/) — antes de colocar um cluster ou workload em produção pela primeira vez.
-- [Prontidão para atualização](../upgrade-readiness/) — antes de uma janela de atualização.
-- [Prontidão para disaster recovery](../disaster-recovery-readiness/) — para confirmar que uma perda total do host é de fato recuperável.
+- [Prontidão para produção](../production-readiness/): antes de colocar um cluster ou workload em produção pela primeira vez.
+- [Prontidão para atualização](../upgrade-readiness/): antes de uma janela de atualização.
+- [Prontidão para disaster recovery](../disaster-recovery-readiness/): para confirmar que uma perda total do host é de fato recuperável.
 
 ## Rotina recorrente
 

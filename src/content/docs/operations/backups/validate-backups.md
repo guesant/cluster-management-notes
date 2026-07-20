@@ -43,7 +43,7 @@ Para cada seção, confirme que existe uma execução recente e sem falha, dentr
 
 ## Próximo passo
 
-Se qualquer item falhar, trate como prioridade — um backup não verificado é indistinguível de nenhum backup até o momento em que é necessário.
+Se qualquer item falhar, trate como prioridade: um backup não verificado é indistinguível de nenhum backup até o momento em que é necessário.
 
 ## Fontes e leitura adicional
 

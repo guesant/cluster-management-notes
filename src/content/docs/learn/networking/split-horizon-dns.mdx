@@ -1,122 +1,65 @@
 ---
-title: Split-horizon DNS (domínios internos vs. externos)
+title: Split-horizon DNS
 sidebar:
   order: 3
 ---
 
-> **Para quem é:** operadores de clusters que querem resolver nomes de serviços internos sem expor portas publicamente.
+> **Para quem é:** operadores que querem resolver nomes de serviços internos por DNS, sem publicar uma porta por serviço no host.
 
-**Split-horizon DNS** significa que um mesmo domínio resolve diferente dependendo se a consulta vem de **dentro** (rede interna) ou de **fora** (internet).
+**Split-horizon DNS** é uma configuração em que o mesmo nome de domínio resolve para endereços diferentes dependendo de quem faz a consulta: um cliente na rede interna recebe um endereço, e um cliente na internet pública recebe outro (ou nenhum, se o domínio não existir na visão externa). O nome vem da ideia de que o "horizonte" de resolução muda conforme a origem da pergunta.
 
-## O problema que split-horizon resolve
+## O problema que resolve
 
-```yaml
-Exemplo: seu cluster roda Grafana
-- Acesso interno: grafana.cluster.local → 10.0.0.5:3000
-- Acesso externo: grafana.example.com → 203.0.113.1 (público, com auth)
+Um cluster que expõe serviços de administração (Grafana, Prometheus, o próprio ArgoCD) enfrenta um dilema: publicar essas interfaces na internet pública é uma superfície de ataque desnecessária, mas acessá-las sem DNS nenhum normalmente significa depender de `kubectl port-forward`, um comando manual, que precisa ser reexecutado a cada nova sessão e que se torna tedioso quando vários serviços diferentes precisam de acesso simultâneo.
 
-Sem split-horizon:
-  admin@laptop → kubectl port-forward :3000
-  (manual, tedioso, quebra quando laptop reconecta)
-
-Com split-horizon:
-  admin@laptop → ssh bastion
-  bastion → grafana.cluster.local:443 (reverse proxy resolve internamente)
-  (automático, permanente)
-```
-
-## Arquitetura
+O split-horizon DNS remove essa fricção sem expor os serviços publicamente. Um administrador acessando o cluster através de uma VPN ou de um bastion consulta o mesmo nome de domínio (por exemplo, `grafana.internal`) que resolve, nessa visão interna, para um endereço que um reverse proxy interpreta e usa para rotear a conexão até o Pod correto. A internet pública nunca vê esse nome, porque a zona DNS que o resolve só existe dentro da rede interna.
 
 ```mermaid
 flowchart TB
-    accTitle: Split-horizon DNS e reverse proxy
-    accDescr: Domínios internos resolvem para localhost, reverse proxy roteia.
+    accTitle: Split-horizon DNS com reverse proxy
+    accDescr: Um cliente externo consulta DNS público e recebe o endereço público do cluster. Um administrador na rede interna, via VPN ou bastion, consulta o CoreDNS interno e recebe o endereço do reverse proxy, que roteia por SNI até o serviço correto.
 
-    Internet["Internet<br/>(usuários públicos)"]
-    Admin["Admin<br/>(via bastion ou VPN)"]
-    
-    PublicDNS["DNS Público<br/>(Route53, Cloudflare)"]
-    InternalDNS["CoreDNS<br/>(dentro do cluster)"]
-    
-    ReverseProxy["Reverse Proxy<br/>(127.0.0.1:443)"]
-    
-    Services["Serviços internes<br/>(Grafana, Prometheus,<br/>Plex, Homeserver)"]
-    
-    Internet -->|"exemplo.com?"| PublicDNS
-    PublicDNS -->|"203.0.113.1"| Internet
-    
-    Admin -->|"grafana.cluster.local?"| InternalDNS
-    InternalDNS -->|"127.0.0.1"| Admin
-    Admin -->|"conecta a 127.0.0.1:443<br/>(SNI: grafana.cluster.local)"| ReverseProxy
-    ReverseProxy -->|"roteia por SNI"| Services
+    Internet["Cliente externo"] -->|"exemplo.com?"| DNSPublico["DNS público"]
+    DNSPublico -->|"IP público"| Internet
+
+    Admin["Administrador via VPN/bastion"] -->|"grafana.internal?"| CoreDNS["CoreDNS interno"]
+    CoreDNS -->|"127.0.0.1"| Admin
+    Admin -->|"conecta a 127.0.0.1:443, SNI grafana.internal"| Proxy["Reverse proxy"]
+    Proxy -->|"roteia por SNI"| Servicos["Grafana, Prometheus, ArgoCD"]
 ```
 
-## Conceitos
+## Por que a resposta interna aponta para localhost
 
-### DNS público vs. interno
+Quando o resolvedor interno responde `127.0.0.1` para um nome como `grafana.internal`, o endereço não se refere ao cluster, e sim à máquina que está fazendo a consulta. Isso só funciona porque o reverse proxy roda no mesmo host que resolve o DNS para o administrador, seja um bastion dedicado, um gateway de VPN, ou o próprio túnel SSH estabelecido pelo administrador até um ponto de entrada do cluster. A conexão até o serviço final acontece em duas etapas que o administrador não precisa gerenciar manualmente: a resolução do nome aponta para o localhost desse ponto de entrada, e o reverse proxy, rodando ali, decide o backend real a partir do nome que o próprio cliente informou na conexão.
 
-- **DNS público** (Route53, Cloudflare, etc.): aponta para IP público (WAF, load balancer)
-- **DNS interno** (CoreDNS no cluster): aponta para `127.0.0.1` (localhost)
+Esse é o motivo pelo qual o SNI (Server Name Indication), a extensão TLS que transmite o nome do domínio solicitado antes da negociação da chave de sessão, é o mecanismo mais comum para o roteamento nessa última etapa: ele permite que várias conexões diferentes, endereçadas a serviços diferentes, cheguem todas à mesma porta 443 do proxy, que decide o destino sem precisar terminar a conexão TLS antes de rotear. O mecanismo é o mesmo descrito com mais detalhe em [reverse proxy, fundamentos](./reverse-proxy-basics/#como-o-proxy-decide-o-destino).
 
-### Por que `127.0.0.1`?
+## Quando faz sentido usar
 
-Porque o reverse proxy roda **no mesmo host** onde o admin está fazendo a consulta (ex.: bastion, VPN gateway, laptop com SSH tunnel).
+Split-horizon DNS se encaixa bem em serviços de administração e observabilidade que só devem ser alcançáveis por quem já tem acesso à rede interna (VPN ou bastion), eliminando a necessidade de `kubectl port-forward` manual a cada sessão sem expor nada publicamente. Não é a ferramenta certa para serviços que já precisam ser públicos, porque esses já resolvem normalmente por DNS público e passam por um caminho de exposição diferente (com WAF ou load balancer, tipicamente); e não simplifica ambientes com múltiplas redes segmentadas que exigem visões de DNS totalmente distintas entre si, caso em que a configuração de múltiplas zonas internas passa a ter complexidade equivalente à de operar DNS público separado por segmento.
 
-```yaml
-Fluxo:
-  admin@laptop conecta via SSH ao bastion
-  bastion resolve grafana.cluster.local → 127.0.0.1
-  bastion roteia 127.0.0.1:443 (SNI: grafana) → pod Grafana no cluster
-```
-
-### SNI (Server Name Indication)
-
-O reverse proxy usa **SNI** (TLS extension) para rotear requests de diferentes domínios internos pela mesma porta (443):
-
-```yaml
-Cliente conecta a 127.0.0.1:443, informa SNI: grafana.cluster.local
-Reverse proxy vê SNI, roteia para pod Grafana
-
-Cliente conecta a 127.0.0.1:443, informa SNI: prometheus.cluster.local
-Reverse proxy vê SNI, roteia para pod Prometheus
-
-(múltiplos serviços, uma porta)
-```
-
-## Quando usar split-horizon
-
-- ✅ **Serviços internos:** Grafana, Prometheus, ArgoCD, etc.
-- ✅ **Homelab/produção privada:** acesso via VPN ou bastion
-- ✅ **Zero downtime para admin:** sem `kubectl port-forward` manual
-- ❌ **Serviços públicos:** já estão em DNS público (WAF/LB)
-- ❌ **Múltiplas redes separadas:** exigiria múltiplos DNS (mais complexo)
-
-## Comparação: com/sem split-horizon
+## Comparação com o acesso manual
 
 | Aspecto | Sem split-horizon | Com split-horizon |
 | --- | --- | --- |
-| **Acesso a Grafana** | `kubectl port-forward :3000` | `curl https://grafana.cluster.local` |
-| **Conexão** | Manual, via kubectl | Automática, via DNS |
-| **Porta** | Aleatória (30000+) | 443 (padrão HTTPS) |
-| **Múltiplos serviços** | Precisa de múltiplos port-forwards | Uma porta (SNI roteia) |
-| **Downtime em reconexão SSH** | Quebra, precisa redo | Automático, sem queda |
-| **Segurança** | Expõe porta no host | Isolado em 127.0.0.1 |
+| Acesso a um serviço | `kubectl port-forward svc/grafana 3000:3000` | `curl https://grafana.internal` |
+| Repetição necessária | A cada nova sessão de terminal | Nenhuma, a resolução é persistente |
+| Porta usada | Aleatória, escolhida a cada `port-forward` | 443, fixa, via SNI |
+| Vários serviços simultâneos | Um `port-forward` por serviço, em terminais separados | Uma porta única, roteada por nome |
+| Reconexão de VPN/SSH | Port-forward cai e precisa ser reaberto | DNS e proxy continuam disponíveis automaticamente |
 
-## Componentes necessários
+## Componentes envolvidos
 
-1. **CoreDNS:** resolve nomes internos (rodando no cluster ou fora)
-2. **Reverse proxy:** roteia por SNI (Nginx, HAProxy, Traefik, etc.)
-3. **Certificados:** TLS para cada domínio interno (ou wildcard)
-4. **Rota de acesso:** SSH tunnel, VPN, ou direto (se no bastion)
+Uma configuração completa de split-horizon DNS para um cluster depende de quatro peças trabalhando em conjunto: um servidor DNS interno (tipicamente CoreDNS, rodando dentro do cluster ou em um host dedicado) que responde apenas para consultas originadas na rede confiável; um reverse proxy que roteia por SNI ou por host, recebendo todas as conexões na mesma porta e decidindo o backend a partir do nome informado; certificados TLS válidos para cada domínio interno, emitidos por wildcard, por SANs múltiplos, ou automaticamente via cert-manager (as opções estão detalhadas em [reverse proxy, fundamentos](./reverse-proxy-basics/#certificados-para-múltiplos-domínios-internos)); e uma rota de acesso à rede interna, seja um túnel SSH, uma VPN, ou acesso direto a partir de uma máquina já posicionada dentro do perímetro.
 
-## Tópicos relacionados
+## Páginas relacionadas
 
-- [Reverse proxy basics](./reverse-proxy-basics/): como reverse proxy roteia
-- [CoreDNS setup interno](../../guides/tasks/networking/setup-coredns-internal/): task guide
-- [Reverse proxy localhost](../../guides/tasks/networking/setup-reverse-proxy-localhost/): task guide
+- [Reverse proxy, fundamentos](./reverse-proxy-basics/)
+- [Configurar CoreDNS interno (procedimento)](../../guides/tasks/networking/setup-coredns-internal/)
+- [Configurar reverse proxy em localhost (procedimento)](../../guides/tasks/networking/setup-reverse-proxy-localhost/)
 
-## Fontes e leitura adicional
+## Referências
 
-- [DNS — Authoritative vs. Recursive](https://www.cloudflare.com/en-gb/learning/dns/dns-server-types/): tipos de DNS.
-- [TLS SNI (Server Name Indication)](https://en.wikipedia.org/wiki/Server_Name_Indication): como identificar domínio em HTTPS.
-- [Nginx — Virtual Hosts](https://nginx.org/en/docs/http/server_names.html): como Nginx roteia por domínio.
+- [DNS Server Types (Cloudflare Learning Center)](https://www.cloudflare.com/en-gb/learning/dns/dns-server-types/): explica a diferença entre servidores DNS autoritativos e recursivos.
+- [Server Name Indication (Wikipedia)](https://en.wikipedia.org/wiki/Server_Name_Indication): descreve o funcionamento da extensão SNI do TLS.
+- [Server Names (Nginx)](https://nginx.org/en/docs/http/server_names.html): documentação oficial do roteamento por host no Nginx.

@@ -50,8 +50,16 @@ mapeamento de conteúdo inteiro antes de começar a criar páginas, e ainda deix
 menos alinhada ao princípio central da proposta (separar Learn/Guides/Operations/Toolbox/
 Resources/Reference como tipos de conteúdo, não como hierarquia de tecnologia).
 
-**Consequência:** a migração em si é um item do escopo da Fase 1 do plano de conteúdo interno
-(`.todo/phase-1-fundacao-editorial.md`, fora do site publicado) — mover conteúdo existente para
-os diretórios novos, atualizar a navegação do Starlight e corrigir links internos. Até essa
-migração ser concluída, páginas novas de fases seguintes devem ser criadas já na estrutura alvo,
-não na estrutura antiga.
+**Consequência:** a migração em si foi um item do escopo da Fase 1 do plano de conteúdo interno
+(`.todo/phase-1-fundacao-editorial.md`, fora do site publicado): mover conteúdo existente para os
+diretórios novos, atualizar a navegação do Starlight e corrigir links internos.
+
+**Estado atual:** a migração está concluída. A árvore publicada em `src/content/docs/` corresponde
+à estrutura alvo (`getting-started/`, `learn/`, `guides/blueprints/`, `guides/tasks/`,
+`operations/`, `toolbox/`, `technologies/`, `resources/`, `reference/`, `contributing/`,
+`project/`), e nenhum diretório da estrutura antiga (`concepts/`, `hosts/`, `kubernetes/`,
+`guides/{deployment,secrets,operations-overview}`) permanece. As subseções `toolbox/scripts/` e
+`toolbox/labs/` previstas na árvore alvo original não foram criadas como seções próprias do site:
+scripts maiores vivem em `src/scripts/` (fora do site publicado) e são incorporados às páginas via
+os componentes `ScriptHelper`/`FileWriter`, conforme registrado em
+[política de conteúdo](../content-policy/).

@@ -14,132 +14,129 @@ dig example.com
 host example.com
 ```
 
-**Quando usar:** verificar que um domínio resolve, descobrir IP de um host.
+**Quando usar:** verificar se um domínio resolve, ou descobrir o IP de um host.
 
 **Considerações:**
 
-- `nslookup` usa `/etc/resolv.conf`.
-- `dig` mostra mais detalhes (TTL, tipo de record).
-- `host` é mais breve.
+- `nslookup` usa o resolvedor configurado em `/etc/resolv.conf`.
+- `dig` mostra mais detalhes (TTL, tipo de registro, seção de autoridade).
+- `host` é o mais direto dos três, útil para uma checagem rápida.
 
 ---
 
-## Listar servidor DNS configurado
+## Descobrir qual servidor DNS está configurado
 
 ```bash
 cat /etc/resolv.conf
-# ou (systemd-resolved)
+# ou, em sistemas com systemd-resolved
 resolvectl status
 ```
 
-**Quando usar:** confirmar qual resolver está em uso (Google 8.8.8.8, Cloudflare, local, etc.).
+**Quando usar:** confirmar qual resolvedor está em uso (Google Public DNS, Cloudflare, um resolvedor local, etc.).
 
 **Considerações:**
 
-- `/etc/resolv.conf` pode ser gerado automaticamente por systemd-resolved.
-- Em systemd: `resolvectl` mostra config por interface.
+- `/etc/resolv.conf` pode ser gerado e sobrescrito automaticamente pelo `systemd-resolved`; editá-lo manualmente em um sistema assim raramente é persistente.
+- Em sistemas com `systemd-resolved`, `resolvectl status` mostra a configuração por interface, o que costuma ser mais preciso.
 
 ---
 
-## Resolver para um nameserver específico
+## Resolver contra um nameserver específico
 
 ```bash
 dig @8.8.8.8 example.com
-# Força uso do Google DNS (8.8.8.8)
+# Força a consulta a usar o DNS público do Google (8.8.8.8)
 ```
 
-**Quando usar:** testar se um nameserver específico responde, contornar cache local.
+**Quando usar:** testar se um nameserver específico responde, ou contornar o cache do resolvedor local.
 
 **Considerações:**
 
-- `@<IP>` especifica o resolver.
-- Útil para diagnóstico de DNS distribuído.
+- `@<IP>` especifica qual resolvedor consultar, ignorando o configurado no sistema.
+- Útil para diagnosticar diferenças de resposta entre resolvedores em uma configuração de DNS distribuído (split-horizon, por exemplo).
 
 ---
 
-## Listar todos os records de um domínio
+## Listar todos os registros de um domínio
 
 ```bash
 dig example.com ANY
-# ou com short output
+# Saída resumida
 dig +short example.com
 
-# Específico: só A records
+# Só registros A
 dig +short example.com A
 
-# Todos: A, AAAA, MX, NS, TXT
+# Todos os tipos comuns, formatados
 dig example.com +nocmd +noall +answer
 ```
 
-**Quando usar:** auditoria de zona, descobrir todos os IPs/aliases.
+**Quando usar:** auditoria de zona, ou descobrir todos os IPs e aliases associados a um domínio.
 
 **Considerações:**
 
-- `ANY` pode ser bloqueado por alguns nameservers (política).
-- `+short` é mais legível.
-- `+nocmd +noall +answer` mostra só answers.
+- Muitos nameservers bloqueiam ou limitam consultas `ANY` por política de segurança; não assuma que a ausência de resposta significa ausência de registros.
+- `+short` produz a saída mais fácil de processar em scripts.
+- `+nocmd +noall +answer` remove o cabeçalho e mostra só a seção de resposta.
 
 ---
 
-## Verificar record MX, TXT, CNAME
+## Verificar registros MX, TXT e CNAME
 
 ```bash
-# Mail servers (MX)
+# Servidores de e-mail
 dig example.com MX
 
-# Text records (TXT) — DKIM, SPF, etc.
+# Registros de texto (SPF, DKIM, verificação de domínio)
 dig example.com TXT
 
-# Aliases (CNAME)
+# Aliases
 dig example.com CNAME
 ```
 
-**Quando usar:** validar email infrastructure, verificar SPF/DKIM, resolver aliases.
+**Quando usar:** validar a infraestrutura de e-mail, verificar SPF/DKIM, ou resolver aliases.
 
 **Considerações:**
 
-- MX: lower preference = higher priority (confuso!).
-- TXT: inclui SPF, DKIM, DMARC, verificação de domínio.
-- CNAME: não pode existir junto com A record.
+- Em registros MX, um valor de preferência (`priority`) menor indica prioridade maior; é fácil interpretar isso ao contrário.
+- Registros TXT também carregam SPF, DKIM e DMARC, além de tokens de verificação de propriedade de domínio usados por vários provedores.
+- Um nome não pode ter um registro CNAME e outros registros (como A) simultaneamente, conforme a RFC do DNS.
 
 ---
 
-## Testar conectividade DNS interno (K3s)
+## Testar resolução DNS interna do K3s
 
 ```bash
-# De um pod no cluster
+# A partir de um Pod temporário no cluster
 kubectl run -it --rm debug --image=nicolaka/netshoot --restart=Never -- \
   nslookup kubernetes.default.svc.cluster.local
 
-# ou dentro de um container
-docker exec <container> nslookup myservice
-
-# Verificar CoreDNS
+# Verificar o CoreDNS
 kubectl get svc -n kube-system coredns
 kubectl logs -n kube-system -l k8s-app=kube-dns
 ```
 
-**Quando usar:** diagnosticar resolução de services internas, verificar CoreDNS.
+**Quando usar:** diagnosticar falha de resolução de Services internos, ou verificar a saúde do CoreDNS.
 
 **Considerações:**
 
-- FQDN em K3s: `<service>.<namespace>.svc.cluster.local`.
-- CoreDNS responde na porta 53 (UDP/TCP).
-- Logs de CoreDNS indicam cache misses.
+- O FQDN interno de um Service segue o padrão `<service>.<namespace>.svc.cluster.local`.
+- O CoreDNS responde na porta 53, em UDP e TCP.
+- Erros e cache misses recorrentes nos logs do CoreDNS costumam indicar sobrecarga ou uma `NetworkPolicy` bloqueando a porta 53.
 
 ---
 
-## Medir latência de resolução
+## Medir a latência de uma resolução
 
 ```bash
 time dig example.com
-# mostra tempo total de lookup
+# mostra o tempo total gasto na consulta
 ```
 
-**Quando usar:** diagnosticar lentidão de DNS, comparar resolvers.
+**Quando usar:** diagnosticar lentidão de DNS, ou comparar resolvedores diferentes.
 
 **Considerações:**
 
-- Primeira query é mais lenta (cache miss).
-- Queries subsequentes usam cache (mais rápidas).
-- >100ms indica problema.
+- A primeira consulta a um domínio costuma ser mais lenta, por não estar em cache em nenhum resolvedor intermediário.
+- Consultas subsequentes ao mesmo nome tendem a usar cache e responder mais rápido.
+- Uma latência acima de 100ms de forma consistente, mesmo com cache quente, costuma indicar um problema no caminho de resolução, não apenas uma consulta isolada lenta.

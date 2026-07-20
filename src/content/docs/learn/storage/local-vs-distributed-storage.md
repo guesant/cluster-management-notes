@@ -11,7 +11,7 @@ A instalação do primeiro servidor deste notebook desabilita `local-storage` de
 
 ## Como funciona
 
-**Armazenamento local** vincula os dados ao disco de um nó específico. Rápido (sem rede envolvida) e simples, mas o Pod que usa esse volume só pode ser agendado no nó que o contém — perder o nó é perder os dados, a menos que exista backup externo.
+**Armazenamento local** vincula os dados ao disco de um nó específico. É rápido (sem rede envolvida) e simples, mas o Pod que usa esse volume só pode ser agendado no nó que o contém: perder o nó é perder os dados, a menos que exista backup externo.
 
 **Armazenamento distribuído** (Longhorn, Ceph, e equivalentes gerenciados em nuvem) replica os dados entre múltiplos nós. Um Pod pode ser reagendado em qualquer nó que tenha acesso à rede de armazenamento, e a perda de um nó não derruba o volume enquanto houver réplicas saudáveis restantes.
 
@@ -36,7 +36,7 @@ Em um cluster de nó único, a distinção entre os dois é menor: não há outr
 
 ## Alternativas
 
-Um provisionador de nuvem gerenciado (EBS, uma classe de disco de bloco do provedor) resolve o mesmo problema fora do cluster, delegando a replicação à infraestrutura subjacente — não é o caso coberto por este notebook, focado em hosts próprios.
+Um provisionador de nuvem gerenciado (EBS, uma classe de disco de bloco do provedor) resolve o mesmo problema fora do cluster, delegando a replicação à infraestrutura subjacente. Não é o caso coberto por este notebook, focado em hosts próprios.
 
 ## Quando usar armazenamento local
 
@@ -48,7 +48,7 @@ Qualquer dado que precise sobreviver à perda de um disco, ou workloads que prec
 
 ## Decisões que isso implica
 
-Nenhuma das duas opções substitui backup — veja [replicação não é backup](../replication-is-not-backup/) antes de tratar réplicas como proteção suficiente.
+Nenhuma das duas opções substitui backup: veja [replicação não é backup](../replication-is-not-backup/) antes de tratar réplicas como proteção suficiente.
 
 ## Páginas relacionadas
 

@@ -7,7 +7,7 @@ sidebar:
 > **Pré-requisitos:** [backups do PostgreSQL configurados](../../guides/tasks/databases/configure-postgresql-backups/).
 > **Frequência sugerida:** revisão diária do arquivamento de WAL; semanal para os backups completos.
 
-Esta página cobre a rotina de verificação periódica dos backups do CloudNativePG — a configuração inicial está em [configurar backups do PostgreSQL](../../guides/tasks/databases/configure-postgresql-backups/); esta página não repete os comandos de configuração.
+Esta página cobre a rotina de verificação periódica dos backups do CloudNativePG. A configuração inicial está em [configurar backups do PostgreSQL](../../guides/tasks/databases/configure-postgresql-backups/); esta página não repete os comandos de configuração.
 
 ## Verificação de rotina
 
@@ -34,7 +34,7 @@ Confirme que:
 kubectl --namespace "${PG_NAMESPACE}" get backups -o jsonpath='{.items[-1:].status.stoppedAt}'
 ```
 
-Compare com o RPO definido para este banco — se o intervalo entre o valor retornado e agora exceder o RPO, investigue antes de considerar a proteção adequada.
+Compare com o RPO definido para este banco: se o intervalo entre o valor retornado e agora exceder o RPO, investigue antes de considerar a proteção adequada.
 
 ## Checklist de rotina
 
@@ -45,7 +45,7 @@ Compare com o RPO definido para este banco — se o intervalo entre o valor reto
 
 ## Troubleshooting
 
-Se o arquivamento de WAL parar, o disco de dados do banco pode encher com WAL não arquivado — trate como incidente imediato, não apenas item de rotina; veja [revisão de capacidade de disco](../../operations/maintenance/disk-capacity-review/).
+Se o arquivamento de WAL parar, o disco de dados do banco pode encher com WAL não arquivado. Trate como incidente imediato, não apenas item de rotina; veja [revisão de capacidade de disco](../../operations/maintenance/disk-capacity-review/).
 
 ## Próximo passo
 

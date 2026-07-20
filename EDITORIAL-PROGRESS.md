@@ -29,350 +29,350 @@ Regras do repositório: nunca execute comandos no host, use `./jail-exec.sh`; ze
 - [x] src/content/docs/guides/blueprints/dns-and-reverse-proxy/index.mdx
 
 ### guides/blueprints/docker-swarm
-- [ ] src/content/docs/guides/blueprints/docker-swarm/application-deployment.md
-- [ ] src/content/docs/guides/blueprints/docker-swarm/architecture.md
-- [ ] src/content/docs/guides/blueprints/docker-swarm/backup-and-recovery.md
-- [ ] src/content/docs/guides/blueprints/docker-swarm/index.md
-- [ ] src/content/docs/guides/blueprints/docker-swarm/managers-and-workers.md
-- [ ] src/content/docs/guides/blueprints/docker-swarm/networking.md
-- [ ] src/content/docs/guides/blueprints/docker-swarm/persistent-data.md
-- [ ] src/content/docs/guides/blueprints/docker-swarm/secrets-and-configs.md
-- [ ] src/content/docs/guides/blueprints/docker-swarm/updates-and-rollbacks.md
+- [x] src/content/docs/guides/blueprints/docker-swarm/application-deployment.md
+- [x] src/content/docs/guides/blueprints/docker-swarm/architecture.md
+- [x] src/content/docs/guides/blueprints/docker-swarm/backup-and-recovery.md
+- [x] src/content/docs/guides/blueprints/docker-swarm/index.md
+- [x] src/content/docs/guides/blueprints/docker-swarm/managers-and-workers.md
+- [x] src/content/docs/guides/blueprints/docker-swarm/networking.md
+- [x] src/content/docs/guides/blueprints/docker-swarm/persistent-data.md
+- [x] src/content/docs/guides/blueprints/docker-swarm/secrets-and-configs.md
+- [x] src/content/docs/guides/blueprints/docker-swarm/updates-and-rollbacks.md
 
 ### guides/blueprints/k3s-multinode
-- [ ] src/content/docs/guides/blueprints/k3s-multinode/additional-servers.mdx
-- [ ] src/content/docs/guides/blueprints/k3s-multinode/agents.mdx
-- [ ] src/content/docs/guides/blueprints/k3s-multinode/api-endpoint.mdx
-- [ ] src/content/docs/guides/blueprints/k3s-multinode/architecture.mdx
-- [ ] src/content/docs/guides/blueprints/k3s-multinode/failure-and-recovery.mdx
-- [ ] src/content/docs/guides/blueprints/k3s-multinode/first-server.mdx
-- [ ] src/content/docs/guides/blueprints/k3s-multinode/index.mdx
-- [ ] src/content/docs/guides/blueprints/k3s-multinode/network-requirements.mdx
-- [ ] src/content/docs/guides/blueprints/k3s-multinode/node-maintenance.mdx
-- [ ] src/content/docs/guides/blueprints/k3s-multinode/topologies.mdx
-- [ ] src/content/docs/guides/blueprints/k3s-multinode/validation.mdx
+- [x] src/content/docs/guides/blueprints/k3s-multinode/additional-servers.mdx
+- [x] src/content/docs/guides/blueprints/k3s-multinode/agents.mdx
+- [x] src/content/docs/guides/blueprints/k3s-multinode/api-endpoint.mdx
+- [x] src/content/docs/guides/blueprints/k3s-multinode/architecture.mdx
+- [x] src/content/docs/guides/blueprints/k3s-multinode/failure-and-recovery.mdx
+- [x] src/content/docs/guides/blueprints/k3s-multinode/first-server.mdx
+- [x] src/content/docs/guides/blueprints/k3s-multinode/index.mdx
+- [x] src/content/docs/guides/blueprints/k3s-multinode/network-requirements.mdx
+- [x] src/content/docs/guides/blueprints/k3s-multinode/node-maintenance.mdx
+- [x] src/content/docs/guides/blueprints/k3s-multinode/topologies.mdx
+- [x] src/content/docs/guides/blueprints/k3s-multinode/validation.mdx
 
 ### guides/blueprints/k3s-single-node-gitops
-- [ ] src/content/docs/guides/blueprints/k3s-single-node-gitops/architecture.md
-- [ ] src/content/docs/guides/blueprints/k3s-single-node-gitops/backup-and-recovery.md
-- [ ] src/content/docs/guides/blueprints/k3s-single-node-gitops/implementation.md
-- [ ] src/content/docs/guides/blueprints/k3s-single-node-gitops/index.md
-- [ ] src/content/docs/guides/blueprints/k3s-single-node-gitops/limitations.md
-- [ ] src/content/docs/guides/blueprints/k3s-single-node-gitops/operations.md
-- [ ] src/content/docs/guides/blueprints/k3s-single-node-gitops/prerequisites.md
-- [ ] src/content/docs/guides/blueprints/k3s-single-node-gitops/templates.md
-- [ ] src/content/docs/guides/blueprints/k3s-single-node-gitops/validation.md
-- [ ] src/content/docs/guides/blueprints/k3s-single-node-gitops/variables.md
+- [x] src/content/docs/guides/blueprints/k3s-single-node-gitops/architecture.md
+- [x] src/content/docs/guides/blueprints/k3s-single-node-gitops/backup-and-recovery.md
+- [x] src/content/docs/guides/blueprints/k3s-single-node-gitops/implementation.md
+- [x] src/content/docs/guides/blueprints/k3s-single-node-gitops/index.md
+- [x] src/content/docs/guides/blueprints/k3s-single-node-gitops/limitations.md
+- [x] src/content/docs/guides/blueprints/k3s-single-node-gitops/operations.md
+- [x] src/content/docs/guides/blueprints/k3s-single-node-gitops/prerequisites.md
+- [x] src/content/docs/guides/blueprints/k3s-single-node-gitops/templates.md
+- [x] src/content/docs/guides/blueprints/k3s-single-node-gitops/validation.md
+- [x] src/content/docs/guides/blueprints/k3s-single-node-gitops/variables.md
 
 ### guides/tasks/backup
-- [ ] src/content/docs/guides/tasks/backup/install-velero.md
-- [ ] src/content/docs/guides/tasks/backup/velero-complete-setup.md
+- [x] src/content/docs/guides/tasks/backup/install-velero.md
+- [x] src/content/docs/guides/tasks/backup/velero-complete-setup.md
 
 ### guides/tasks/certificates
-- [ ] src/content/docs/guides/tasks/certificates/create-acme-clusterissuer.md
-- [ ] src/content/docs/guides/tasks/certificates/install-cert-manager.mdx
+- [x] src/content/docs/guides/tasks/certificates/create-acme-clusterissuer.md
+- [x] src/content/docs/guides/tasks/certificates/install-cert-manager.mdx
 
 ### guides/tasks/databases
-- [ ] src/content/docs/guides/tasks/databases/access-postgresql-with-gui-client.md
-- [ ] src/content/docs/guides/tasks/databases/configure-application-credentials.md
-- [ ] src/content/docs/guides/tasks/databases/configure-postgresql-backups.md
-- [ ] src/content/docs/guides/tasks/databases/create-postgresql-cluster.md
-- [ ] src/content/docs/guides/tasks/databases/expose-postgresql-for-administration.md
-- [ ] src/content/docs/guides/tasks/databases/install-cloudnative-pg-operator.md
-- [ ] src/content/docs/guides/tasks/databases/restore-postgresql-cluster.md
+- [x] src/content/docs/guides/tasks/databases/access-postgresql-with-gui-client.md
+- [x] src/content/docs/guides/tasks/databases/configure-application-credentials.md
+- [x] src/content/docs/guides/tasks/databases/configure-postgresql-backups.md
+- [x] src/content/docs/guides/tasks/databases/create-postgresql-cluster.md
+- [x] src/content/docs/guides/tasks/databases/expose-postgresql-for-administration.md
+- [x] src/content/docs/guides/tasks/databases/install-cloudnative-pg-operator.md
+- [x] src/content/docs/guides/tasks/databases/restore-postgresql-cluster.md
 
 ### guides/tasks/gitops
-- [ ] src/content/docs/guides/tasks/gitops/access-argocd.md
-- [ ] src/content/docs/guides/tasks/gitops/bootstrap-gitops.mdx
-- [ ] src/content/docs/guides/tasks/gitops/connect-git-repository.md
-- [ ] src/content/docs/guides/tasks/gitops/create-root-application.md
-- [ ] src/content/docs/guides/tasks/gitops/install-argocd.mdx
-- [ ] src/content/docs/guides/tasks/gitops/structure-gitops-repository.md
+- [x] src/content/docs/guides/tasks/gitops/access-argocd.md
+- [x] src/content/docs/guides/tasks/gitops/bootstrap-gitops.mdx
+- [x] src/content/docs/guides/tasks/gitops/connect-git-repository.md
+- [x] src/content/docs/guides/tasks/gitops/create-root-application.md
+- [x] src/content/docs/guides/tasks/gitops/install-argocd.mdx
+- [x] src/content/docs/guides/tasks/gitops/structure-gitops-repository.md
 
 ### guides/tasks/host
-- [ ] src/content/docs/guides/tasks/host/configure-automatic-security-updates.md
-- [ ] src/content/docs/guides/tasks/host/configure-dns.md
-- [ ] src/content/docs/guides/tasks/host/configure-fail2ban.md
-- [ ] src/content/docs/guides/tasks/host/configure-firewalld.md
-- [ ] src/content/docs/guides/tasks/host/configure-hostname.md
-- [ ] src/content/docs/guides/tasks/host/configure-persistent-journal.md
-- [ ] src/content/docs/guides/tasks/host/configure-time-synchronization.md
-- [ ] src/content/docs/guides/tasks/host/configure-ufw.mdx
-- [ ] src/content/docs/guides/tasks/host/disable-unnecessary-services.md
-- [ ] src/content/docs/guides/tasks/host/harden-ssh.mdx
-- [ ] src/content/docs/guides/tasks/host/prepare-debian-server.md
-- [ ] src/content/docs/guides/tasks/host/validate-host-requirements.md
+- [x] src/content/docs/guides/tasks/host/configure-automatic-security-updates.md
+- [x] src/content/docs/guides/tasks/host/configure-dns.md
+- [x] src/content/docs/guides/tasks/host/configure-fail2ban.md
+- [x] src/content/docs/guides/tasks/host/configure-firewalld.md
+- [x] src/content/docs/guides/tasks/host/configure-hostname.md
+- [x] src/content/docs/guides/tasks/host/configure-persistent-journal.md
+- [x] src/content/docs/guides/tasks/host/configure-time-synchronization.md
+- [x] src/content/docs/guides/tasks/host/configure-ufw.mdx
+- [x] src/content/docs/guides/tasks/host/disable-unnecessary-services.md
+- [x] src/content/docs/guides/tasks/host/harden-ssh.mdx
+- [x] src/content/docs/guides/tasks/host/prepare-debian-server.md
+- [x] src/content/docs/guides/tasks/host/validate-host-requirements.md
 
 ### guides/tasks/kubernetes
-- [ ] src/content/docs/guides/tasks/kubernetes/configure-k3s-firewall-rules.mdx
-- [ ] src/content/docs/guides/tasks/kubernetes/configure-k3s-server-options.md
-- [ ] src/content/docs/guides/tasks/kubernetes/configure-kubeconfig.md
-- [ ] src/content/docs/guides/tasks/kubernetes/configure-rbac.mdx
-- [ ] src/content/docs/guides/tasks/kubernetes/configure-tls-san.md
-- [ ] src/content/docs/guides/tasks/kubernetes/install-first-k3s-server.mdx
-- [ ] src/content/docs/guides/tasks/kubernetes/join-k3s-agent.mdx
-- [ ] src/content/docs/guides/tasks/kubernetes/join-k3s-server.mdx
-- [ ] src/content/docs/guides/tasks/kubernetes/remove-k3s-node.md
-- [ ] src/content/docs/guides/tasks/kubernetes/uninstall-k3s.md
-- [ ] src/content/docs/guides/tasks/kubernetes/validate-k3s-cluster.md
+- [x] src/content/docs/guides/tasks/kubernetes/configure-k3s-firewall-rules.mdx
+- [x] src/content/docs/guides/tasks/kubernetes/configure-k3s-server-options.md
+- [x] src/content/docs/guides/tasks/kubernetes/configure-kubeconfig.md
+- [x] src/content/docs/guides/tasks/kubernetes/configure-rbac.mdx
+- [x] src/content/docs/guides/tasks/kubernetes/configure-tls-san.md
+- [x] src/content/docs/guides/tasks/kubernetes/install-first-k3s-server.mdx
+- [x] src/content/docs/guides/tasks/kubernetes/join-k3s-agent.mdx
+- [x] src/content/docs/guides/tasks/kubernetes/join-k3s-server.mdx
+- [x] src/content/docs/guides/tasks/kubernetes/remove-k3s-node.md
+- [x] src/content/docs/guides/tasks/kubernetes/uninstall-k3s.md
+- [x] src/content/docs/guides/tasks/kubernetes/validate-k3s-cluster.md
 
 ### guides/tasks/networking
-- [ ] src/content/docs/guides/tasks/networking/configure-network-policies.mdx
-- [ ] src/content/docs/guides/tasks/networking/configure-traefik-gateway-api.mdx
-- [ ] src/content/docs/guides/tasks/networking/coredns-local-reverse-proxy.md
-- [ ] src/content/docs/guides/tasks/networking/setup-coredns-internal.mdx
-- [ ] src/content/docs/guides/tasks/networking/setup-reverse-proxy-localhost.mdx
+- [x] src/content/docs/guides/tasks/networking/configure-network-policies.mdx
+- [x] src/content/docs/guides/tasks/networking/configure-traefik-gateway-api.mdx
+- [x] src/content/docs/guides/tasks/networking/coredns-local-reverse-proxy.md
+- [x] src/content/docs/guides/tasks/networking/setup-coredns-internal.mdx
+- [x] src/content/docs/guides/tasks/networking/setup-reverse-proxy-localhost.mdx
 
 ### guides/tasks/observability
-- [ ] src/content/docs/guides/tasks/observability/collect-logs-with-alloy.md
-- [ ] src/content/docs/guides/tasks/observability/configure-alertmanager.md
-- [ ] src/content/docs/guides/tasks/observability/configure-external-availability-monitoring.md
-- [ ] src/content/docs/guides/tasks/observability/configure-pod-monitor.md
-- [ ] src/content/docs/guides/tasks/observability/configure-service-monitor.md
-- [ ] src/content/docs/guides/tasks/observability/expose-traefik-metrics.md
-- [ ] src/content/docs/guides/tasks/observability/install-loki.md
-- [ ] src/content/docs/guides/tasks/observability/install-prometheus-stack.md
-- [ ] src/content/docs/guides/tasks/observability/monitor-cloudnative-pg.md
-- [ ] src/content/docs/guides/tasks/observability/monitor-k3s-nodes.md
-- [ ] src/content/docs/guides/tasks/observability/monitor-longhorn.md
+- [x] src/content/docs/guides/tasks/observability/collect-logs-with-alloy.md
+- [x] src/content/docs/guides/tasks/observability/configure-alertmanager.md
+- [x] src/content/docs/guides/tasks/observability/configure-external-availability-monitoring.md
+- [x] src/content/docs/guides/tasks/observability/configure-pod-monitor.md
+- [x] src/content/docs/guides/tasks/observability/configure-service-monitor.md
+- [x] src/content/docs/guides/tasks/observability/expose-traefik-metrics.md
+- [x] src/content/docs/guides/tasks/observability/install-loki.md
+- [x] src/content/docs/guides/tasks/observability/install-prometheus-stack.md
+- [x] src/content/docs/guides/tasks/observability/monitor-cloudnative-pg.md
+- [x] src/content/docs/guides/tasks/observability/monitor-k3s-nodes.md
+- [x] src/content/docs/guides/tasks/observability/monitor-longhorn.md
 
 ### guides/tasks/secrets
-- [ ] src/content/docs/guides/tasks/secrets/bootstrap-secret-management.mdx
-- [ ] src/content/docs/guides/tasks/secrets/configure-cloudflare-token.mdx
-- [ ] src/content/docs/guides/tasks/secrets/configure-openbao-auto-unseal.mdx
-- [ ] src/content/docs/guides/tasks/secrets/configure-openbao-high-availability.mdx
-- [ ] src/content/docs/guides/tasks/secrets/configure-sops-with-age.mdx
-- [ ] src/content/docs/guides/tasks/secrets/create-kubernetes-secret.mdx
-- [ ] src/content/docs/guides/tasks/secrets/install-external-secrets-operator.mdx
-- [ ] src/content/docs/guides/tasks/secrets/install-infisical.mdx
-- [ ] src/content/docs/guides/tasks/secrets/install-openbao.mdx
-- [ ] src/content/docs/guides/tasks/secrets/install-sealed-secrets.mdx
-- [ ] src/content/docs/guides/tasks/secrets/openbao-advanced-ha.md
-- [ ] src/content/docs/guides/tasks/secrets/rotate-application-secret.mdx
-- [ ] src/content/docs/guides/tasks/secrets/use-sops-with-argocd.mdx
+- [x] src/content/docs/guides/tasks/secrets/bootstrap-secret-management.mdx
+- [x] src/content/docs/guides/tasks/secrets/configure-cloudflare-token.mdx
+- [x] src/content/docs/guides/tasks/secrets/configure-openbao-auto-unseal.mdx
+- [x] src/content/docs/guides/tasks/secrets/configure-openbao-high-availability.mdx
+- [x] src/content/docs/guides/tasks/secrets/configure-sops-with-age.mdx
+- [x] src/content/docs/guides/tasks/secrets/create-kubernetes-secret.mdx
+- [x] src/content/docs/guides/tasks/secrets/install-external-secrets-operator.mdx
+- [x] src/content/docs/guides/tasks/secrets/install-infisical.mdx
+- [x] src/content/docs/guides/tasks/secrets/install-openbao.mdx
+- [x] src/content/docs/guides/tasks/secrets/install-sealed-secrets.mdx
+- [x] src/content/docs/guides/tasks/secrets/openbao-advanced-ha.md
+- [x] src/content/docs/guides/tasks/secrets/rotate-application-secret.mdx
+- [x] src/content/docs/guides/tasks/secrets/use-sops-with-argocd.mdx
 
 ### guides/tasks/storage
-- [ ] src/content/docs/guides/tasks/storage/configure-longhorn-node.md
-- [ ] src/content/docs/guides/tasks/storage/configure-volume-backup.md
-- [ ] src/content/docs/guides/tasks/storage/create-filesystem-and-mount.md
-- [ ] src/content/docs/guides/tasks/storage/create-storage-class.md
-- [ ] src/content/docs/guides/tasks/storage/expand-persistent-volume.md
-- [ ] src/content/docs/guides/tasks/storage/install-longhorn.mdx
-- [ ] src/content/docs/guides/tasks/storage/prepare-host-disk.md
-- [ ] src/content/docs/guides/tasks/storage/restore-volume-backup.md
+- [x] src/content/docs/guides/tasks/storage/configure-longhorn-node.md
+- [x] src/content/docs/guides/tasks/storage/configure-volume-backup.md
+- [x] src/content/docs/guides/tasks/storage/create-filesystem-and-mount.md
+- [x] src/content/docs/guides/tasks/storage/create-storage-class.md
+- [x] src/content/docs/guides/tasks/storage/expand-persistent-volume.md
+- [x] src/content/docs/guides/tasks/storage/install-longhorn.mdx
+- [x] src/content/docs/guides/tasks/storage/prepare-host-disk.md
+- [x] src/content/docs/guides/tasks/storage/restore-volume-backup.md
 
 ### (raiz)
-- [ ] src/content/docs/index.mdx
+- [x] src/content/docs/index.mdx
 
 ### learn/backups
-- [ ] src/content/docs/learn/backups/backup-fundamentals.md
-- [ ] src/content/docs/learn/backups/cluster-state-vs-application-data.md
-- [ ] src/content/docs/learn/backups/off-cluster-backups.md
-- [ ] src/content/docs/learn/backups/restore-testing.md
-- [ ] src/content/docs/learn/backups/retention-strategies.md
-- [ ] src/content/docs/learn/backups/rpo-and-rto.md
+- [x] src/content/docs/learn/backups/backup-fundamentals.md
+- [x] src/content/docs/learn/backups/cluster-state-vs-application-data.md
+- [x] src/content/docs/learn/backups/off-cluster-backups.md
+- [x] src/content/docs/learn/backups/restore-testing.md
+- [x] src/content/docs/learn/backups/retention-strategies.md
+- [x] src/content/docs/learn/backups/rpo-and-rto.md
 
 ### learn/backup
-- [ ] src/content/docs/learn/backup/velero-overview.md
+- [x] src/content/docs/learn/backup/velero-overview.md
 
 ### learn/clusters
-- [ ] src/content/docs/learn/clusters/advanced-ha.md
-- [ ] src/content/docs/learn/clusters/docker-compose-vs-swarm-vs-kubernetes.md
-- [ ] src/content/docs/learn/clusters/docker-swarm-vs-kubernetes.md
-- [ ] src/content/docs/learn/clusters/eks-overview.md
-- [ ] src/content/docs/learn/clusters/embedded-vs-external-datastore.mdx
-- [ ] src/content/docs/learn/clusters/k3s-architecture.mdx
-- [ ] src/content/docs/learn/clusters/kine-overview.md
-- [ ] src/content/docs/learn/clusters/kubernetes-distributions.md
-- [ ] src/content/docs/learn/clusters/kubernetes.mdx
-- [ ] src/content/docs/learn/clusters/managed-vs-selfhosted.md
-- [ ] src/content/docs/learn/clusters/quorum.mdx
-- [ ] src/content/docs/learn/clusters/rke2-vs-k3s.md
+- [x] src/content/docs/learn/clusters/advanced-ha.md
+- [x] src/content/docs/learn/clusters/docker-compose-vs-swarm-vs-kubernetes.md
+- [x] src/content/docs/learn/clusters/docker-swarm-vs-kubernetes.md
+- [x] src/content/docs/learn/clusters/eks-overview.md
+- [x] src/content/docs/learn/clusters/embedded-vs-external-datastore.mdx
+- [x] src/content/docs/learn/clusters/k3s-architecture.mdx
+- [x] src/content/docs/learn/clusters/kine-overview.md
+- [x] src/content/docs/learn/clusters/kubernetes-distributions.md
+- [x] src/content/docs/learn/clusters/kubernetes.mdx
+- [x] src/content/docs/learn/clusters/managed-vs-selfhosted.md
+- [x] src/content/docs/learn/clusters/quorum.mdx
+- [x] src/content/docs/learn/clusters/rke2-vs-k3s.md
 
 ### learn/containers
-- [ ] src/content/docs/learn/containers/image-lifecycle.md
+- [x] src/content/docs/learn/containers/image-lifecycle.md
 
 ### learn/infrastructure
-- [ ] src/content/docs/learn/infrastructure/iac-overview.md
+- [x] src/content/docs/learn/infrastructure/iac-overview.md
 
 ### learn/networking
-- [ ] src/content/docs/learn/networking/cilium-vs-calico.md
+- [x] src/content/docs/learn/networking/cilium-vs-calico.md
 
 ### learn/networking/firewalls
-- [ ] src/content/docs/learn/networking/firewalls/docker-published-ports.mdx
-- [ ] src/content/docs/learn/networking/firewalls/firewalld.mdx
-- [ ] src/content/docs/learn/networking/firewalls/linux-firewall-fundamentals.mdx
-- [ ] src/content/docs/learn/networking/firewalls/ufw.mdx
-- [ ] src/content/docs/learn/networking/firewalls/ufw-vs-firewalld.mdx
+- [x] src/content/docs/learn/networking/firewalls/docker-published-ports.mdx
+- [x] src/content/docs/learn/networking/firewalls/firewalld.mdx
+- [x] src/content/docs/learn/networking/firewalls/linux-firewall-fundamentals.mdx
+- [x] src/content/docs/learn/networking/firewalls/ufw.mdx
+- [x] src/content/docs/learn/networking/firewalls/ufw-vs-firewalld.mdx
 
 ### learn/networking
-- [ ] src/content/docs/learn/networking/reverse-proxy-basics.mdx
-- [ ] src/content/docs/learn/networking/service-mesh-overview.md
-- [ ] src/content/docs/learn/networking/split-horizon-dns.mdx
+- [x] src/content/docs/learn/networking/reverse-proxy-basics.mdx
+- [x] src/content/docs/learn/networking/service-mesh-overview.md
+- [x] src/content/docs/learn/networking/split-horizon-dns.mdx
 
 ### learn/observability
-- [ ] src/content/docs/learn/observability/alerting.md
-- [ ] src/content/docs/learn/observability/application-health.md
-- [ ] src/content/docs/learn/observability/blackbox-vs-whitebox-monitoring.md
-- [ ] src/content/docs/learn/observability/distributed-tracing.md
-- [ ] src/content/docs/learn/observability/logs-and-metrics.md
-- [ ] src/content/docs/learn/observability/metrics-logs-and-traces.md
-- [ ] src/content/docs/learn/observability/observability-for-small-clusters.md
-- [ ] src/content/docs/learn/observability/prometheus-architecture.md
-- [ ] src/content/docs/learn/observability/retention.md
+- [x] src/content/docs/learn/observability/alerting.md
+- [x] src/content/docs/learn/observability/application-health.md
+- [x] src/content/docs/learn/observability/blackbox-vs-whitebox-monitoring.md
+- [x] src/content/docs/learn/observability/distributed-tracing.md
+- [x] src/content/docs/learn/observability/logs-and-metrics.md
+- [x] src/content/docs/learn/observability/metrics-logs-and-traces.md
+- [x] src/content/docs/learn/observability/observability-for-small-clusters.md
+- [x] src/content/docs/learn/observability/prometheus-architecture.md
+- [x] src/content/docs/learn/observability/retention.md
 
 ### learn/secrets-management
-- [ ] src/content/docs/learn/secrets-management/bootstrap-problem.mdx
-- [ ] src/content/docs/learn/secrets-management/encryption-vs-secret-store.mdx
-- [ ] src/content/docs/learn/secrets-management/external-secrets.mdx
-- [ ] src/content/docs/learn/secrets-management/openbao-and-vault.mdx
-- [ ] src/content/docs/learn/secrets-management/openbao-auto-unseal.mdx
-- [ ] src/content/docs/learn/secrets-management/openbao-high-availability.mdx
-- [ ] src/content/docs/learn/secrets-management/overview.mdx
-- [ ] src/content/docs/learn/secrets-management/recovery-strategies.mdx
-- [ ] src/content/docs/learn/secrets-management/secret-rotation.mdx
-- [ ] src/content/docs/learn/secrets-management/secrets-in-git.mdx
-- [ ] src/content/docs/learn/secrets-management/sops-vs-sealed-secrets.mdx
+- [x] src/content/docs/learn/secrets-management/bootstrap-problem.mdx
+- [x] src/content/docs/learn/secrets-management/encryption-vs-secret-store.mdx
+- [x] src/content/docs/learn/secrets-management/external-secrets.mdx
+- [x] src/content/docs/learn/secrets-management/openbao-and-vault.mdx
+- [x] src/content/docs/learn/secrets-management/openbao-auto-unseal.mdx
+- [x] src/content/docs/learn/secrets-management/openbao-high-availability.mdx
+- [x] src/content/docs/learn/secrets-management/overview.mdx
+- [x] src/content/docs/learn/secrets-management/recovery-strategies.mdx
+- [x] src/content/docs/learn/secrets-management/secret-rotation.mdx
+- [x] src/content/docs/learn/secrets-management/secrets-in-git.mdx
+- [x] src/content/docs/learn/secrets-management/sops-vs-sealed-secrets.mdx
 
 ### learn/security
-- [ ] src/content/docs/learn/security/policy-enforcement.md
+- [x] src/content/docs/learn/security/policy-enforcement.md
 
 ### learn/storage
-- [ ] src/content/docs/learn/storage/database-storage.md
-- [ ] src/content/docs/learn/storage/kubernetes-storage-model.md
-- [ ] src/content/docs/learn/storage/local-vs-distributed-storage.md
-- [ ] src/content/docs/learn/storage/longhorn-overview.md
-- [ ] src/content/docs/learn/storage/persistent-volumes.md
-- [ ] src/content/docs/learn/storage/replication-is-not-backup.md
+- [x] src/content/docs/learn/storage/database-storage.md
+- [x] src/content/docs/learn/storage/kubernetes-storage-model.md
+- [x] src/content/docs/learn/storage/local-vs-distributed-storage.md
+- [x] src/content/docs/learn/storage/longhorn-overview.md
+- [x] src/content/docs/learn/storage/persistent-volumes.md
+- [x] src/content/docs/learn/storage/replication-is-not-backup.md
 
 ### learn/tools
-- [ ] src/content/docs/learn/tools/visual-management.md
+- [x] src/content/docs/learn/tools/visual-management.md
 
 ### operations/backups
-- [ ] src/content/docs/operations/backups/backup-and-recovery.md
-- [ ] src/content/docs/operations/backups/backup-gitops-bootstrap-data.md
-- [ ] src/content/docs/operations/backups/backup-k3s-etcd.md
-- [ ] src/content/docs/operations/backups/backup-kubernetes-resources.md
-- [ ] src/content/docs/operations/backups/backup-longhorn-volumes.md
-- [ ] src/content/docs/operations/backups/backup-postgresql.md
-- [ ] src/content/docs/operations/backups/protect-age-keys.md
-- [ ] src/content/docs/operations/backups/setup-velero-backups.md
-- [ ] src/content/docs/operations/backups/validate-backups.md
+- [x] src/content/docs/operations/backups/backup-and-recovery.md
+- [x] src/content/docs/operations/backups/backup-gitops-bootstrap-data.md
+- [x] src/content/docs/operations/backups/backup-k3s-etcd.md
+- [x] src/content/docs/operations/backups/backup-kubernetes-resources.md
+- [x] src/content/docs/operations/backups/backup-longhorn-volumes.md
+- [x] src/content/docs/operations/backups/backup-postgresql.md
+- [x] src/content/docs/operations/backups/protect-age-keys.md
+- [x] src/content/docs/operations/backups/setup-velero-backups.md
+- [x] src/content/docs/operations/backups/validate-backups.md
 
 ### operations/checklists
-- [ ] src/content/docs/operations/checklists/application-readiness.md
-- [ ] src/content/docs/operations/checklists/automated-validation.md
-- [ ] src/content/docs/operations/checklists/backup-readiness.md
-- [ ] src/content/docs/operations/checklists/cluster-operational-checklist.md
-- [ ] src/content/docs/operations/checklists/cluster-security.md
-- [ ] src/content/docs/operations/checklists/disaster-recovery-readiness.md
-- [ ] src/content/docs/operations/checklists/host-security.md
-- [ ] src/content/docs/operations/checklists/observability-readiness.md
-- [ ] src/content/docs/operations/checklists/post-install-checklist.md
-- [ ] src/content/docs/operations/checklists/production-readiness.md
-- [ ] src/content/docs/operations/checklists/upgrade-readiness.md
+- [x] src/content/docs/operations/checklists/application-readiness.md
+- [x] src/content/docs/operations/checklists/automated-validation.md
+- [x] src/content/docs/operations/checklists/backup-readiness.md
+- [x] src/content/docs/operations/checklists/cluster-operational-checklist.md
+- [x] src/content/docs/operations/checklists/cluster-security.md
+- [x] src/content/docs/operations/checklists/disaster-recovery-readiness.md
+- [x] src/content/docs/operations/checklists/host-security.md
+- [x] src/content/docs/operations/checklists/observability-readiness.md
+- [x] src/content/docs/operations/checklists/post-install-checklist.md
+- [x] src/content/docs/operations/checklists/production-readiness.md
+- [x] src/content/docs/operations/checklists/upgrade-readiness.md
 
 ### operations/disaster-recovery
-- [ ] src/content/docs/operations/disaster-recovery/multinode-scenarios.mdx
-- [ ] src/content/docs/operations/disaster-recovery/rebuild-single-node-cluster.mdx
-- [ ] src/content/docs/operations/disaster-recovery/recover-secret-management.mdx
-- [ ] src/content/docs/operations/disaster-recovery/restore-k3s-etcd.mdx
-- [ ] src/content/docs/operations/disaster-recovery/restore-longhorn-volume.mdx
-- [ ] src/content/docs/operations/disaster-recovery/restore-postgresql.mdx
+- [x] src/content/docs/operations/disaster-recovery/multinode-scenarios.mdx
+- [x] src/content/docs/operations/disaster-recovery/rebuild-single-node-cluster.mdx
+- [x] src/content/docs/operations/disaster-recovery/recover-secret-management.mdx
+- [x] src/content/docs/operations/disaster-recovery/restore-k3s-etcd.mdx
+- [x] src/content/docs/operations/disaster-recovery/restore-longhorn-volume.mdx
+- [x] src/content/docs/operations/disaster-recovery/restore-postgresql.mdx
 
 ### operations/maintenance
-- [ ] src/content/docs/operations/maintenance/certificate-review.md
-- [ ] src/content/docs/operations/maintenance/disk-capacity-review.md
-- [ ] src/content/docs/operations/maintenance/drain-and-uncordon-node.md
-- [ ] src/content/docs/operations/maintenance/k3s-cluster-maintenance.md
-- [ ] src/content/docs/operations/maintenance/maintenance-runbook.md
-- [ ] src/content/docs/operations/maintenance/node-maintenance.md
+- [x] src/content/docs/operations/maintenance/certificate-review.md
+- [x] src/content/docs/operations/maintenance/disk-capacity-review.md
+- [x] src/content/docs/operations/maintenance/drain-and-uncordon-node.md
+- [x] src/content/docs/operations/maintenance/k3s-cluster-maintenance.md
+- [x] src/content/docs/operations/maintenance/maintenance-runbook.md
+- [x] src/content/docs/operations/maintenance/node-maintenance.md
 
 ### operations/observability
-- [ ] src/content/docs/operations/observability/observability-and-alerting.md
+- [x] src/content/docs/operations/observability/observability-and-alerting.md
 
 ### operations/troubleshooting
-- [ ] src/content/docs/operations/troubleshooting/argocd-out-of-sync.md
-- [ ] src/content/docs/operations/troubleshooting/certificate-not-ready.md
-- [ ] src/content/docs/operations/troubleshooting/node-not-ready.md
-- [ ] src/content/docs/operations/troubleshooting/pod-pending.md
+- [x] src/content/docs/operations/troubleshooting/argocd-out-of-sync.md
+- [x] src/content/docs/operations/troubleshooting/certificate-not-ready.md
+- [x] src/content/docs/operations/troubleshooting/node-not-ready.md
+- [x] src/content/docs/operations/troubleshooting/pod-pending.md
 
 ### operations/upgrades
-- [ ] src/content/docs/operations/upgrades/upgrade-k3s-multinode.mdx
-- [ ] src/content/docs/operations/upgrades/upgrade-k3s-single-node.mdx
+- [x] src/content/docs/operations/upgrades/upgrade-k3s-multinode.mdx
+- [x] src/content/docs/operations/upgrades/upgrade-k3s-single-node.mdx
 
 ### project
-- [ ] src/content/docs/project/content-policy.md
-- [ ] src/content/docs/project/decisions.md
-- [ ] src/content/docs/project/disclaimer.md
+- [x] src/content/docs/project/content-policy.md
+- [x] src/content/docs/project/decisions.md
+- [x] src/content/docs/project/disclaimer.md
 
 ### project/experiments
-- [ ] src/content/docs/project/experiments/cmcli.md
+- [x] src/content/docs/project/experiments/cmcli.md
 
 ### project
-- [ ] src/content/docs/project/scope.md
+- [x] src/content/docs/project/scope.md
 
 ### reference
-- [ ] src/content/docs/reference/conventions.md
+- [x] src/content/docs/reference/conventions.md
 
 ### resources
-- [ ] src/content/docs/resources/index.md
+- [x] src/content/docs/resources/index.md
 
 ### technologies
-- [ ] src/content/docs/technologies/index.md
+- [x] src/content/docs/technologies/index.md
 
 ### toolbox/commands
-- [ ] src/content/docs/toolbox/commands/certificates.md
-- [ ] src/content/docs/toolbox/commands/containers.md
-- [ ] src/content/docs/toolbox/commands/dns.md
-- [ ] src/content/docs/toolbox/commands/filesystems.md
-- [ ] src/content/docs/toolbox/commands/git.md
-- [ ] src/content/docs/toolbox/commands/index.md
-- [ ] src/content/docs/toolbox/commands/kubernetes.md
-- [ ] src/content/docs/toolbox/commands/networking.md
-- [ ] src/content/docs/toolbox/commands/processes.md
-- [ ] src/content/docs/toolbox/commands/random-values.md
-- [ ] src/content/docs/toolbox/commands/systemd.md
-- [ ] src/content/docs/toolbox/commands/troubleshooting.md
+- [x] src/content/docs/toolbox/commands/certificates.md
+- [x] src/content/docs/toolbox/commands/containers.md
+- [x] src/content/docs/toolbox/commands/dns.md
+- [x] src/content/docs/toolbox/commands/filesystems.md
+- [x] src/content/docs/toolbox/commands/git.md
+- [x] src/content/docs/toolbox/commands/index.md
+- [x] src/content/docs/toolbox/commands/kubernetes.md
+- [x] src/content/docs/toolbox/commands/networking.md
+- [x] src/content/docs/toolbox/commands/processes.md
+- [x] src/content/docs/toolbox/commands/random-values.md
+- [x] src/content/docs/toolbox/commands/systemd.md
+- [x] src/content/docs/toolbox/commands/troubleshooting.md
 
 ### toolbox/snippets
-- [ ] src/content/docs/toolbox/snippets/bash.md
-- [ ] src/content/docs/toolbox/snippets/docker-compose.md
-- [ ] src/content/docs/toolbox/snippets/index.md
-- [ ] src/content/docs/toolbox/snippets/kubernetes.md
+- [x] src/content/docs/toolbox/snippets/bash.md
+- [x] src/content/docs/toolbox/snippets/docker-compose.md
+- [x] src/content/docs/toolbox/snippets/index.md
+- [x] src/content/docs/toolbox/snippets/kubernetes.md
 
 ### toolbox/tools/automation
-- [ ] src/content/docs/toolbox/tools/automation/index.md
+- [x] src/content/docs/toolbox/tools/automation/index.md
 
 ### toolbox/tools/container-management
-- [ ] src/content/docs/toolbox/tools/container-management/index.md
+- [x] src/content/docs/toolbox/tools/container-management/index.md
 
 ### toolbox/tools/database-clients
-- [ ] src/content/docs/toolbox/tools/database-clients/db-tools.md
-- [ ] src/content/docs/toolbox/tools/database-clients/index.md
+- [x] src/content/docs/toolbox/tools/database-clients/db-tools.md
+- [x] src/content/docs/toolbox/tools/database-clients/index.md
 
 ### toolbox/tools/file-explorers
-- [ ] src/content/docs/toolbox/tools/file-explorers/index.md
+- [x] src/content/docs/toolbox/tools/file-explorers/index.md
 
 ### toolbox/tools/file-transfer
-- [ ] src/content/docs/toolbox/tools/file-transfer/index.md
-- [ ] src/content/docs/toolbox/tools/file-transfer/transfer-tools.md
+- [x] src/content/docs/toolbox/tools/file-transfer/index.md
+- [x] src/content/docs/toolbox/tools/file-transfer/transfer-tools.md
 
 ### toolbox/tools/host-management
-- [ ] src/content/docs/toolbox/tools/host-management/cluster-tools.md
-- [ ] src/content/docs/toolbox/tools/host-management/index.md
+- [x] src/content/docs/toolbox/tools/host-management/cluster-tools.md
+- [x] src/content/docs/toolbox/tools/host-management/index.md
 
 ### toolbox/tools/kubernetes-management
-- [ ] src/content/docs/toolbox/tools/kubernetes-management/command-line-tools.mdx
+- [x] src/content/docs/toolbox/tools/kubernetes-management/command-line-tools.mdx
 
 ### toolbox/tools/networking
-- [ ] src/content/docs/toolbox/tools/networking/index.md
+- [x] src/content/docs/toolbox/tools/networking/index.md
 
 ### toolbox/tools/observability
-- [ ] src/content/docs/toolbox/tools/observability/index.md
+- [x] src/content/docs/toolbox/tools/observability/index.md
 
 ### toolbox/tools
-- [ ] src/content/docs/toolbox/tools/overview.md
+- [x] src/content/docs/toolbox/tools/overview.md
 
 ### toolbox/tools/remote-access
 - [ ] src/content/docs/toolbox/tools/remote-access/index.md
@@ -386,15 +386,226 @@ Regras do repositório: nunca execute comandos no host, use `./jail-exec.sh`; ze
 
 ## Pendências
 
-- `src/content/docs/guides/tasks/networking/setup-coredns-internal.mdx` e
-  `setup-reverse-proxy-localhost.mdx` (seção "Próximo passo" de ambos): linkam para
-  `../validate-dns-and-proxy/`, uma página que não existe em `guides/tasks/networking/`. O
-  blueprint `dns-and-reverse-proxy/index.mdx` foi ajustado para não referenciar essa página
-  (aponta para os passos de validação já embutidos em cada guia). Ao revisar o lote
-  `guides/tasks/networking`, decidir entre criar a página de validação ou remover esses dois
-  links quebrados.
-- `src/content/docs/guides/blueprints/k3s-multinode/index.mdx` (seção "Reaproveitamento da Fase
-  2"): os três links relativos para `guides/tasks/...` usam um nível a mais de `../`
-  (`../../../tasks/...`), o que resolve para `/tasks/...` em vez de `/guides/tasks/...` (link
-  quebrado). Mesma classe de bug corrigida neste lote em `dns-and-reverse-proxy/index.mdx`;
-  corrigir quando esse arquivo for revisado.
+- `src/content/docs/toolbox/tools/kubernetes-management/command-line-tools.mdx`: bug técnico grave
+  encontrado e corrigido. As seções de kubectl, Helm e Argo CD CLI instruíam o leitor a rodar
+  `curl ... https://raw.githubusercontent.com/guesant/infrastructure-and-cluster-notebook/.../scripts/install/{kubectl,helm,argocd}.sh | bash -`,
+  mas o diretório `scripts/install/` **não existe neste repositório** (confirmado por `find` direto
+  no `src/scripts/`; só existe `src/scripts/*.sh` na raiz, sem subdiretório `install/`, e nenhum
+  desses arquivos instala kubectl/Helm/argocd CLI). Qualquer leitor que executasse esses comandos
+  receberia um 404 do GitHub. Substituí pelos métodos oficiais reais de cada ferramenta: kubectl via
+  download de binário + verificação de checksum SHA-256 contra `dl.k8s.io` (documentação oficial já
+  citada na página); Helm via `get-helm-3`, o script oficial mantido pelo próprio projeto Helm,
+  com `DESIRED_VERSION` fixável; Argo CD CLI via download direto do binário nas releases oficiais do
+  GitHub do projeto. Não fixei números de versão específicos para Helm/argocd (usei placeholders
+  `<versão>`), já que não há acesso à rede nesta sessão para confirmar as versões estáveis atuais;
+  para kubectl, mantive a opção de usar `stable.txt` (comportamento já descrito no texto original)
+  com uma nota explicando como fixar uma versão específica em vez disso. Também corrigidos os
+  fences ```yaml que continham bash, para ```bash.
+- `src/content/docs/toolbox/tools/host-management/cluster-tools.md`: página duplicava quase
+  integralmente `learn/tools/visual-management.md` (k9s, Lens, Rancher, Portainer, Headlamp), com
+  informação pior e desatualizada. Corrigido: reescrita como o companheiro de instalação rápida,
+  cross-referenciando a página `learn/` para a comparação conceitual em vez de repeti-la. Bugs reais
+  corrigidos: comando do Headlamp usava `ghcr.io/kinvolk/headlamp:latest`, organização desatualizada
+  (o projeto foi doado à CNCF e vive sob `kubernetes-sigs`, não mais sob o nome do mantenedor
+  original) e tag flutuante `latest`; trocado por instalação via Helm com `--version` a preencher,
+  igual ao padrão já usado no restante do notebook. Comando do Portainer montava
+  `/var/run/docker.sock` sem nenhum aviso de que isso concede controle equivalente a root sobre o
+  host; adicionada nota de segurança explícita, porta restrita a `127.0.0.1` e tag da imagem
+  fixada (como placeholder a preencher, não inventei uma versão). Comando do Rancher não fixava a
+  versão do chart; corrigido para exigir `--version` explícito. Mantida a mesma ressalva sobre
+  licenciamento incerto do Lens já registrada na página `learn/` correspondente, sem repetir os
+  detalhes, só linkando para lá.
+- `src/content/docs/toolbox/tools/file-transfer/transfer-tools.md`: bug técnico real corrigido. O
+  texto original descrevia `rsync -avz --delete ...` como "Bidirecional (cuidado!)", mas rsync é,
+  por natureza, uma ferramenta unidirecional; `--delete` apenas faz o destino espelhar exatamente a
+  origem (removendo lá o que não existe mais aqui), sem sincronizar mudanças feitas no destino de
+  volta para a origem. Corrigido para explicar o comportamento real e apontar Unison ou
+  `rclone bisync` como caminhos para sincronização genuinamente bidirecional. Também: a seção
+  "FTP/SFTP via navegador" descrevia o FileZilla, que é um cliente desktop, não algo acessado pelo
+  navegador — cabeçalho corrigido. O exemplo do MinIO Client usava as credenciais padrão reais e
+  publicamente conhecidas do MinIO (`minioadmin`/`minioadmin`) sem aviso; substituídas por
+  placeholders com uma nota explícita para nunca usar essas credenciais fora de um ambiente de teste
+  isolado. Removida a referência vaga a um cliente "Commander (Norton Commander-style)" não
+  identificável/verificável.
+- `src/content/docs/toolbox/tools/database-clients/db-tools.md`: bug técnico real corrigido. O
+  exemplo `docker run -p 80:80 dpage/pgadmin4` estava incompleto: a imagem oficial do pgAdmin exige
+  `PGADMIN_DEFAULT_EMAIL` e `PGADMIN_DEFAULT_PASSWORD` definidos como variáveis de ambiente, sem
+  elas o container não inicia; o texto original ainda documentava credenciais padrão fixas
+  (`admin@pgadmin.org` / `admin`) que não correspondem ao comportamento real da imagem. Corrigido
+  para um comando funcional com as variáveis obrigatórias, publicando a porta só em `127.0.0.1` por
+  padrão (consistente com a prática de segurança já usada no resto do notebook para interfaces
+  administrativas). Também removido um preço específico da DataGrip (~$200/ano) que tende a ficar
+  desatualizado; substituído por um link para a página oficial de preços. A página duplicava
+  parcialmente `guides/tasks/databases/access-postgresql-with-gui-client.md` (já revisada); agora
+  cross-referencia essa página para a conexão específica ao PostgreSQL deste notebook, em vez de
+  repetir dados de conexão genéricos.
+- `src/content/docs/toolbox/snippets/*`: as 4 páginas foram reescritas. Bug técnico real encontrado
+  em `docker-compose.md`: o exemplo "Com volume" declarava `volumes: app_cache:` (o volume nomeado)
+  aninhado *dentro* do serviço `app`, duplicando a chave `volumes:` já usada para os mounts do
+  serviço; a declaração de volume nomeado precisa estar no nível raiz do arquivo, como irmã de
+  `services:`. Corrigido. Em `kubernetes.md`, vários exemplos (ConfigMap, Secret, PVC) mostravam um
+  segundo bloco YAML com `...` e campos soltos como se fosse um manifesto completo; adicionei um
+  comentário explícito "(excerto, não um manifesto completo)" em cada um, conforme a regra do guia
+  editorial de deixar claro quando um exemplo é parcial. Também substituí o snippet de `Ingress`
+  clássico por um de `HTTPRoute` (Gateway API), já que este notebook usa Gateway API como padrão
+  documentado (`guides/tasks/networking/configure-traefik-gateway-api.mdx`), mantendo uma nota
+  explicando que `Ingress` continua válido para outros clusters, só não é o caminho documentado
+  aqui. `index.md` tinha uma lista de 12 categorias como bullets em bold sem links (não eram links
+  quebrados, só texto), das quais 9 nunca foram escritas; reescrito no mesmo padrão adotado em
+  `toolbox/commands/index.md`: links reais para as 3 categorias existentes, lista em prosa (sem
+  link) para as 9 planejadas. Todos os anchors novos entre páginas foram conferidos contra o HTML
+  gerado pelo build.
+- `src/content/docs/toolbox/commands/*`: lote grande (12 páginas) reescrito por completo. Além de
+  travessão como pontuação e mistura de português/inglês em quase todo recipe, encontrei bugs
+  técnicos reais: `networking.md` documentava `ping -w 5000` como "5 segundos", mas a flag `-w` do
+  `ping` (iputils/Linux) define um prazo total em **segundos**, não milissegundos — o exemplo
+  original configuraria um prazo de 5000 segundos (~83 minutos), não 5 segundos; corrigido para
+  `ping -w 5`. `processes.md` tinha dois trechos corrompidos/sem sentido ("Atman (melhor
+  interface)" como comentário acima de `htop`, e "Ódios: parent morreu, init adotou" na seção de
+  zumbis, claramente devendo ser "Órfãos"); corrigidos. `systemd.md` e `troubleshooting.md` tinham
+  vários cabeçalhos `**Relacionado:**` vazios (sem nenhum link ou conteúdo abaixo, seguidos
+  imediatamente por `---`); removidos.
+  `index.md` tinha dois problemas de link reais: os links de "Por categoria" usavam caminhos
+  absolutos (`/toolbox/commands/...`) sem o `base` do site (`/infrastructure-and-cluster-notebook`),
+  o que os deixava quebrados em produção (confirmado inspecionando o HTML gerado); corrigidos para
+  links relativos. Cinco categorias linkadas (`cryptography`, `firewalls`, `disks-and-volumes`,
+  `logs`, `helm`) nunca foram escritas como páginas — confirmado por `ls` no diretório e por
+  referência ao plano de conteúdo interno (`.todo/phase-7-toolbox.md`, que lista essas mesmas
+  páginas como parte do escopo da Fase 7, ainda não implementado); removidos os links quebrados e
+  listadas essas categorias como planejadas, sem link, em vez de apontar para páginas inexistentes.
+  Todos os anchors internos adicionados entre as páginas (`#criar-chave-ssh`,
+  `#testar-resolução-dns-interna-do-k3s`) foram conferidos contra o HTML gerado pelo build, não
+  apenas presumidos a partir do título.
+- `src/content/docs/project/scope.md`: a página estava desatualizada de forma factual, não apenas
+  estilística. Ela afirmava que "conteúdo sobre Docker e Docker Swarm está planejado, mas ainda não
+  foi escrito", mas `guides/blueprints/docker-swarm/` já existe como um blueprint completo de 9
+  páginas (já revisado em lote anterior deste processo editorial); movido da seção "fora do escopo"
+  para "o que este projeto cobre hoje". Também afirmava que o notebook "ainda não cobre" RKE2,
+  kubeadm, EKS, GKE ou AKS, mas `learn/clusters/rke2-vs-k3s.md`, `learn/clusters/eks-overview.md` e
+  `learn/clusters/managed-vs-selfhosted.md` já existem (cobertura conceitual/comparativa); reescrito
+  para refletir com precisão que existe cobertura conceitual em `learn/`, mas nenhum blueprint
+  operacional completo equivalente ao de K3s para essas alternativas. Verificado por inspeção direta
+  dos diretórios, não por suposição.
+- `src/content/docs/project/decisions.md`: a decisão de migração de diretórios (2026-07-18) descrevia
+  a migração como trabalho futuro ("até essa migração ser concluída..."), mas a árvore atual de
+  `src/content/docs/` já corresponde integralmente à estrutura alvo (confirmado por inspeção direta
+  do diretório). Atualizado com uma seção "Estado atual" registrando a conclusão, sem alterar o
+  registro histórico da decisão original. Também confirmado que `toolbox/scripts/` e `toolbox/labs/`,
+  previstos na árvore alvo original, nunca foram criados como seções do site; scripts vivem em
+  `src/scripts/` e são incorporados via `ScriptHelper`/`FileWriter`. O mesmo ajuste foi refletido em
+  `content-policy.md` (a linha sobre `toolbox/` citava `scripts/` como subseção, o que não existe).
+- `src/content/docs/project/disclaimer.md`: o aviso citava "especificamente o ChatGPT" como a
+  ferramenta de IA usada, o que está desatualizado dado que esta própria sessão de revisão editorial
+  (e presumivelmente outras) usa Claude. Generalizado para "assistentes de inteligência artificial
+  (incluindo, ao longo do desenvolvimento do projeto, ferramentas como ChatGPT e Claude)" em vez de
+  nomear uma única ferramenta como a fonte exclusiva. Se o usuário preferir uma atribuição diferente
+  (mais específica, ou sem nomear ferramentas), ajustar manualmente; não assumi qual é a intenção
+  exata de divulgação.
+- `src/content/docs/operations/upgrades/upgrade-k3s-multinode.mdx`: reescrito por completo (era o
+  único arquivo do lote `operations/upgrades`; `upgrade-k3s-single-node.mdx` já estava excelente e
+  não precisou de edição). Problemas do original: blocos ```yaml contendo bash; emoji ✅/❌; script de
+  automação de ~60 linhas inventado e colado inline em vez de reaproveitar os scripts já existentes
+  do projeto (`src/scripts/upgrade-k3s-server.sh`, `upgrade-k3s-agent.sh`,
+  `cordon-and-drain-node.sh`); afirmação simplificada demais de que "K3s suporta até 1 versão de
+  diferença entre componentes", substituída por referência direta à Kubernetes Version Skew Policy
+  (já citada em `maintenance-runbook.md`); troubleshooting de "quorum quebrado" original sugeria SSH
+  manual e reinstalar uma versão anterior em um único servidor como solução, o que pode piorar uma
+  perda de quorum real; substituído por um apontamento para o procedimento correto de restauração via
+  `disaster-recovery/multinode-scenarios.mdx#perda-de-quorum-crítico` (já revisado em lote anterior).
+  A página agora usa os componentes `ScriptHelper` com os scripts reais do projeto, no mesmo padrão já
+  usado por `upgrade-k3s-single-node.mdx` e por `drain-and-uncordon-node.md`.
+- `src/content/docs/operations/disaster-recovery/multinode-scenarios.mdx`: reescrito por completo
+  (era o único arquivo do lote `operations/disaster-recovery` fora do padrão editorial; os outros
+  cinco já estavam em ótima forma). Problemas do original: blocos de comando marcados como ```yaml
+  contendo shell/bash; emoji ✅/❌ em tabela; checklist final em pseudo-YAML com `☐`; ausência de
+  callouts "Executar em"; duplicava, em versão pior, o conteúdo já bem escrito em
+  `guides/blueprints/k3s-multinode/failure-and-recovery.mdx` (que a própria página já linkava como
+  "mais detalhes estão em"). Reescrita como runbook de resposta rápida que aponta para o blueprint em
+  vez de duplicar as explicações e os comandos completos, seguindo o mesmo padrão já usado por
+  `restore-longhorn-volume.mdx` e `restore-postgresql.mdx` neste mesmo diretório. Também alinhado o
+  numero e o escopo dos cenários ao blueprint (a versão antiga tinha um "Cenário 5: Corrupção de
+  etcd" que não existe no blueprint e faltava o "Cenário 4: Recuperação de datastore externo" que
+  existe lá); corrupção de etcd foi tratada como o mesmo caminho de recuperação da perda de quorum,
+  já que usa o mesmo procedimento de restauração por snapshot.
+- `src/content/docs/operations/checklists/automated-validation.md`: reescrito por completo (era o
+  único arquivo do lote `operations/checklists` fora do padrão editorial já estabelecido nos demais).
+  Corrigido um link quebrado real: `[quality-criteria.md](../../../project/quality-criteria/)` apontava
+  para uma página que nunca foi publicada em `src/content/docs/project/` (o arquivo correspondente
+  existe apenas como nota interna de planejamento em `.todo/quality-criteria.md`, fora do conteúdo
+  publicado); a referência foi removida. Também corrigido o link para
+  `check-cluster-health.sh`, que apontava para `../../../scripts/check-cluster-health.sh` (rota
+  inexistente dentro de `src/content/docs/`, já que o script vive em `src/scripts/` e não é copiado
+  para o site publicado); substituído por um link direto ao arquivo no repositório GitHub. As demais
+  afirmações técnicas da página (formato do JSON de saída, checks cobertos, jobs do workflow de CI)
+  foram conferidas contra `src/scripts/check-cluster-health.sh` e `.github/workflows/scripts.yml`
+  diretamente e estavam corretas.
+- `src/content/docs/operations/backups/setup-velero-backups.md`: reescrito por completo (era o único
+  arquivo do lote `operations/backups` com problemas técnicos reais, não apenas de estilo). Corrigidos:
+  cron de 6 campos inválido (`0 4 0 * * 0`) trocado por sintaxe de 5 campos; afirmação de que
+  `--include-namespaces`/`--exclude-namespaces` aceitam glob (`prod-*`) removida, pois o Velero exige
+  nomes exatos de namespace (substituído por exemplo com `--selector` de label); hooks de backup que
+  o texto original declarava dentro de `BackupStorageLocation` foram corrigidos para o local correto
+  (anotações no Pod), já que `BackupStorageLocation` descreve apenas o destino do backup, não hooks; o
+  exemplo original de hook usava `pg_dump` manual sobre um banco CloudNativePG, redundante e
+  potencialmente inconsistente com o backup nativo do operator já documentado em
+  `backup-postgresql.md` — trocado por uma recomendação de usar o mecanismo nativo do operator. Não foi
+  possível confirmar nesta sessão (sem rede) os nomes exatos das métricas Prometheus expostas pelo
+  Velero v1.18 nem a chave Helm correta para habilitar o node-agent/fs-backup na versão do chart que o
+  projeto viria a adotar; o texto evita agora afirmar esses nomes como fato e orienta a conferir contra
+  a versão instalada antes de escrever regras de alerta. Como as demais páginas do lote, mantém a
+  postura de "Velero como ferramenta a avaliar" já estabelecida em `backup-and-recovery.md`, em vez de
+  presumir que Velero já é a escolha definitiva do projeto.
+- `src/content/docs/learn/tools/visual-management.md`: o repositório Helm do Headlamp
+  (`https://kubernetes-sigs.github.io/headlamp/`) e a existência do chart `headlamp/headlamp`
+  não foram confirmados por acesso direto ao repositório nesta sessão (sem rede habilitada no
+  runner); a URL segue o padrão esperado após a doação do projeto à CNCF/kubernetes-sigs, mas
+  deve ser validada antes de tratar o comando como copiável sem revisão. Nenhuma versão de
+  referência do chart do Headlamp está fixada em `reference/conventions.md`; o texto já orienta
+  o leitor a confirmar a versão nas releases do projeto antes de instalar.
+- ~~`src/content/docs/guides/tasks/networking/setup-coredns-internal.mdx` e
+  `setup-reverse-proxy-localhost.mdx`~~: resolvido neste lote. Os links quebrados para
+  `../validate-dns-and-proxy/` foram removidos; cada página já tem sua própria seção de
+  Validação, consistente com o que `dns-and-reverse-proxy/index.mdx` já documentava
+  ("não existe uma página de validação separada").
+- `src/content/docs/guides/blueprints/dns-and-reverse-proxy/index.mdx` (já revisado em lote
+  anterior, fora do escopo deste lote): o texto afirma que `.cluster.local` é "um domínio
+  arbitrário de uso interno, não o `.local` reservado por multicast DNS". Isso ignora que
+  `cluster.local` é o domínio real usado pelo próprio Kubernetes/K3s para resolução de
+  Services e Pods (via plugin `kubernetes` do CoreDNS); declarar uma zona adicional para
+  exatamente esse sufixo no CoreDNS pode ter prioridade sobre esse plugin e quebrar a
+  resolução real do cluster. As páginas `guides/tasks/networking/setup-coredns-internal.mdx`
+  e `setup-reverse-proxy-localhost.mdx` foram corrigidas neste lote para usar o sufixo
+  `.internal` (reservado pela IANA para esse uso, RFC 9476) em vez de `.cluster.local`, o que
+  as deixa tecnicamente corretas mas divergentes da terminologia do blueprint. Revisar o
+  blueprint para alinhar com `.internal` na próxima vez que a seção `guides/blueprints` for
+  reaberta.
+- ~~`src/content/docs/guides/blueprints/k3s-multinode/index.mdx`~~: corrigido neste lote
+  (link tinha um `../` a mais; profundidade correta confirmada no HTML gerado).
+- `src/content/docs/guides/blueprints/k3s-multinode/first-server.mdx` e `validation.mdx`:
+  o texto original assumia que o etcd do K3s roda como pod em `kube-system` (comandos como
+  `kubectl exec ... etcdctl member list` e `k3s check-etcd`), o que não corresponde ao etcd
+  embarcado do K3s (roda dentro do processo `k3s`, sem pod dedicado). Suavizado neste lote para
+  não afirmar um comando específico não verificado; a forma confiável documentada é `kubectl get
+  nodes` mostrando todos os servidores `Ready`. Se um comando exato de inspeção do Raft for
+  necessário, verificar contra a versão de K3s do projeto antes de documentá-lo.
+- `src/content/docs/guides/tasks/backup/install-velero.md` e `velero-complete-setup.md`:
+  corrigidos bugs reais confirmados via documentação oficial (verificado com WebFetch): repositório
+  Helm `https://charts.velero.io` não resolve (DNS inexistente), substituído por
+  `https://vmware-tanzu.github.io/helm-charts` (oficial); chaves `--set
+  configuration.schedules.daily...` estavam com prefixo errado (deveria ser `schedules.daily...`,
+  sem `configuration.`); flag `--default-volumes-to-restic` está desatualizada, substituída por
+  `--default-volumes-to-fs-backup`. Não foi possível confirmar com certeza se
+  `configuration.backupStorageLocation.bucket` (forma "achatada", sem índice de array) é válida na
+  versão de Velero/chart que o projeto pretende usar (o chart mudou para array em versões mais
+  recentes); nenhuma versão de Velero está fixada em `reference/conventions.md`. Se ao testar a
+  instalação real o `--set configuration.backupStorageLocation.bucket=...` falhar, trocar para
+  `configuration.backupStorageLocation[0].bucket=...` conforme a versão do chart instalada.
+- `src/content/docs/learn/secrets-management/openbao-high-availability.mdx`: o texto original
+  listava PostgreSQL, etcd, S3+DynamoDB e MySQL como storage backends do OpenBao para HA, além de
+  Consul. Não foi possível confirmar com segurança, sem acesso à documentação oficial atualizada
+  do OpenBao nesta sessão, que todos esses backends são de fato suportados e mantidos oficialmente
+  (Vault removeu suporte a alguns backends de armazenamento ao longo do tempo, e o OpenBao pode não
+  ter herdado todos). A reescrita manteve apenas os dois backends de que há confiança razoável
+  (Integrated Storage/Raft, o caminho recomendado atualmente, e Consul, a opção externa
+  tradicional). Antes de recomendar qualquer outro backend específico, confirmar contra
+  <https://openbao.org/docs/configuration/storage/>.

@@ -7,7 +7,7 @@ sidebar:
 
 > **Para quem é:** quem vai rodar um banco de dados (ex.: PostgreSQL, via operador Kubernetes ou gerenciado) sobre armazenamento distribuído e quer entender os trade-offs antes de configurar.
 
-Um banco de dados escreve de forma muito mais sensível a latência e ordem do que a maioria das aplicações stateless. Armazenamento distribuído em rede, como o Longhorn, adiciona uma camada entre o processo do banco e o disco físico — essa camada tem custo, e o banco de dados é o workload mais provável de sentir esse custo.
+Um banco de dados escreve de forma muito mais sensível a latência e ordem do que a maioria das aplicações stateless. Armazenamento distribuído em rede, como o Longhorn, adiciona uma camada entre o processo do banco e o disco físico. Essa camada tem custo, e o banco de dados é o workload mais provável de sentir esse custo.
 
 ## Como funciona
 
@@ -28,7 +28,7 @@ Réplicas síncronas de armazenamento (Longhorn) e réplicas de banco de dados (
 
 ## Alternativas
 
-Um disco local dedicado (sem replicação de armazenamento) oferece a menor latência, mas perde a proteção contra falha de disco — nesse caso, a disponibilidade depende inteiramente das réplicas do próprio banco de dados, se existirem.
+Um disco local dedicado (sem replicação de armazenamento) oferece a menor latência, mas perde a proteção contra falha de disco: nesse caso, a disponibilidade depende inteiramente das réplicas do próprio banco de dados, se existirem.
 
 ## Quando usar armazenamento distribuído para banco de dados
 
@@ -40,7 +40,7 @@ Quando o teste de carga mostra que a latência de escrita do armazenamento distr
 
 ## Decisões que isso implica
 
-Meça a latência de escrita real antes de decidir — não presuma que o overhead é aceitável ou inaceitável sem medir. Veja [criar um cluster PostgreSQL](../../../guides/tasks/databases/create-postgresql-cluster/) para a configuração usada neste notebook.
+Meça a latência de escrita real antes de decidir; não presuma que o overhead é aceitável ou inaceitável sem medir. Veja [criar um cluster PostgreSQL](../../../guides/tasks/databases/create-postgresql-cluster/) para a configuração usada neste notebook.
 
 ## Páginas relacionadas
 

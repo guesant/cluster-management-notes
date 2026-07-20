@@ -10,12 +10,12 @@ sidebar:
 Esta página é o procedimento de restauração referenciado pelo [roteiro de restore drill](../../backups/backup-and-recovery/#roteiro-de-restore-drill) e pela [reconstrução de um cluster single-node](../rebuild-single-node-cluster/). O procedimento de criação do snapshot está em [backup do etcd](../../backups/backup-k3s-etcd/); esta página cobre só a restauração.
 
 :::danger
-Restaurar um snapshot substitui o estado atual do datastore inteiro. Nunca execute este procedimento em um cluster de produção como teste — use um ambiente isolado, conforme [ambiente isolado de restauração](../../backups/backup-and-recovery/#ambiente-isolado-de-restauração).
+Restaurar um snapshot substitui o estado atual do datastore inteiro. Nunca execute este procedimento em um cluster de produção como teste; use um ambiente isolado, conforme [ambiente isolado de restauração](../../backups/backup-and-recovery/#ambiente-isolado-de-restauração).
 :::
 
 ## Preparar
 
-1. Confirme o snapshot correto pelo nome/timestamp — não assuma que o mais recente é o desejado quando o objetivo é restaurar um ponto anterior a um incidente.
+1. Confirme o snapshot correto pelo nome/timestamp: não assuma que o mais recente é o desejado quando o objetivo é restaurar um ponto anterior a um incidente.
 2. Copie o snapshot e o token do servidor original para o host de destino.
 3. Confirme que o host de destino está isolado da rede de produção, se for um drill.
 
@@ -33,7 +33,7 @@ k3s server \
 systemctl start k3s
 ```
 
-Se o host de destino é uma máquina nova (reconstrução completa), instale o K3s primeiro sem iniciar o serviço normalmente — siga [instalar o primeiro servidor K3s](../../../guides/tasks/kubernetes/install-first-k3s-server/) até o ponto de gerar o `config.yaml`, depois execute o comando acima em vez do fluxo de inicialização padrão.
+Se o host de destino é uma máquina nova (reconstrução completa), instale o K3s primeiro sem iniciar o serviço normalmente: siga [instalar o primeiro servidor K3s](../../../guides/tasks/kubernetes/install-first-k3s-server/) até o ponto de gerar o `config.yaml`, depois execute o comando acima em vez do fluxo de inicialização padrão.
 
 ## Validação
 
@@ -46,7 +46,7 @@ k3s kubectl get pods --all-namespaces
 k3s kubectl get applications.argoproj.io --namespace argocd
 ```
 
-Os recursos da API devem reaparecer conforme o ponto do snapshot. Componentes que dependem de estado externo ao etcd (volumes, imagens, endpoints externos) podem não estar automaticamente funcionais — siga a [ordem de recuperação completa](../../backups/backup-and-recovery/#ordem-de-recuperação) para reconciliar o restante.
+Os recursos da API devem reaparecer conforme o ponto do snapshot. Componentes que dependem de estado externo ao etcd (volumes, imagens, endpoints externos) podem não estar automaticamente funcionais; siga a [ordem de recuperação completa](../../backups/backup-and-recovery/#ordem-de-recuperação) para reconciliar o restante.
 
 ## Troubleshooting
 
@@ -54,7 +54,7 @@ Se o comando falhar com erro de diretório de dados já existente, confirme que 
 
 ## Rollback
 
-Não há rollback de uma restauração — se for um drill, descarte o ambiente isolado; se for uma recuperação real, a única forma de reverter é restaurar um snapshot ainda mais antigo.
+Não há rollback de uma restauração: se for um drill, descarte o ambiente isolado; se for uma recuperação real, a única forma de reverter é restaurar um snapshot ainda mais antigo.
 
 ## Próximo passo
 

@@ -7,7 +7,7 @@ sidebar:
 > **Pré-requisitos:** snapshot do etcd (ou repositório GitOps, se optar por reconstrução via Git), token do K3s original, novo host preparado.
 > **Versões testadas:** K3s v1.36.1+k3s1.
 
-Um cluster de nó único não tem failover — a perda do host físico (disco, hardware, provedor) exige reconstruir o cluster inteiro em uma nova máquina. Esta página cobre as duas estratégias possíveis; escolha uma antes de começar, conforme [ordem de recuperação](../../backups/backup-and-recovery/#ordem-de-recuperação) — misturar as duas estratégias no mesmo processo produz um estado inconsistente.
+Um cluster de nó único não tem failover: a perda do host físico (disco, hardware, provedor) exige reconstruir o cluster inteiro em uma nova máquina. Esta página cobre as duas estratégias possíveis; escolha uma antes de começar, conforme [ordem de recuperação](../../backups/backup-and-recovery/#ordem-de-recuperação). Misturar as duas estratégias no mesmo processo produz um estado inconsistente.
 
 ## Estratégia 1: restaurar do snapshot do etcd
 
@@ -22,12 +22,12 @@ Recupera o estado exato registrado no último snapshot, incluindo recursos que n
 
 ## Estratégia 2: reconstruir via GitOps
 
-Cria um cluster novo e deixa o Argo CD reconciliar o estado a partir do Git — não recupera nada que não estava declarado.
+Cria um cluster novo e deixa o Argo CD reconciliar o estado a partir do Git: não recupera nada que não estava declarado.
 
 1. [Preparar um servidor Debian](../../../guides/tasks/host/prepare-debian-server/) na nova máquina.
 2. Seguir a [sequência de implantação completa do blueprint](../../../guides/blueprints/k3s-single-node-gitops/implementation/) do zero: K3s, Gateway API, cert-manager, Argo CD.
 3. No bootstrap GitOps, [conectar o mesmo repositório](../../../guides/tasks/gitops/connect-git-repository/) e [aplicar a Application raiz](../../../guides/tasks/gitops/create-root-application/) já usada antes.
-4. Restaurar dados de volumes persistentes separadamente (fora do escopo do etcd/Git) — veja [backup e recuperação](../../backups/backup-and-recovery/) para a matriz de ativos.
+4. Restaurar dados de volumes persistentes separadamente (fora do escopo do etcd/Git); veja [backup e recuperação](../../backups/backup-and-recovery/) para a matriz de ativos.
 
 **Quando usar:** quando o repositório GitOps está atualizado, o snapshot do etcd está indisponível ou desatualizado, ou quando reconstruir do zero é preferível a herdar um estado potencialmente inconsistente do snapshot.
 
@@ -45,7 +45,7 @@ Siga a checklist completa de [validar o cluster](../../../guides/tasks/kubernete
 
 ## Troubleshooting
 
-Se optar pela estratégia via Git e algumas Applications não sincronizarem, confirme que a ordem de dependências (CRDs antes de recursos que os usam) foi respeitada — veja [criar a Application raiz](../../../guides/tasks/gitops/create-root-application/) para o comportamento esperado do App-of-Apps.
+Se optar pela estratégia via Git e algumas Applications não sincronizarem, confirme que a ordem de dependências (CRDs antes de recursos que os usam) foi respeitada; veja [criar a Application raiz](../../../guides/tasks/gitops/create-root-application/) para o comportamento esperado do App-of-Apps.
 
 ## Próximo passo
 

@@ -18,7 +18,7 @@ df --human /var/lib/rancher /var/lib/kubelet /var/lib/longhorn 2>/dev/null
 du --human --max-depth=1 /var/lib/rancher/k3s/agent/containerd 2>/dev/null | sort -rh | head -n10
 ```
 
-`/var/lib/rancher` contém o datastore do K3s e as imagens de container; `/var/lib/longhorn`, se presente, contém os dados replicados do Longhorn. Cada um merece atenção separada — um cheio pelo outro é um sintoma comum.
+`/var/lib/rancher` contém o datastore do K3s e as imagens de container; `/var/lib/longhorn`, se presente, contém os dados replicados do Longhorn. Cada um merece atenção separada: um cheio pelo outro é um sintoma comum.
 
 ## Verificar pressão de disco relatada pelo Kubernetes
 
@@ -29,7 +29,7 @@ kubectl get nodes -o json | \
   python3 -c 'import json,sys; [print(n["metadata"]["name"], c) for n in json.load(sys.stdin)["items"] for c in n["status"]["conditions"] if c["type"] == "DiskPressure"]'
 ```
 
-Um nó com `DiskPressure: True` já está evictando Pods de baixa prioridade — trate como incidente, não como item de rotina.
+Um nó com `DiskPressure: True` já está evictando Pods de baixa prioridade: trate como incidente, não como item de rotina.
 
 ## Limpar imagens de container não utilizadas
 

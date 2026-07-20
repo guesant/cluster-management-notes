@@ -7,7 +7,7 @@ sidebar:
 > **Sintoma:** uma Application do Argo CD aparece como `OutOfSync` ou `Degraded`.
 > **Versões testadas:** Argo CD (chart 10.1.3).
 
-`OutOfSync` significa que o estado do cluster diverge do que está declarado no Git. `Degraded` significa que os recursos sincronizados não estão saudáveis, independentemente de estarem sincronizados. São problemas diferentes — trate cada um com o diagnóstico correspondente.
+`OutOfSync` significa que o estado do cluster diverge do que está declarado no Git. `Degraded` significa que os recursos sincronizados não estão saudáveis, independentemente de estarem sincronizados. São problemas diferentes: trate cada um com o diagnóstico correspondente.
 
 ## Diagnóstico inicial
 
@@ -45,7 +45,7 @@ kubectl --namespace <namespace-da-app> get pods
 kubectl --namespace <namespace-da-app> describe pod <pod>
 ```
 
-Um `Deployment` com `Degraded` geralmente reflete Pods em `CrashLoopBackOff`, `ImagePullBackOff` ou falha de probe — trate como um problema normal de workload, não do Argo CD.
+Um `Deployment` com `Degraded` geralmente reflete Pods em `CrashLoopBackOff`, `ImagePullBackOff` ou falha de probe: trate como um problema normal de workload, não do Argo CD.
 
 ## Causas comuns
 
@@ -53,8 +53,8 @@ Um `Deployment` com `Degraded` geralmente reflete Pods em `CrashLoopBackOff`, `I
 | --- | --- |
 | `OutOfSync` permanente mesmo com `selfHeal` | `ignoreDifferences` ausente para um campo mutado por um controller externo (ex.: HPA, webhook) |
 | `Degraded` logo após sync | Imagem inexistente, `CrashLoopBackOff`, ou recurso dependente (CRD, Secret) ainda não pronto |
-| Sync falha com erro de CRD ausente | Ordem de instalação incorreta — instale o operator/CRD antes da Application que os usa |
-| Application presa em `Progressing` | Um recurso com `health.lua` customizado nunca reporta saudável — revise a lógica de health check |
+| Sync falha com erro de CRD ausente | Ordem de instalação incorreta: instale o operator/CRD antes da Application que os usa |
+| Application presa em `Progressing` | Um recurso com `health.lua` customizado nunca reporta saudável; revise a lógica de health check |
 
 ## Recuperação
 
@@ -64,7 +64,7 @@ Depois de corrigir a causa raiz, force uma nova sincronização:
 argocd app sync <nome> --force
 ```
 
-`--force` substitui recursos existentes em vez de aplicar um patch — use com atenção em recursos que outros controllers também gerenciam.
+`--force` substitui recursos existentes em vez de aplicar um patch: use com atenção em recursos que outros controllers também gerenciam.
 
 ## Fontes e leitura adicional
 

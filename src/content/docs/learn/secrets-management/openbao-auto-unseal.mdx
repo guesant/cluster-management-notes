@@ -1,111 +1,60 @@
 ---
 title: OpenBao auto-unseal com KMS externo
+description: Explica como um KMS externo elimina a intervenção manual de unseal do OpenBao a cada reinicialização, e quando esse custo adicional se justifica.
 sidebar:
-  order: 7
+  order: 7.3
 ---
 
-> **Para quem é:** operadores que têm OpenBao rodando e precisam eliminar o passo manual de unseal toda vez que o servidor reinicia.
+> **Para quem é:** operadores que já têm o [OpenBao rodando](../openbao-and-vault/) e querem eliminar o passo manual de unseal a cada reinicialização do servidor.
 
-OpenBao começa cada reinicialização no estado **sealed** — as chaves de criptografia estão encriptadas, e nenhuma operação é possível até que alguém forneça a chave de unseal. Isto é seguro, mas operacionalmente custoso: requer intervenção manual ou um serviço acessível 24/7 com a chave.
+Como descrito em [OpenBao e Vault](../openbao-and-vault/), cada reinicialização do OpenBao começa no estado sealed: a chave mestra está protegida, e nenhuma leitura ou escrita é possível até que o número mínimo de chaves de unseal seja apresentado. Isso é o comportamento de segurança esperado, mas tem um custo operacional real quando alguém precisa executar esse passo manualmente toda vez que o processo reinicia, seja por um crash, uma atualização, ou um failover.
 
-**Auto-unseal** resolve isto usando um serviço KMS (Key Management Service) externo — AWS KMS, Google Cloud KMS, Azure Key Vault, ou similar — para armazenar a chave mestre. Na inicialização, OpenBao conversa com o KMS, recupera a chave, e desencripta automaticamente.
-
-## O problema que auto-unseal resolve
-
-```yaml
-Cenário sem auto-unseal:
-  1. OpenBao reinicia (crash, update, failover)
-  2. Status: SEALED (nenhuma leitura/escrita possível)
-  3. Admin precisa: ssh → bao operator unseal → colar chave
-  4. Demora: minutos de downtime, intervenção manual
-
-Cenário com auto-unseal:
-  1. OpenBao reinicia
-  2. Conversa com KMS externo: "preciso desencriptar a chave mestre"
-  3. KMS valida permissões (IAM) e retorna: ✅
-  4. OpenBao desencripta automaticamente
-  5. Status: UNSEALED em segundos, sem intervenção
-```
+**Auto-unseal** substitui a apresentação manual das chaves de unseal por uma chamada automática a um serviço de gerenciamento de chaves (KMS) externo ao próprio OpenBao, tipicamente um provedor de nuvem (AWS KMS, Google Cloud KMS, Azure Key Vault). Na inicialização, o OpenBao se autentica nesse serviço, solicita a operação de descriptografia da sua chave mestra e conclui o unseal sem que um humano precise intervir.
 
 ## Como funciona
 
-```mermaid
-flowchart LR
-    accTitle: Fluxo de auto-unseal com KMS externo
-    accDescr: OpenBao solicita chave ao KMS, KMS valida IAM e retorna chave.
+O OpenBao nunca envia sua chave mestra ao KMS em texto claro para armazenamento; a relação é inversa. A chave mestra fica armazenada localmente, já criptografada por uma chave gerenciada pelo KMS externo. Na inicialização, o OpenBao envia essa chave mestra criptografada ao KMS e solicita a operação de descriptografia; o KMS valida que a identidade que fez a chamada (uma role IAM, uma managed identity, ou credencial equivalente) tem permissão para usar aquela chave específica, e retorna o resultado descriptografado. O OpenBao usa esse resultado para transicionar de sealed para unsealed, sem que a chave de descriptografia do KMS jamais saia do serviço que a gerencia.
 
-    Bao["OpenBao<br/>(iniciando)"]
-    IAM["IAM do KMS<br/>(credenciais)"]
-    KMS["KMS Externo<br/>(AWS/GCP/Azure)"]
-    
-    Bao -->|"solicita chave mestre"| IAM
-    IAM -->|"valida credenciais"| KMS
-    KMS -->|"retorna chave (encriptada)"| Bao
-    Bao -->|"desencripta com chave"| Bao
-    Bao -.-> Bao
-    
-    note["Status: UNSEALED"]
+```mermaid
+sequenceDiagram
+    accTitle: Fluxo de auto-unseal com KMS externo
+    accDescr: O OpenBao envia sua chave mestra criptografada ao KMS e solicita a descriptografia; o KMS valida as credenciais apresentadas e retorna o resultado, permitindo ao OpenBao concluir o unseal sem intervenção manual.
+
+    participant OpenBao
+    participant KMS as KMS externo
+
+    OpenBao->>KMS: solicita descriptografia da chave mestra (com credencial IAM/managed identity)
+    KMS->>KMS: valida permissão da credencial sobre a chave
+    KMS-->>OpenBao: retorna chave mestra descriptografada
+    OpenBao->>OpenBao: transiciona de sealed para unsealed
 ```
 
-## Fluxo técnico
-
-1. **Inicialização:** OpenBao detecta que está sealed
-2. **Autenticação:** OpenBao apresenta credenciais ao KMS (role IAM, service account, etc.)
-3. **Validação:** KMS valida que as credenciais têm permissão para acessar a chave
-4. **Recuperação da chave:** KMS retorna a chave mestre (armazenada de forma encriptada)
-5. **Desencriptação:** OpenBao desencripta a chave e inicia operações
-
-## Providers suportados
-
-OpenBao suporta vários KMS:
-
-| Provider | Como | Detalhes |
-| --- | --- | --- |
-| AWS KMS | IAM role (recomendado) ou access key/secret | Integrado com EC2, ECS, IRSA em K3s |
-| Google Cloud KMS | Service account JSON | Integrado com GKE, Cloud Run |
-| Azure Key Vault | Managed Identity ou service principal | Integrado com AKS, App Service |
-| HashiCorp Cloud | HCP Vault Cloud | Serviço gerenciado (não gratuito) |
-| Kubernetes Secret | ConfigMap/Secret no cluster | Only for dev/test (não é "externo") |
-
-## Trade-offs
-
-### ✅ Vantagens
-
-- **Zero downtime:** reinicializações não exigem intervenção
-- **Simples operacionalmente:** sem guardar chaves de unseal em papel/vault pessoal
-- **Segurança aprimorada:** chave mestre não está em disco local
-- **Multi-cloud:** mesma OpenBao pode usar KMS diferentes por ambiente
-
-### ❌ Desvantagens
-
-- **Dependência do KMS:** se KMS cair, OpenBao fica sealed
-- **Custos:** KMS geralmente é serviço pago (ex.: AWS KMS ~$1/mês por chave)
-- **Complexidade inicial:** setup de IAM/credenciais é mais envolvido
-- **Segurança da credencial:** credencial de acesso ao KMS precisa estar segura (não hardcoded)
-
-## Quando usar
-
-- ✅ **Produção:** clusters que precisam de uptime máximo
-- ✅ **Multi-réplica:** se tem múltiplos OpenBao em HA, auto-unseal é essencial
-- ✅ **Cloud:** já está usando AWS/GCP/Azure (KMS é natural)
-- ❌ **Dev/test:** complexidade não vale a pena
-- ❌ **Single-node sem HA:** unseal manual é aceitável
+Essa dependência do KMS é o ponto central a entender antes de adotar auto-unseal: ela não elimina a necessidade de proteger material criptográfico crítico, apenas move essa responsabilidade do operador humano (guardando chaves de unseal) para o controle de acesso do provedor de nuvem (a política IAM que autoriza a credencial do OpenBao a usar aquela chave específica no KMS). Se essa credencial for comprometida ou mal configurada, o efeito é equivalente a expor as chaves de unseal originais.
 
 ## Alternativas
 
-- **Shamir keys + unsealer service:** dividir chave em N partes (Shamir) e ter um microserviço "unsealer" que as reúne. Menos seguro, mas sem dependência de KMS
-- **Sealed Secrets do K3s:** para secrets de aplicação (não para OpenBao em si)
-- **Manual unseal:** simplesmente aceitar a intervenção (válido para dev)
+Dividir a chave mestra em partes via Shamir Secret Sharing e reunir o número mínimo delas manualmente a cada reinicialização, como descrito em [OpenBao e Vault](../openbao-and-vault/#como-funciona), é o modo padrão sem auto-unseal. Ele evita a dependência de um KMS externo e de custos recorrentes associados a ele, ao custo de exigir um operador disponível (ou um procedimento bem ensaiado) toda vez que o processo reinicia.
 
-## Tópicos relacionados
+## Quando usar auto-unseal
 
-- [OpenBao e Vault](./openbao-and-vault/): fundamentos de OpenBao
-- [OpenBao em modo HA](./openbao-high-availability/): múltiplas réplicas com auto-unseal
-- [Configurar OpenBao com auto-unseal](../../guides/tasks/secrets/configure-openbao-auto-unseal/): task guide passo-a-passo
-- [Secrets management overview](./overview/): comparação de 4 estratégias
+Auto-unseal se justifica em produção, onde reinicializações não planejadas não podem depender da disponibilidade de um operador humano, e especialmente em topologias com múltiplas réplicas (veja [OpenBao em modo de alta disponibilidade](../openbao-high-availability/)), onde cada réplica precisa se unsealar de forma independente e simultânea para participar da eleição de líder. Também se justifica quando o ambiente já opera em uma nuvem com um serviço de KMS gerenciado disponível, tornando a integração uma configuração adicional em vez de uma nova peça de infraestrutura.
 
-## Fontes e leitura adicional
+## Quando evitar
 
-- [OpenBao — Auto Unseal](https://openbao.org/docs/concepts/seal): documentação oficial.
-- [AWS KMS — Key Management](https://docs.aws.amazon.com/kms/): para setup com AWS.
-- [Google Cloud KMS](https://cloud.google.com/docs/security/key-management-deep-dive): para setup com GCP.
+Em ambientes de desenvolvimento, teste, ou em um cluster de nó único sem exigência de alta disponibilidade, o unseal manual é uma escolha aceitável: mais simples de entender, sem custo recorrente do KMS, e sem introduzir uma dependência externa cuja indisponibilidade impediria o próprio unseal do OpenBao. Avalie também que a credencial usada para autenticar no KMS precisa, ela mesma, ser protegida com o mesmo cuidado dado a um segredo crítico; hardcodá-la em um manifesto ou script anularia o ganho de segurança do auto-unseal.
+
+## Decisões que isso implica
+
+Adotar auto-unseal transfere o risco de indisponibilidade do "operador não está disponível para inserir a chave" para "o KMS externo não está acessível". Documente essa dependência como parte do procedimento de [recuperação do gerenciamento de segredos](../../../operations/disaster-recovery/recover-secret-management/), incluindo qual credencial autentica no KMS e onde ela está protegida.
+
+## Páginas relacionadas
+
+- [OpenBao e Vault](../openbao-and-vault/)
+- [OpenBao em modo de alta disponibilidade](../openbao-high-availability/)
+- [Configurar OpenBao com auto-unseal](../../../guides/tasks/secrets/configure-openbao-auto-unseal/)
+
+## Referências
+
+- [OpenBao: Seal/Unseal](https://openbao.org/docs/concepts/seal/): documentação oficial dos mecanismos de seal, incluindo auto-unseal via KMS externo.
+- [AWS Key Management Service](https://docs.aws.amazon.com/kms/): documentação oficial do serviço usado como um dos backends de auto-unseal.
+- [Google Cloud KMS](https://cloud.google.com/kms/docs): documentação oficial do serviço usado como um dos backends de auto-unseal.

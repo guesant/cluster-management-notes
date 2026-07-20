@@ -7,7 +7,7 @@ sidebar:
 > **Pré-requisitos:** [repositório GitOps estruturado](../../guides/tasks/gitops/structure-gitops-repository/).
 > **Frequência sugerida:** revisão a cada mudança na estrutura de bootstrap; trimestral por padrão.
 
-O repositório GitOps em si já é a proteção do estado desejado — mas alguns dados de bootstrap ficam **fora** do repositório por design (chave SSH do Argo CD, credencial de bootstrap de segredos) e precisam de sua própria estratégia de backup, distinta do próprio Git.
+O repositório GitOps em si já é a proteção do estado desejado, mas alguns dados de bootstrap ficam **fora** do repositório por design (chave SSH do Argo CD, credencial de bootstrap de segredos) e precisam de sua própria estratégia de backup, distinta do próprio Git.
 
 ## O que precisa de backup fora do repositório
 
@@ -37,7 +37,7 @@ Armazene o mirror em um destino diferente do provedor Git principal (outra máqu
 
 ## Troubleshooting
 
-Se a organização/conta do provedor Git principal for perdida (exclusão acidental, suspensão), o mirror local é o único caminho de recuperação do histórico completo — teste periodicamente que ele está atualizado.
+Se a organização/conta do provedor Git principal for perdida (exclusão acidental, suspensão), o mirror local é o único caminho de recuperação do histórico completo: teste periodicamente que ele está atualizado.
 
 ## Próximo passo
 

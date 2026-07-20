@@ -11,7 +11,7 @@ Réplicas síncronas de armazenamento e backups resolvem problemas diferentes, m
 
 ## Como funciona
 
-Uma réplica de armazenamento copia cada escrita em tempo real para outro disco (ou nó). Ela protege contra a perda física de um componente — um disco que falha, um nó que cai. Ela não protege contra um erro lógico: se uma aplicação corrompe seus próprios dados, apaga um registro por engano, ou é atingida por ransomware, a escrita destrutiva é replicada com a mesma velocidade e confiabilidade que qualquer outra escrita legítima. Todas as réplicas ficam corrompidas ou vazias ao mesmo tempo.
+Uma réplica de armazenamento copia cada escrita em tempo real para outro disco (ou nó). Ela protege contra a perda física de um componente: um disco que falha, um nó que cai. Ela não protege contra um erro lógico: se uma aplicação corrompe seus próprios dados, apaga um registro por engano, ou é atingida por ransomware, a escrita destrutiva é replicada com a mesma velocidade e confiabilidade que qualquer outra escrita legítima. Todas as réplicas ficam corrompidas ou vazias ao mesmo tempo.
 
 ```mermaid
 sequenceDiagram
@@ -29,11 +29,11 @@ sequenceDiagram
     Note over R1,R2: Nenhuma réplica preserva o estado anterior
 ```
 
-Um backup, por definição, é um ponto no tempo isolado da escrita corrente — só um snapshot anterior ao erro, copiado para fora do sistema de produção, permite voltar a um estado consistente.
+Um backup, por definição, é um ponto no tempo isolado da escrita corrente: só um snapshot anterior ao erro, copiado para fora do sistema de produção, permite voltar a um estado consistente.
 
 ## Alternativas
 
-Snapshots do próprio volume (não réplicas, mas pontos de retorno rápidos) ajudam contra erros lógicos recentes, mas normalmente permanecem no mesmo storage e domínio de falha do volume original — não substituem uma cópia externa. Veja [backup e recuperação](../../../operations/backups/backup-and-recovery/#réplica-snapshot-e-backup) para a comparação completa entre réplica, snapshot e backup.
+Snapshots do próprio volume (não réplicas, mas pontos de retorno rápidos) ajudam contra erros lógicos recentes, mas normalmente permanecem no mesmo storage e domínio de falha do volume original: não substituem uma cópia externa. Veja [backup e recuperação](../../../operations/backups/backup-and-recovery/#réplica-snapshot-e-backup) para a comparação completa entre réplica, snapshot e backup.
 
 ## Quando a distinção importa mais
 
@@ -41,7 +41,7 @@ Bancos de dados e qualquer dado sujeito a erro de aplicação, bug de migração
 
 ## Quando a distinção importa menos
 
-Dados verdadeiramente reconstruíveis a partir de outra fonte confiável — nesse caso, a réplica já cumpre o papel de disponibilidade, e a "fonte" externa já cumpre o papel de backup.
+Dados verdadeiramente reconstruíveis a partir de outra fonte confiável: nesse caso, a réplica já cumpre o papel de disponibilidade, e a "fonte" externa já cumpre o papel de backup.
 
 ## Páginas relacionadas
 

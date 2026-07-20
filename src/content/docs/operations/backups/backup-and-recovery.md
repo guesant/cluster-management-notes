@@ -51,11 +51,11 @@ Mantenha uma linha por ativo e por método. Um banco protegido por backup físic
 
 | ID | Ativo e responsável | Consistência/método | RPO | RTO | Frequência e retenção | Destino/domínio de falha | Proteção e acesso | Último restore testado |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| K3S-01 | Datastore K3s — `<equipe>` | Snapshot etcd + token correlacionado | `<definir>` | `<definir>` | `<agenda>` / `<retenção>` | `<destino externo>` | `<criptografia, imutabilidade, papéis>` | `<data, evidência>` |
-| GIT-01 | Estado declarativo — `<equipe>` | Repositório remoto protegido + cópia independente | `<definir>` | `<definir>` | `<frequência>` / `<retenção>` | `<outro provedor ou conta>` | `<MFA, acesso, proteção contra exclusão>` | `<data, commit restaurado>` |
-| PV-01 | `<PVC/aplicação>` — `<equipe>` | `<backup externo ou snapshot + cópia>` | `<definir>` | `<definir>` | `<agenda>` / `<retenção>` | `<destino>` | `<controles>` | `<data, validação>` |
-| DB-01 | `<banco>` — `<equipe>` | `<dump consistente ou base backup + logs>` | `<definir>` | `<definir>` | `<agenda>` / `<janela>` | `<destino>` | `<controles>` | `<data, ponto recuperado>` |
-| SEC-01 | Fonte de segredos — `<equipe>` | `<backup/export suportado + bootstrap>` | `<definir>` | `<definir>` | `<agenda>` / `<retenção>` | `<destino protegido>` | `<duplo controle, rotação>` | `<data, credencial de teste>` |
+| K3S-01 | Datastore K3s (`<equipe>`) | Snapshot etcd + token correlacionado | `<definir>` | `<definir>` | `<agenda>` / `<retenção>` | `<destino externo>` | `<criptografia, imutabilidade, papéis>` | `<data, evidência>` |
+| GIT-01 | Estado declarativo (`<equipe>`) | Repositório remoto protegido + cópia independente | `<definir>` | `<definir>` | `<frequência>` / `<retenção>` | `<outro provedor ou conta>` | `<MFA, acesso, proteção contra exclusão>` | `<data, commit restaurado>` |
+| PV-01 | `<PVC/aplicação>` (`<equipe>`) | `<backup externo ou snapshot + cópia>` | `<definir>` | `<definir>` | `<agenda>` / `<retenção>` | `<destino>` | `<controles>` | `<data, validação>` |
+| DB-01 | `<banco>` (`<equipe>`) | `<dump consistente ou base backup + logs>` | `<definir>` | `<definir>` | `<agenda>` / `<janela>` | `<destino>` | `<controles>` | `<data, ponto recuperado>` |
+| SEC-01 | Fonte de segredos (`<equipe>`) | `<backup/export suportado + bootstrap>` | `<definir>` | `<definir>` | `<agenda>` / `<retenção>` | `<destino protegido>` | `<duplo controle, rotação>` | `<data, credencial de teste>` |
 
 Acrescente, conforme necessário:
 
@@ -347,13 +347,13 @@ Um screenshot isolado de “Completed” não comprova integridade, destino, pon
 
 ## Fontes e leitura adicional
 
-- [K3s — Backup and Restore](https://docs.k3s.io/datastore/backup-restore) — Define o conteúdo do datastore, a exigência do token original e os procedimentos por tipo de backend.
-- [K3s — `etcd-snapshot`](https://docs.k3s.io/cli/etcd-snapshot) — Documenta agendamento, retenção, storage compatível com S3, restauração e riscos de segurança dos snapshots.
-- [Kubernetes — Volume Snapshots](https://kubernetes.io/docs/concepts/storage/volume-snapshots/) — Explica os objetos CSI de snapshot, suas classes, ciclo de vida e dependência do driver.
-- [Velero — How Velero Works](https://velero.io/docs/v1.18/how-velero-works/) — Delimita backup de objetos, snapshots, hooks, retenção, restauração e ausência de atomicidade estrita.
-- [Velero — CSI Snapshot Support](https://velero.io/docs/v1.18/csi/) — Lista pré-requisitos, integração CSI e ressalvas de durabilidade e portabilidade dos snapshots.
-- [Longhorn — Backups and Secondary Storage](https://longhorn.io/docs/1.12.0/concepts/#3-backups-and-secondary-storage) — Diferencia réplicas, snapshots e backups copiados para um backupstore externo.
-- [Longhorn — Backup and Restore](https://longhorn.io/docs/1.12.0/snapshots-and-backups/backup-and-restore/) — Documenta backup targets, criação de backups e restauração de volumes.
-- [PostgreSQL — Backup and Restore](https://www.postgresql.org/docs/current/backup.html) — Compara dump SQL, backup em nível de filesystem e arquivamento contínuo com PITR.
-- [CloudNativePG — Backup](https://cloudnative-pg.io/documentation/current/backup/) — Apresenta backups agendados, object storage, volume snapshots e interfaces suportadas pelo operator.
-- [CloudNativePG — Recovery](https://cloudnative-pg.io/documentation/current/recovery/) — Explica recuperação em novo cluster, WAL, PITR e requisitos separados para Secrets.
+- [K3s — Backup and Restore](https://docs.k3s.io/datastore/backup-restore): define o conteúdo do datastore, a exigência do token original e os procedimentos por tipo de backend.
+- [K3s — `etcd-snapshot`](https://docs.k3s.io/cli/etcd-snapshot): documenta agendamento, retenção, storage compatível com S3, restauração e riscos de segurança dos snapshots.
+- [Kubernetes — Volume Snapshots](https://kubernetes.io/docs/concepts/storage/volume-snapshots/): explica os objetos CSI de snapshot, suas classes, ciclo de vida e dependência do driver.
+- [Velero — How Velero Works](https://velero.io/docs/v1.18/how-velero-works/): delimita backup de objetos, snapshots, hooks, retenção, restauração e ausência de atomicidade estrita.
+- [Velero — CSI Snapshot Support](https://velero.io/docs/v1.18/csi/): lista pré-requisitos, integração CSI e ressalvas de durabilidade e portabilidade dos snapshots.
+- [Longhorn — Backups and Secondary Storage](https://longhorn.io/docs/1.12.0/concepts/#3-backups-and-secondary-storage): diferencia réplicas, snapshots e backups copiados para um backupstore externo.
+- [Longhorn — Backup and Restore](https://longhorn.io/docs/1.12.0/snapshots-and-backups/backup-and-restore/): documenta backup targets, criação de backups e restauração de volumes.
+- [PostgreSQL — Backup and Restore](https://www.postgresql.org/docs/current/backup.html): compara dump SQL, backup em nível de filesystem e arquivamento contínuo com PITR.
+- [CloudNativePG — Backup](https://cloudnative-pg.io/documentation/current/backup/): apresenta backups agendados, object storage, volume snapshots e interfaces suportadas pelo operator.
+- [CloudNativePG — Recovery](https://cloudnative-pg.io/documentation/current/recovery/): explica recuperação em novo cluster, WAL, PITR e requisitos separados para Secrets.

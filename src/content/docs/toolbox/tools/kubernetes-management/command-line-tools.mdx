@@ -15,15 +15,22 @@ Os scripts deste repositório instalam binários em `/usr/local/bin` e usam `sud
 
 `kubectl` é o cliente principal da API Kubernetes. Ele cria, consulta, altera e remove objetos, acompanha logs e eventos e auxilia no diagnóstico de workloads. O comando lê o kubeconfig para decidir com qual cluster e identidade trabalhar; portanto, confira o contexto antes de qualquer alteração. O `kubectl` não acessa diretamente o banco do K3s nem os containers: suas operações passam pela API e pelas regras de autorização do Kubernetes. Referência: [introdução ao kubectl](https://kubernetes.io/docs/reference/kubectl/introduction/).
 
-O instalador baixa a versão estável indicada por `dl.k8s.io` e valida o SHA-256:
+A instalação oficial baixa o binário publicado em `dl.k8s.io` e valida seu checksum antes de instalá-lo, em vez de confiar apenas no download:
 
 > **Executar em:** máquina onde a CLI será instalada.
 
-```yaml
-curl -sfL \
-  https://raw.githubusercontent.com/guesant/infrastructure-and-cluster-notebook/refs/heads/main/scripts/install/kubectl.sh \
-  | bash -
+```bash
+KUBECTL_VERSION="$(curl -Ls https://dl.k8s.io/release/stable.txt)"
+
+curl -LO "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
+curl -LO "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl.sha256"
+echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+rm kubectl kubectl.sha256
 ```
+
+`stable.txt` sempre aponta para a versão estável mais recente; para fixar uma versão específica (recomendado para reprodutibilidade), substitua a primeira linha por `KUBECTL_VERSION="v1.36.1"` ou a versão desejada, compatível com a versão do K3s em uso (veja a [política de version skew](https://kubernetes.io/releases/version-skew-policy/)).
 
 ## Helm
 
@@ -31,29 +38,40 @@ Helm é um gerenciador de pacotes para Kubernetes. Um **chart** reúne templates
 
 Helm renderiza manifests e os envia à API Kubernetes usando o kubeconfig, mas não mantém um controller próprio reconciliando continuamente a release. Depois da instalação, uma alteração manual no cluster não é corrigida por Helm até uma nova operação; essa é uma diferença importante em relação ao Argo CD. Referência: [introdução ao Helm](https://helm.sh/docs/intro/introduction/).
 
-O instalador usa o script oficial da linha Helm 3:
+A instalação oficial usa o script mantido pelo próprio projeto Helm:
 
 > **Executar em:** máquina onde a CLI será instalada.
 
-```yaml
-curl -sfL \
-  https://raw.githubusercontent.com/guesant/infrastructure-and-cluster-notebook/refs/heads/main/scripts/install/helm.sh \
-  | bash -
+```bash
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod +x get_helm.sh
+
+DESIRED_VERSION=<versão-do-helm> ./get_helm.sh
+rm get_helm.sh
 ```
+
+Fixe `DESIRED_VERSION` com uma versão específica das [releases do Helm](https://github.com/helm/helm/releases) em vez de omiti-la; sem essa variável, o script instala a versão mais recente disponível no momento da execução, o que torna a instalação não reprodutível entre máquinas.
 
 ## Argo CD CLI
 
 `argocd` é o cliente da API do Argo CD. Ele permite autenticar no servidor Argo CD, cadastrar repositórios, consultar diferenças e controlar sincronizações. Não substitui `kubectl`: a CLI `argocd` opera os conceitos do Argo CD, enquanto `kubectl` opera qualquer recurso exposto pela API Kubernetes, inclusive os CRDs `Application`.
 
-O instalador baixa a versão do canal `stable` para `amd64` ou `arm64`:
+A instalação oficial baixa o binário publicado nas releases do projeto no GitHub:
 
 > **Executar em:** máquina onde a CLI será instalada.
 
-```yaml
-curl -sfL \
-  https://raw.githubusercontent.com/guesant/infrastructure-and-cluster-notebook/refs/heads/main/scripts/install/argocd.sh \
-  | bash -
+```bash
+ARGOCD_VERSION="<versão-do-argocd>"
+ARGOCD_ARCH="amd64"  # ou arm64, conforme a arquitetura da máquina
+
+curl -sSL -o argocd \
+  "https://github.com/argoproj/argo-cd/releases/download/${ARGOCD_VERSION}/argocd-linux-${ARGOCD_ARCH}"
+
+sudo install -o root -g root -m 0755 argocd /usr/local/bin/argocd
+rm argocd
 ```
+
+Fixe `ARGOCD_VERSION` com uma versão específica das [releases do Argo CD](https://github.com/argoproj/argo-cd/releases); prefira alinhá-la à versão do chart Argo CD já instalado no cluster (veja [instalar o Argo CD](../../../../guides/tasks/gitops/install-argocd/)), já que a CLI e o servidor têm compatibilidade mais estreita entre versões próximas.
 
 ## cmctl
 
@@ -83,7 +101,7 @@ Depois de instalar as ferramentas, valide as versões:
 
 > **Executar em:** máquina onde as CLIs foram instaladas.
 
-```yaml
+```bash
 kubectl version --client
 helm version
 argocd version --client

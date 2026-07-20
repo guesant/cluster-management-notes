@@ -7,7 +7,7 @@ sidebar:
 > **Pré-requisitos:** [SOPS configurado com age](../../guides/tasks/secrets/configure-sops-with-age/).
 > **Frequência sugerida:** revisão a cada rotação de chave; trimestral por padrão.
 
-A chave privada age é o material crítico que protege todos os segredos criptografados no repositório GitOps via SOPS — sua perda torna esses segredos permanentemente irrecuperáveis, mesmo com o repositório Git intacto.
+A chave privada age é o material crítico que protege todos os segredos criptografados no repositório GitOps via SOPS: sua perda torna esses segredos permanentemente irrecuperáveis, mesmo com o repositório Git intacto.
 
 ## Onde guardar a chave privada
 
@@ -27,7 +27,7 @@ Se [SOPS estiver integrado ao Argo CD](../../guides/tasks/secrets/use-sops-with-
 kubectl --namespace argocd get secret sops-age-key
 ```
 
-Esse Secret é, ele mesmo, um dado de bootstrap fora do GitOps — trate-o com o mesmo cuidado descrito em [backup de dados de bootstrap do GitOps](../backup-gitops-bootstrap-data/).
+Esse Secret é, ele mesmo, um dado de bootstrap fora do GitOps: trate-o com o mesmo cuidado descrito em [backup de dados de bootstrap do GitOps](../backup-gitops-bootstrap-data/).
 
 ## Testar a recuperação
 
@@ -48,7 +48,7 @@ Uma cópia de chave nunca testada pode estar corrompida, incompleta, ou ser a ve
 
 ## Rollback
 
-Se uma chave for comprometida, gere um novo par e reencripte todos os arquivos protegidos por ela — não há "revogação" de uma chave age já exposta, apenas substituição.
+Se uma chave for comprometida, gere um novo par e reencripte todos os arquivos protegidos por ela: não há "revogação" de uma chave age já exposta, apenas substituição.
 
 ## Próximo passo
 

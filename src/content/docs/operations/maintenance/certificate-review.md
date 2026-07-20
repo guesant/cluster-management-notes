@@ -33,7 +33,7 @@ Compare `notAfter` com a data atual; certificados do Let's Encrypt normalmente t
 kubectl describe certificate <nome> --namespace <namespace>
 ```
 
-Revise a seção `Status.Conditions` e os eventos — veja [diagnosticar uma emissão](../../../guides/tasks/certificates/install-cert-manager/#diagnosticar-uma-emissão) para o procedimento completo com `cmctl`.
+Revise a seção `Status.Conditions` e os eventos; veja [diagnosticar uma emissão](../../../guides/tasks/certificates/install-cert-manager/#diagnosticar-uma-emissão) para o procedimento completo com `cmctl`.
 
 ## Checklist
 
@@ -45,7 +45,7 @@ Revise a seção `Status.Conditions` e os eventos — veja [diagnosticar uma emi
 
 ## Troubleshooting
 
-Se um certificado ficar preso em renovação, o `Challenge` associado geralmente indica a causa — propagação DNS lenta, credencial revogada ou limite de taxa do Let's Encrypt atingido (veja [rate limits](https://letsencrypt.org/docs/rate-limits/)).
+Se um certificado ficar preso em renovação, o `Challenge` associado geralmente indica a causa: propagação DNS lenta, credencial revogada ou limite de taxa do Let's Encrypt atingido (veja [rate limits](https://letsencrypt.org/docs/rate-limits/)).
 
 ## Próximo passo
 
