@@ -18,9 +18,9 @@ graph TB
     S1["Servidor 1<br/>etcd"]
     S2["Servidor 2<br/>etcd"]
     
-    S0 ↔|Raft<br/>replicação| S1
-    S1 ↔|Raft<br/>replicação| S2
-    S0 ↔|Raft<br/>replicação| S2
+    S0 <-->|Raft<br/>replicação| S1
+    S1 <-->|Raft<br/>replicação| S2
+    S0 <-->|Raft<br/>replicação| S2
     
     Note["quorum = 2/3"]
 ```

@@ -29,7 +29,7 @@ JAIL_PUBLISH=4321 ./jail-exec.sh bun run dev -- --host 0.0.0.0
 ```
 
 A imagem padrão (`jail`) não tem `git`; o build local não preenche a data de última revisão de
-cada página (`lastUpdated`, baseada no histórico do Git) por esse motivo — isso só acontece no
+cada página (`lastUpdated`, baseada no histórico do Git) por esse motivo. Isso só acontece no
 CI, que usa a imagem `ci` (com `git`) e faz checkout com histórico completo.
 
 ## Via Dev Container
@@ -38,7 +38,7 @@ Para quem prefere abrir o projeto num ambiente já pronto (VS Code Dev Container
 Codespaces), o repositório inclui
 [`.devcontainer/code/devcontainer.json`](https://github.com/guesant/infrastructure-and-cluster-notebook/blob/main/.devcontainer/code/devcontainer.json).
 Ao abrir o repositório no Dev Container, as dependências são instaladas automaticamente
-(`bun install --frozen-lockfile`) e a porta `4321` já fica encaminhada — basta rodar
+(`bun install --frozen-lockfile`) e a porta `4321` já fica encaminhada; basta rodar
 `bun run dev` dentro do container.
 
 ## Estrutura do conteúdo
@@ -52,8 +52,8 @@ Ao abrir o repositório no Dev Container, as dependências são instaladas autom
 
 ## Antes de abrir um PR
 
-Rode `./jail-exec.sh bun run lint` e `./jail-exec.sh bun run build` — os mesmos passos do
+Rode `./jail-exec.sh bun run lint` e `./jail-exec.sh bun run build`: são os mesmos passos do
 workflow [`Documentação`](https://github.com/guesant/infrastructure-and-cluster-notebook/blob/main/.github/workflows/docs.yml),
 que também roda a verificação de links quebrados (`lychee`) sobre o HTML gerado. Todos rodam
-automaticamente no CI a cada push ou pull request que altere a documentação — rodar localmente
+automaticamente no CI a cada push ou pull request que altere a documentação. Rodar localmente
 antes só evita descobrir o problema depois de abrir o PR.

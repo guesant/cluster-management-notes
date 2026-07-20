@@ -61,9 +61,9 @@ graph TB
     LB --> S1
     LB --> S2
     LB --> S3
-    S1 ↔ S2
-    S2 ↔ S3
-    S1 ↔ S3
+    S1 <--> S2
+    S2 <--> S3
+    S1 <--> S3
 ```
 
 Perder DC A inteiro → cluster continua (quorum em B+C).

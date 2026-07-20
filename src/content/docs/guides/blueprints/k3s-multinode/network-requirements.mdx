@@ -48,9 +48,9 @@ graph TB
     
     S0 -->|TCP 2379-2380<br/>etcd peer| S1
     S0 -->|TCP 2379-2380<br/>etcd peer| S2
-    S1 ↔|UDP 8472 VXLAN<br/>TCP 10250 kubelet| S2
-    S1 ↔|UDP 8472 VXLAN<br/>TCP 10250 kubelet| A
-    S2 ↔|UDP 8472 VXLAN<br/>TCP 10250 kubelet| A
+    S1 <-->|UDP 8472 VXLAN<br/>TCP 10250 kubelet| S2
+    S1 <-->|UDP 8472 VXLAN<br/>TCP 10250 kubelet| A
+    S2 <-->|UDP 8472 VXLAN<br/>TCP 10250 kubelet| A
     S1 <-->|TCP 6443 API| A
     S2 <-->|TCP 6443 API| A
 ```

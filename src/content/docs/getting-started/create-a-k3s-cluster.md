@@ -146,8 +146,8 @@ Revise a [validação pós-instalação](../../operations/checklists/post-instal
 
 ## Fontes e leitura adicional
 
-- [Quick-Start Guide — K3s](https://docs.k3s.io/quick-start): apresenta o fluxo oficial de instalação do primeiro servidor e de associação de agentes.
-- [Requisitos de instalação — K3s](https://docs.k3s.io/installation/requirements): documenta sistemas suportados, recursos mínimos e comunicação de rede entre os nós.
-- [HA com etcd embarcado — K3s](https://docs.k3s.io/datastore/ha-embedded): explica quorum, quantidade de servidores e inicialização de clusters altamente disponíveis.
-- [Acesso ao cluster — K3s](https://docs.k3s.io/cluster-access): descreve o kubeconfig administrativo e o acesso à API a partir de outra máquina.
-- [Backup e restauração do datastore — K3s](https://docs.k3s.io/datastore/backup-restore): referência para snapshots do etcd, token do servidor e procedimentos de recuperação.
+- [K3s: Quick-Start Guide](https://docs.k3s.io/quick-start): apresenta o fluxo oficial de instalação do primeiro servidor e de associação de agentes.
+- [K3s: Requisitos de instalação](https://docs.k3s.io/installation/requirements): documenta sistemas suportados, recursos mínimos e comunicação de rede entre os nós.
+- [K3s: HA com etcd embarcado](https://docs.k3s.io/datastore/ha-embedded): explica quorum, quantidade de servidores e inicialização de clusters altamente disponíveis.
+- [K3s: Acesso ao cluster](https://docs.k3s.io/cluster-access): descreve o kubeconfig administrativo e o acesso à API a partir de outra máquina.
+- [K3s: Backup e restauração do datastore](https://docs.k3s.io/datastore/backup-restore): referência para snapshots do etcd, token do servidor e procedimentos de recuperação.

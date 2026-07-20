@@ -71,8 +71,8 @@ graph TB
         Fargate["Fargate<br/>(opção serverless<br/>sem nodes visíveis)"]
     end
     
-    API ↔ EC2
-    API ↔ Fargate
+    API <--> EC2
+    API <--> Fargate
 ```
 
 ## Worker nodes: EC2 vs. Fargate

@@ -1,130 +1,179 @@
 ---
 title: DNS interno e reverse proxy local
+description: Blueprint que substitui port-forwards manuais por resolução DNS de domínios internos (CoreDNS) combinada com um reverse proxy que roteia por SNI na porta 443.
 sidebar:
   order: 3
 ---
 
-> **Público-alvo:** operadores que querem acessar serviços internos (Grafana, Prometheus, ArgoCD, etc.) sem `kubectl port-forward` manual.
+> **Público-alvo:** operadores que querem acessar serviços internos (Grafana, Prometheus, ArgoCD etc.) sem `kubectl port-forward` manual.
 > **Versões testadas:** CoreDNS 1.10+, Nginx 1.25+, K3s 1.36.
 
-Este blueprint substitui port-forwards manuais por um setup permanente: **CoreDNS** resolve domínios internos (`grafana.cluster.local`) para `127.0.0.1`, e um **reverse proxy** (Nginx, HAProxy, ou Traefik) na porta 443 roteia por SNI para os serviços.
+Este blueprint substitui port-forwards manuais por um setup permanente. O **CoreDNS** resolve
+domínios internos (`grafana.cluster.local`) para `127.0.0.1`, e um **reverse proxy** (Nginx,
+HAProxy ou Traefik) escutando na porta 443 do mesmo host roteia cada conexão para o serviço
+correto usando SNI (o nome de domínio que o cliente TLS envia antes da negociação, visível mesmo
+sem descriptografar o tráfego).
 
-## O problema que este blueprint resolve
+O problema que ele resolve aparece assim que o número de serviços internos cresce. Cada
+`kubectl port-forward` ocupa um terminal, usa uma porta diferente e cai sempre que o processo
+local termina ou a conexão SSH reconecta; não há nada persistente para lembrar qual porta
+correspondia a qual serviço.
 
 ```mermaid
 graph LR
-    subgraph Before["❌ Sem blueprint"]
+    subgraph Before["Sem blueprint"]
         L1["operator@laptop"]
-        L1 -->|port-forward :3000| G["Grafana<br/>(manual)"]
-        L1 -->|port-forward :9090| P["Prometheus<br/>(manual)"]
-        L1 -->|port-forward :8080| A["ArgoCD<br/>(manual)"]
+        L1 -->|"port-forward :3000"| G["Grafana (manual)"]
+        L1 -->|"port-forward :9090"| P["Prometheus (manual)"]
+        L1 -->|"port-forward :8080"| A["ArgoCD (manual)"]
     end
-    
-    subgraph After["✅ Com blueprint"]
+
+    subgraph After["Com blueprint"]
         L2["operator@laptop"]
-        L2 -->|ssh bastion| B["Bastion"]
-        B -->|https://grafana.cluster.local| G2["Grafana<br/>(automático)"]
-        B -->|https://prometheus.cluster.local| P2["Prometheus<br/>(automático)"]
-        B -->|https://argocd.cluster.local| A2["ArgoCD<br/>(1 porta 443)"]
+        L2 -->|"ssh bastion"| B["Bastion"]
+        B -->|"https://grafana.cluster.local"| G2["Grafana"]
+        B -->|"https://prometheus.cluster.local"| P2["Prometheus"]
+        B -->|"https://argocd.cluster.local"| A2["ArgoCD (porta 443 única)"]
     end
 ```
 
-## O que está aqui
+À esquerda, cada serviço exige um túnel manual independente, amarrado a uma porta local
+específica e a uma sessão de terminal ativa. À direita, o operador só precisa de uma conexão ao
+bastion; a resolução de nomes e o roteamento por porta 443 ficam permanentes, e adicionar um novo
+serviço interno não exige negociar mais uma porta local.
 
-- [Conceitos: split-horizon DNS e reverse proxy](../../learn/networking/split-horizon-dns/) — entender domínios internos
-- [Conceitos: reverse proxy basics](../../learn/networking/reverse-proxy-basics/) — como roteia
-- [Setup CoreDNS para resolução interna](../../tasks/networking/setup-coredns-internal/) — configurar DNS
-- [Setup reverse proxy em localhost](../../tasks/networking/setup-reverse-proxy-localhost/) — configurar proxy
-- [Validação pós-setup](../../tasks/networking/validate-dns-and-proxy/) — checklist
+## O que este blueprint cobre
+
+O setup completo tem duas partes independentes que se combinam: resolução de nomes e roteamento
+de tráfego. As páginas abaixo tratam de cada parte separadamente, na ordem em que normalmente são
+configuradas.
+
+- [Split-horizon DNS](../../../learn/networking/split-horizon-dns/): o conceito por trás de um
+  domínio resolver de forma diferente conforme a origem da consulta, que é o que permite
+  `grafana.cluster.local` existir só na rede interna.
+- [Reverse proxy: fundamentos](../../../learn/networking/reverse-proxy-basics/): como um proxy
+  decide para onde encaminhar uma conexão TLS sem terminar a criptografia antes de saber o
+  destino.
+- [Configurar CoreDNS para resolução interna](../../tasks/networking/setup-coredns-internal/):
+  o procedimento de configuração do DNS.
+- [Configurar reverse proxy em localhost](../../tasks/networking/setup-reverse-proxy-localhost/):
+  o procedimento de configuração do proxy, com Nginx ou HAProxy.
+
+Não existe uma página de validação separada para o conjunto: cada guia de configuração já inclui
+seus próprios passos de teste (resolução de nomes no guia de CoreDNS, conectividade HTTPS no guia
+de reverse proxy). Depois de seguir os dois, confirme que a cadeia completa funciona resolvendo
+um domínio interno e acessando-o via HTTPS a partir da estação administrativa.
 
 ## Topologia
 
+O diagrama a seguir mostra a ordem real das operações quando um operador acessa um serviço
+interno pela primeira vez: uma consulta DNS antes de qualquer conexão HTTP.
+
 ```mermaid
-graph TD
-    Admin["Admin laptop<br/>(ou bastion/VPN gateway)<br/>Rede: pode resolver cluster.local"]
-    
-    DNS["CoreDNS<br/>(cluster DNS)<br/>resolve:<br/>- grafana.cluster.local<br/>- prometheus.cluster.local<br/>- argocd.cluster.local"]
-    
-    Proxy["Reverse Proxy<br/>(127.0.0.1:443)<br/>roteia:<br/>- grafana-svc:3000<br/>- prometheus-svc:9090<br/>- argocd-svc:8080"]
-    
-    Admin --> DNS
-    Admin --> Proxy
+sequenceDiagram
+    participant Admin as Admin (laptop/bastion)
+    participant DNS as CoreDNS
+    participant Proxy as Reverse proxy (127.0.0.1:443)
+    participant Svc as Serviço interno (ex.: Grafana)
+
+    Admin->>DNS: resolve grafana.cluster.local
+    DNS-->>Admin: 127.0.0.1
+    Admin->>Proxy: conexão HTTPS, SNI = grafana.cluster.local
+    Proxy->>Svc: encaminha para grafana-svc:3000
+    Svc-->>Admin: resposta HTTP
 ```
+
+O CoreDNS só participa da primeira etapa, a resolução do nome; ele não vê nem participa do
+tráfego HTTPS que vem depois. O reverse proxy, por outro lado, nunca resolve nomes: ele recebe a
+conexão já destinada a `127.0.0.1` e decide o destino olhando o campo SNI da negociação TLS. Essa
+separação de responsabilidades é o que permite trocar de reverse proxy (Nginx, HAProxy, Traefik)
+sem tocar na configuração do CoreDNS, e vice-versa.
 
 ## Quando usar este blueprint
 
-- ✅ **Serviços internos:** dashboard admin, monitoramento, CI/CD
-- ✅ **Homelab/produção privada:** acesso via SSH ou VPN
-- ✅ **Zero downtime para access:** sem port-forward manual
-- ✅ **Múltiplos serviços:** consolidar em uma porta
-- ❌ **Serviços públicos:** use DNS público + WAF/LB
-- ❌ **Sem acesso SSH/VPN:** use `kubectl port-forward`
+Use este blueprint quando o acesso for administrativo e a rede de origem for confiável (SSH ou
+VPN até o cluster): dashboards de monitoramento, interface do Argo CD, ferramentas de CI/CD e
+qualquer serviço que só deveria ser alcançável por operadores. Ele não substitui a exposição
+pública de uma aplicação, que exige DNS público, um certificado emitido para um domínio real e
+geralmente um WAF ou load balancer na frente; para isso, veja
+[Gateway API e Traefik](../../tasks/networking/configure-traefik-gateway-api/). Também não vale a
+pena adotá-lo para acessar um único serviço ocasionalmente: nesse caso, um `kubectl port-forward`
+pontual continua sendo mais simples do que manter DNS e proxy permanentes.
 
 ## Variantes
 
-### Variante A: CoreDNS no cluster + Reverse proxy local (recomendado)
+As três variantes abaixo resolvem o mesmo problema com topologias diferentes. A escolha depende
+de onde o CoreDNS já roda e de que tipo de acesso administrativo o ambiente tem.
 
-CoreDNS rodando como serviço no cluster, reverse proxy no bastion/laptop:
+### Variante A: CoreDNS no cluster com reverse proxy local (recomendado)
 
-```mermaid
-graph TB
-    Cluster["Dentro do cluster<br/>CoreDNS<br/>resolve .local"]
-    
-    Bastion["Bastion/laptop<br/>Reverse proxy<br/>(Nginx/HAProxy)<br/>127.0.0.1:443"]
-    
-    Bastion -->|query DNS| Cluster
-```
-
-**Quando:** cluster K3s com múltiplos admins.
-
-### Variante B: CoreDNS externo + Reverse proxy externo
-
-Ambos rodando fora do cluster (ex.: Pihole + Nginx no bastion):
+O CoreDNS roda como o resolvedor padrão do próprio cluster K3s (é o comportamento de fábrica), e
+o reverse proxy roda separadamente no bastion ou laptop administrativo, consultando esse CoreDNS
+pela rede.
 
 ```mermaid
 graph TB
-    Bastion["Bastion/servidor de infra<br/>CoreDNS + Reverse Proxy<br/>Resolve + roteia em paralelo"]
+    Cluster["Dentro do cluster<br/>CoreDNS resolve .cluster.local"]
+    Bastion["Bastion ou laptop<br/>Reverse proxy (Nginx/HAProxy)<br/>127.0.0.1:443"]
+
+    Bastion -->|"consulta DNS"| Cluster
 ```
 
-**Quando:** cluster sem privilégio de admin, ou CoreDNS já rodando externamente.
+**Quando usar:** é a variante padrão para um cluster K3s com múltiplos administradores, porque
+reaproveita o CoreDNS que já existe no cluster em vez de duplicar a infraestrutura de resolução
+de nomes.
 
-### Variante C: Traefik integrado (se já tem Traefik)
+### Variante B: CoreDNS e reverse proxy externos ao cluster
 
-Se está usando Traefik como ingress controller, pode configurar roteamento interno:
+Ambos os componentes rodam fora do cluster, por exemplo um Pi-hole fazendo o papel de CoreDNS e
+um Nginx no mesmo bastion, sem depender de nenhum recurso do Kubernetes.
 
-```yaml
-Traefik já está na porta 443
-  └─ adicionar IngressRoute para domínios internos
-  └─ roteia para serviços por SNI
-```
+**Quando usar:** o operador não tem privilégio administrativo sobre o cluster para editar o
+`ConfigMap` do CoreDNS, ou já existe um resolvedor DNS interno rodando fora do cluster que pode
+assumir esse papel.
 
-**Quando:** K3s com Traefik já instalado (Fase 2).
+### Variante C: roteamento integrado ao Traefik já instalado
+
+Quando o cluster já usa Traefik como ingress controller na porta 443, o mesmo ponto de entrada
+pode, em princípio, servir também domínios internos, adicionando rotas específicas para eles
+sem introduzir um segundo processo de reverse proxy.
+
+**Quando usar:** o cluster já tem Traefik instalado (via
+[Gateway API e Traefik](../../tasks/networking/configure-traefik-gateway-api/)) e o objetivo é
+evitar rodar um proxy adicional só para o tráfego interno.
 
 ## Próximos passos
 
-1. Ler [Split-horizon DNS](../../learn/networking/split-horizon-dns/) para entender a arquitetura
-2. Escolher variant (A, B, ou C acima)
-3. Seguir [Setup CoreDNS](../../tasks/networking/setup-coredns-internal/)
-4. Seguir [Setup reverse proxy](../../tasks/networking/setup-reverse-proxy-localhost/)
-5. [Validar](../../tasks/networking/validate-dns-and-proxy/)
+1. Leia [Split-horizon DNS](../../../learn/networking/split-horizon-dns/) para entender a arquitetura.
+2. Escolha a variante (A, B ou C, descritas acima) de acordo com onde o CoreDNS já roda.
+3. Siga [Configurar CoreDNS para resolução interna](../../tasks/networking/setup-coredns-internal/).
+4. Siga [Configurar reverse proxy em localhost](../../tasks/networking/setup-reverse-proxy-localhost/).
+5. Confirme a cadeia completa resolvendo um domínio interno e acessando-o via HTTPS, usando os
+   passos de teste descritos em cada um dos dois guias acima.
 
 ## Considerações de segurança
 
-- **TLS:** use certificados (auto-assinados ok para lab, Let's Encrypt para produção)
-- **Acesso:** reverse proxy em `127.0.0.1` (isolado); CoreDNS acessível apenas na rede interna
-- **Domínios:** `.cluster.local` é reservado para uso local (RFC 6762)
-- **Authentication:** reverse proxy pode validar credenciais (basic auth, OAuth, etc.)
+O reverse proxy expõe a porta 443 apenas em `127.0.0.1`, isolada da rede pública; o alcance real
+depende de quem consegue chegar até essa interface (SSH, VPN ou a rede local do bastion). O
+CoreDNS, por sua vez, só precisa ser alcançável pela rede interna que faz as consultas, nunca pela
+internet. Para TLS, certificados auto-assinados são aceitáveis em laboratório, já que o objetivo é
+criptografar a conexão, não provar identidade a um público externo; em produção, prefira
+certificados emitidos por uma CA interna ou por Let's Encrypt com um domínio que a organização
+controla. O sufixo `.cluster.local` usado nos exemplos é um domínio arbitrário de uso interno, não
+o `.local` reservado por multicast DNS (RFC 6762); qualquer sufixo que não colida com um domínio
+público real funciona, desde que seja usado de forma consistente. Nenhuma das duas variantes
+citadas aqui adiciona autenticação por padrão: se o serviço interno não tiver login próprio, a
+autenticação (basic auth, OAuth) precisa ser configurada no reverse proxy.
 
 ## Tópicos relacionados
 
-- [Split-horizon DNS](../../learn/networking/split-horizon-dns/) — conceitos
-- [Reverse proxy basics](../../learn/networking/reverse-proxy-basics/) — como roteia
-- [Gateway API e Traefik](../../tasks/networking/configure-traefik-gateway-api/) — ingress controller (público)
-- [Network policies](../../tasks/networking/configure-network-policies/) — segurança de rede
+- [NetworkPolicy](../../tasks/networking/configure-network-policies/): restringe de qual
+  namespace ou pod o tráfego pode alcançar os serviços internos expostos por este blueprint, uma
+  camada de controle independente da resolução de nomes.
 
 ## Fontes e leitura adicional
 
 - [CoreDNS Documentation](https://coredns.io/): referência oficial.
 - [Nginx Reverse Proxy Guide](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/): setup detalhado.
 - [HAProxy Configuration](https://www.haproxy.org/#docs): alternativa a Nginx.
-- [RFC 6762 — mDNS](https://tools.ietf.org/html/rfc6762): especificação de `.local`.
+- [RFC 6762 (mDNS)](https://tools.ietf.org/html/rfc6762): especificação do domínio `.local` reservado para multicast DNS.

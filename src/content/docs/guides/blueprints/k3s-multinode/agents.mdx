@@ -29,9 +29,9 @@ graph TD
         S2["Servidor 2"]
         AS["Agentes 1, 2, ..., N<br/>apenas executam workloads"]
         
-        S0 ↔|quorum etcd| S1
-        S1 ↔|quorum etcd| S2
-        S0 ↔|quorum etcd| S2
+        S0 <-->|quorum etcd| S1
+        S1 <-->|quorum etcd| S2
+        S0 <-->|quorum etcd| S2
         
         S0 --> AS
         S1 --> AS

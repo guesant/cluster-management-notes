@@ -35,9 +35,9 @@ graph TD
     M1 -.->|Rede Overlay| W1
     M2 -.->|Rede Overlay| W2
     
-    M0 ↔ M1
-    M1 ↔ M2
-    M0 ↔ M2
+    M0 <--> M1
+    M1 <--> M2
+    M0 <--> M2
 ```
 
 - **3 ou 5 managers**: quorum para tolerância a falhas. Managers também podem rodar workloads.
