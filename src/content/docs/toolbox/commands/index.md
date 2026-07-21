@@ -10,17 +10,20 @@ Esta seção reúne recipes de comandos organizadas por tarefa, não por ferrame
 
 - [Valores aleatórios](../random-values/): senhas, tokens, chaves.
 - [Certificados](../certificates/): criar, inspecionar e converter certificados.
+- [Criptografia](../cryptography/): hashes, verificação de checksum, assinatura GPG e cifragem simétrica de arquivos.
 - [DNS](../dns/): resolução, testes e troubleshooting.
 - [Rede](../networking/): conectividade, rotas e portas.
+- [Firewalls](../firewalls/): inspecionar regras, portas liberadas e log de pacotes descartados no UFW, firewalld e nftables.
 - [Processos](../processes/): listar, encerrar e priorizar.
 - [Troubleshooting genérico](../troubleshooting/): histórico, redirecionamento, paralelismo.
 - [Filesystems](../filesystems/): montagem, permissões, inodes.
+- [Discos e volumes](../disks-and-volumes/): dispositivos de bloco, UUID e saúde SMART.
 - [Systemd](../systemd/): serviços, timers, logs.
+- [Logs](../logs/): journal completo, boots anteriores, prioridade e log do kernel.
 - [Containers (Docker)](../containers/): listar, inspecionar, build e push.
 - [Kubernetes](../kubernetes/): `kubectl`, logs, port-forward, recursos.
+- [Helm](../helm/): releases, values efetivos, histórico, rollback e `helm template`.
 - [Git](../git/): branches, commits, stash, push e pull.
-
-As categorias a seguir estão planejadas (Fase 7 do plano de conteúdo interno, `.todo/phase-7-toolbox.md`, fora do site publicado), mas ainda não foram escritas: criptografia (chaves e hashing além do já coberto em [certificados](../certificates/)), firewalls (UFW, firewalld, iptables), discos e volumes (partições, LVM), logs de aplicação (fora do escopo de [systemd](../systemd/)) e Helm (busca de charts, valores, releases).
 
 ## Formato de uma recipe
 

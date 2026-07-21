@@ -44,7 +44,7 @@ flowchart TB
     Cliente["Cliente externo"] -->|"HTTPS"| Traefik
 ```
 
-O K3s roda com `cluster-init: true` mesmo em nó único, o que já deixa o control plane pronto para receber servidores adicionais no futuro sem reinstalação (veja [Fase 5: multinó](../../../../../.todo/phase-5-multinode.md), fora do escopo deste blueprint). O mesmo host executa control plane, workloads, ingress e o próprio Argo CD; não há isolamento de papéis entre essas funções.
+O K3s roda com `cluster-init: true` mesmo em nó único, o que já deixa o control plane pronto para receber servidores adicionais no futuro sem reinstalação (veja o [blueprint multinode](../k3s-multinode/), fora do escopo deste blueprint). O mesmo host executa control plane, workloads, ingress e o próprio Argo CD; não há isolamento de papéis entre essas funções.
 
 ## Decisões adotadas
 

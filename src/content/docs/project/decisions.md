@@ -10,9 +10,8 @@ que não precisem ser redescobertas ou re-discutidas a cada nova página.
 
 ## Estrutura de diretórios da documentação (2026-07-18)
 
-**Decisão:** migrar integralmente para a estrutura de diretórios proposta no plano de conteúdo
-(`.todo/todo.txt`, seção 3), em vez de adaptar a proposta à estrutura atual ou manter uma
-estrutura híbrida.
+**Decisão:** migrar integralmente para a estrutura de diretórios proposta no planejamento interno
+de conteúdo, em vez de adaptar a proposta à estrutura atual ou manter uma estrutura híbrida.
 
 **Estrutura alvo:**
 
@@ -50,9 +49,9 @@ mapeamento de conteúdo inteiro antes de começar a criar páginas, e ainda deix
 menos alinhada ao princípio central da proposta (separar Learn/Guides/Operations/Toolbox/
 Resources/Reference como tipos de conteúdo, não como hierarquia de tecnologia).
 
-**Consequência:** a migração em si foi um item do escopo da Fase 1 do plano de conteúdo interno
-(`.todo/phase-1-fundacao-editorial.md`, fora do site publicado): mover conteúdo existente para os
-diretórios novos, atualizar a navegação do Starlight e corrigir links internos.
+**Consequência:** a migração em si foi um item do escopo inicial do planejamento interno de
+conteúdo: mover conteúdo existente para os diretórios novos, atualizar a navegação do Starlight e
+corrigir links internos.
 
 **Estado atual:** a migração está concluída. A árvore publicada em `src/content/docs/` corresponde
 à estrutura alvo (`getting-started/`, `learn/`, `guides/blueprints/`, `guides/tasks/`,

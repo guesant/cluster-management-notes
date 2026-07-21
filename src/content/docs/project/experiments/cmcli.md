@@ -5,7 +5,7 @@ sidebar:
   order: 99
 ---
 
-> **Status:** investigação aberta (Fase 8 do plano de conteúdo interno), sem compromisso de implementação.
+> **Status:** investigação aberta, sem compromisso de implementação.
 
 `cmcli` é a hipótese de uma CLI somente leitura para diagnóstico rápido de clusters e hosts, complementando a documentação em vez de substituí-la. Esta página não descreve uma ferramenta que existe; ela reúne as perguntas de design que precisam de resposta antes de decidir se a implementação se justifica.
 
@@ -39,7 +39,7 @@ O escopo inicial cobre apenas comandos de leitura: `check *` para diagnóstico, 
 
 ## Como tratar firewalls e distribuições diferentes?
 
-UFW (comum em Ubuntu), firewalld (comum em distribuições baseadas em RHEL) e nftables nativo têm arquivos de configuração, comandos de consulta e modelos conceituais diferentes (regras versus zonas, por exemplo). Como a Fase 8 do plano de conteúdo cobre apenas Debian/Ubuntu, mesmo que o K3s em si seja agnóstico quanto à distribuição, a proposta é limitar o `cmcli` ao mesmo escopo do restante do notebook por enquanto, em vez de tentar suportar todas as combinações desde a primeira versão.
+UFW (comum em Ubuntu), firewalld (comum em distribuições baseadas em RHEL) e nftables nativo têm arquivos de configuração, comandos de consulta e modelos conceituais diferentes (regras versus zonas, por exemplo). Como este notebook cobre apenas Debian/Ubuntu, mesmo que o K3s em si seja agnóstico quanto à distribuição, a proposta é limitar o `cmcli` ao mesmo escopo do restante do notebook por enquanto, em vez de tentar suportar todas as combinações desde a primeira versão.
 
 ## O relatório pode omitir segredos?
 
@@ -66,5 +66,4 @@ O critério de decisão proposto é objetivo: se `cmcli check k3s` rodar em um o
 
 ## Referências
 
-- `.todo/todo.txt` (fora do site publicado), por volta das linhas 1743–1765: escopo original da investigação.
 - Ferramentas que inspiram o formato: `k9s` (TUI completa, veja [ferramentas de gerenciamento visual](../../learn/tools/visual-management/)), `kubectx` (descoberta rápida de contexto), `dive` (análise de camadas de imagem).

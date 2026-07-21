@@ -73,6 +73,28 @@ openssl x509 -in cert.pem -outform der -out cert.der
 
 ---
 
+## Gerar certificado autoassinado (self-signed)
+
+```bash
+openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 \
+  -keyout key.pem -out cert.pem -days 365 -nodes \
+  -subj "/CN=exemplo.local" \
+  -addext "subjectAltName=DNS:exemplo.local,IP:127.0.0.1"
+```
+
+**Quando usar:** testes locais, comunicação interna sem CA pública disponível, ou como insumo manual para dois serviços que vão confiar um no outro diretamente (o caso base do mTLS).
+
+**Considerações:**
+
+- `-x509` faz o `req` gerar diretamente um certificado autoassinado em vez de uma CSR, combinando geração de chave, requisição e assinatura em um único passo.
+- `-newkey ec -pkeyopt ec_paramgen_curve:prime256v1` gera uma chave EC na curva P-256, mais rápida e compacta que RSA para o mesmo nível de segurança prático; para RSA, use `-newkey rsa:2048`.
+- `-nodes` ("no DES") grava a chave privada sem senha; remova essa flag se o processo que vai consumir a chave suportar prompt de senha.
+- `-addext "subjectAltName=..."` é obrigatório na prática: navegadores e bibliotecas TLS atuais ignoram o campo `CN` para validação de hostname e exigem um SAN correspondente; sem isso, a conexão falha mesmo com o certificado "certo".
+- Um certificado autoassinado não passa por nenhuma cadeia de confiança pública. Cada lado da conexão precisa confiar explicitamente nele (ou em uma CA privada que o emitiu) para aceitá-lo. É exatamente esse modelo, aplicado nos dois sentidos da conexão (cliente e servidor apresentam certificado um para o outro), que caracteriza mTLS; veja [visão geral de service mesh](../../../learn/networking/service-mesh-overview/) para como Istio e Linkerd automatizam a emissão, distribuição e rotação desses certificados entre Pods, em vez de gerá-los manualmente como neste comando.
+- Para emissão automatizada de certificados confiáveis publicamente dentro do cluster, veja [criar um ClusterIssuer ACME](../../../guides/tasks/certificates/create-acme-clusterissuer/); este comando serve para geração manual e pontual, fora do fluxo do cert-manager.
+
+---
+
 ## Gerar uma CSR (Certificate Signing Request)
 
 ```bash

@@ -2,7 +2,7 @@
 title: Ciclo de vida de imagens
 description: Fluxo prático de avaliação, atualização, implantação e rollback de imagens de container, cobrindo tags versus digests, evidência de cadeia de suprimentos e critérios objetivos de sucesso ou interrupção.
 sidebar:
-  order: 1
+  order: 8
 ---
 
 Este guia transforma os itens de imagens do [guia de operação contínua](../../../operations/checklists/cluster-operational-checklist/) em um fluxo prático de avaliação, atualização, implantação e rollback. Antes de aplicá-lo a produção, confirme também os requisitos de [prontidão dos workloads](../../../operations/checklists/application-readiness/) e as [convenções deste repositório](../../../reference/conventions/).
@@ -32,7 +32,7 @@ Para encerrar uma atualização, confirme pelo menos:
 | Digest | `registry.example.com/team/api@sha256:...` | Identifica conteúdo imutável por hash | Produção quando a reprodutibilidade for necessária |
 | Tag e digest | `registry.example.com/team/api:2.4.1@sha256:...` | Preserva uma versão legível e fixa o conteúdo pelo digest | Forma preferida quando o processo mantém tag e digest associados |
 
-`latest`, `stable`, `lts`, nomes de canal e tags de branch são flutuantes, mesmo quando parecem estáveis. Uma tag numérica também não é imutável por definição: a garantia depende da política do registro e do processo de publicação.
+`latest`, `stable`, `lts`, nomes de canal e tags de branch são flutuantes, mesmo quando parecem estáveis. Uma tag numérica também não é imutável por definição: a garantia depende da política do registro e do processo de publicação. Para os critérios de escolha entre um registry OCI dedicado e um gerenciador universal de artefatos, e entre as opções SaaS, gerenciadas por nuvem e self-hosted disponíveis, veja [registries de containers](../container-registries/).
 
 Quando tag e digest aparecem juntos, o runtime usa o digest para selecionar o conteúdo. Mantenha a tag no inventário para relacionar a imagem às notas da release, mas use o digest como identidade do artefato implantado.
 

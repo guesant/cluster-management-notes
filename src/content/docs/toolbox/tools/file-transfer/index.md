@@ -5,4 +5,4 @@ sidebar:
   order: 3
 ---
 
-Ferramentas para copiar e sincronizar arquivos entre hosts. Veja [transferência de arquivos](transfer-tools/) para o catálogo completo, incluindo SCP, SFTP, rsync, FileZilla e o MinIO Client.
+Ferramentas para copiar, sincronizar e navegar visualmente em arquivos entre hosts, incluindo exploradores gráficos e montagem de filesystem remoto. Veja [transferência de arquivos](transfer-tools/) para o catálogo completo, incluindo SCP, SFTP, rsync, FileZilla, sshfs e o MinIO Client.

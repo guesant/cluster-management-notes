@@ -8,5 +8,4 @@ Longhorn, CloudNativePG, Traefik, cert-manager, entre outras), servindo como pon
 quem já sabe qual tecnologia está procurando, sem duplicar o conteúdo já existente em `learn/` e
 `guides/`.
 
-Ainda não existe conteúdo aqui. A criação dessas páginas é escopo da Fase 9 (Expansão) do plano de
-conteúdo interno do projeto (veja `.todo/phase-9-expansao.md`, fora do site publicado).
+Ainda não existe conteúdo aqui.

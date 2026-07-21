@@ -12,7 +12,7 @@ O pacote `unattended-upgrades` aplica atualizações de segurança do repositór
 
 ## Instalar e habilitar
 
-> **Executar em:** nó alvo, como `root`. Requer rede (`JAIL_NETWORK=1` ao testar via `jail-exec.sh` neste repositório, quando aplicável).
+> **Executar em:** nó alvo, como `root`. Requer rede.
 
 ```bash
 apt-get update

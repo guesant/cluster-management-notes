@@ -8,7 +8,7 @@ sidebar:
 > **Público-alvo:** quem tem experiência com o [blueprint single-node](../k3s-single-node-gitops/) e quer escalar para múltiplos nós com alta disponibilidade.
 > **Versões testadas:** K3s 1.36, Debian 12, topologia 3 servidores + N agentes.
 
-Este blueprint estende o caminho single-node (Fase 2) para clusters K3s distribuídos em múltiplos
+Este blueprint estende o [caminho single-node](../k3s-single-node-gitops/) para clusters K3s distribuídos em múltiplos
 nós. Os conceitos fundamentais (Gateway API, cert-manager, Argo CD, Longhorn) permanecem os
 mesmos; o que muda é a topologia do control plane, a coordenação entre nós via consenso Raft e os
 runbooks de operação e recuperação.
@@ -24,11 +24,11 @@ runbooks de operação e recuperação.
 - [Operação nó a nó](node-maintenance/): manutenção e atualização sem downtime.
 - [Falha e recuperação](failure-and-recovery/): cenários de perda de servidor, perda de agente e perda de quorum.
 
-## Reaproveitamento da Fase 2
+## Reaproveitamento dos task guides do single-node
 
-A maioria das páginas de task guides da Fase 2 é reutilizada (host, firewall, K3s, rede,
-certificados). Este blueprint aponta para elas e descreve apenas as adaptações específicas de
-multinode:
+A maioria das páginas de task guides do [blueprint single-node](../k3s-single-node-gitops/) é
+reutilizada (host, firewall, K3s, rede, certificados). Este blueprint aponta para elas e descreve
+apenas as adaptações específicas de multinode:
 
 - [Adicionar um servidor K3s](../../tasks/kubernetes/join-k3s-server/): a primeira parte da instalação é igual à do single-node; diverge a partir do momento em que o novo servidor precisa se juntar ao quorum existente.
 - [Configurar firewall entre nós](../../tasks/kubernetes/configure-k3s-firewall-rules/): as regras específicas de comunicação entre servidores estão detalhadas em [Requisitos de rede e portas](network-requirements/).

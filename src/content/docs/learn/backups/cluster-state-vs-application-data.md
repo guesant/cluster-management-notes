@@ -36,7 +36,7 @@ Apenas para clusters que não têm PVCs nem bancos de dados: um cenário raro al
 
 ## Quando não é suficiente
 
-Assim que qualquer workload usa armazenamento persistente ou um banco de dados, o que inclui a maioria dos cenários cobertos por este notebook a partir da Fase 4.
+Assim que qualquer workload usa armazenamento persistente ou um banco de dados, o que inclui a maioria dos cenários de dados e aplicações com estado cobertos por este notebook.
 
 ## Decisões que isso implica
 

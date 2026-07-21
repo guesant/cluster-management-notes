@@ -1,5 +1,5 @@
 ---
-title: Clientes SSH
+title: Clientes e gateways de acesso remoto
 description: Catálogo de ferramentas de acesso remoto (OpenSSH, Teleport, bastion hosts, Apache Guacamole), com o que avaliar antes de escolher cada uma.
 sidebar:
   order: 1
@@ -7,7 +7,7 @@ sidebar:
 
 > **Para quem é:** operadores que precisam acessar hosts remotos via SSH, RDP ou VNC e querem comparar as opções antes de escolher uma.
 
-SSH é o protocolo padrão de acesso remoto seguro em infraestrutura Linux, e a forma mais direta de usá-lo é com o cliente `ssh` da linha de comando. Para times maiores, com muitos operadores e necessidade de auditoria centralizada, um framework de acesso Zero Trust como o Teleport substitui a distribuição manual de chaves por certificados de curta duração e um registro completo das sessões. Quando o destino precisa ficar isolado da rede pública, um bastion host concentra o único ponto de entrada externo. E quando o acesso precisa acontecer sem instalar nenhum cliente, um gateway HTML5 como o Apache Guacamole expõe RDP, VNC e SSH direto no navegador.
+SSH é o protocolo padrão de acesso remoto seguro em infraestrutura Linux, e a forma mais direta de usá-lo é com o cliente `ssh` da linha de comando. Para times maiores, com muitos operadores e necessidade de auditoria centralizada, um framework de acesso Zero Trust como o Teleport substitui a distribuição manual de chaves por certificados de curta duração e um registro completo das sessões. Quando o destino precisa ficar isolado da rede pública, um bastion host concentra o único ponto de entrada externo. E quando o acesso precisa acontecer sem instalar nenhum cliente, ou quando o destino fala RDP ou VNC em vez de SSH, um gateway HTML5 como o Apache Guacamole expõe esses protocolos direto no navegador.
 
 ## OpenSSH: cliente e servidor padrão
 
@@ -58,9 +58,11 @@ ssh private-server
 
 Interface web nativa para administrar um host Linux individual (services, firewall, armazenamento, terminal), não um mecanismo de acesso a múltiplos hosts. A instalação, o endereço padrão e as ressalvas de segurança já estão documentados em [gerenciamento de hosts e clusters](../../host-management/cluster-tools/#cockpit); esta página não repete esses detalhes.
 
-### Apache Guacamole
+### Apache Guacamole: gateway HTML5 para RDP, VNC e SSH
 
 Gateway HTML5 que expõe RDP, VNC e SSH direto no navegador, sem exigir a instalação de nenhum cliente na máquina do operador. A arquitetura combina um daemon (`guacd`) que fala os protocolos nativos com os hosts de destino e uma aplicação web que renderiza a sessão como HTML5/WebSocket para o navegador do operador, com um banco de dados (MySQL ou PostgreSQL) guardando conexões e usuários.
+
+Guacamole não implementa um servidor RDP ou VNC próprio: ele se conecta como cliente a um servidor RDP (como o já embutido no Windows, quando a Área de Trabalho Remota está habilitada) ou VNC (como TigerVNC ou TightVNC) já em execução no host de destino. Isso o torna a opção mais direta deste catálogo quando o destino é uma máquina Windows ou um desktop Linux com servidor VNC, casos que OpenSSH, Teleport e um bastion, todos centrados em SSH, não cobrem sozinhos.
 
 **Quando usar:** acesso remoto centralizado a múltiplos protocolos (RDP, VNC e SSH ao mesmo tempo) sem depender de um cliente instalado em cada estação, e quando um registro centralizado de quem acessou qual destino é necessário.
 
@@ -71,4 +73,4 @@ Gateway HTML5 que expõe RDP, VNC e SSH direto no navegador, sem exigir a instal
 - [OpenSSH documentation](https://man.openbsd.org/ssh): manual oficial do cliente `ssh`.
 - [OpenSSH: ProxyJump](https://man.openbsd.org/ssh_config#ProxyJump): referência da diretiva usada para encadear o acesso via bastion.
 - [Teleport documentation](https://goteleport.com/docs/): arquitetura, certificados de curta duração e RBAC.
-- [Apache Guacamole documentation](https://guacamole.apache.org/doc/gug/): instalação, `guacd` e configuração de conexões.
+- [Apache Guacamole documentation](https://guacamole.apache.org/doc/gug/): instalação, `guacd` e configuração de conexões RDP/VNC/SSH.
