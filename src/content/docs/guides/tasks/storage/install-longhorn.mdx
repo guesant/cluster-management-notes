@@ -8,6 +8,9 @@ sidebar:
 import ScriptHelper from '../../../../../components/ScriptHelper.astro';
 import installLonghornPreflightScript from '../../../../../scripts/install-longhorn-preflight.sh?raw';
 import installLonghornScript from '../../../../../scripts/install-longhorn.sh?raw';
+import installLonghornPortForwardLocalScript from '../../../../../scripts/install-longhorn-port-forward-local.sh?raw';
+import installLonghornPortForwardManagerScript from '../../../../../scripts/install-longhorn-port-forward-manager.sh?raw';
+import setupLonghornTunnelScript from '../../../../../scripts/setup-longhorn-ssh-tunnel.sh?raw';
 
 Os comandos desta página devem ser executados em um servidor ou em uma estação administrativa que tenha `kubectl`, Helm, acesso à API e um kubeconfig válido.
 
@@ -124,13 +127,11 @@ Quando `kubectl` e o kubeconfig estiverem na estação local:
 
 > **Executar em:** estação administrativa com `KUBECONFIG` e acesso à API.
 
-```bash
-read -r -p "Porta local para a interface do Longhorn [8080]: " LOCAL_PORT
-LOCAL_PORT="${LOCAL_PORT:-8080}"
-
-kubectl --namespace longhorn-system \
-  port-forward service/longhorn-frontend "${LOCAL_PORT}:80"
-```
+<ScriptHelper
+  runWhere="estação administrativa com `KUBECONFIG` e acesso à API"
+  script={installLonghornPortForwardLocalScript}
+  fields={[{ var: 'LOCAL_PORT', label: 'Porta local para a interface do Longhorn', defaultValue: '8080' }]}
+/>
 
 Acesse `http://127.0.0.1:PORTA_LOCAL` enquanto o comando estiver em execução, substituindo `PORTA_LOCAL` pelo valor informado.
 
@@ -138,19 +139,15 @@ Quando o port-forward precisar rodar em um manager, execute nele:
 
 > **Executar em:** nó manager com `KUBECONFIG` e acesso à API.
 
-```bash
-read -r -p "Porta no manager para a interface do Longhorn [8080]: " MANAGER_PORT
-MANAGER_PORT="${MANAGER_PORT:-8080}"
-
-kubectl --namespace longhorn-system \
-  port-forward service/longhorn-frontend "${MANAGER_PORT}:80"
-```
+<ScriptHelper
+  runWhere="nó manager com `KUBECONFIG` e acesso à API"
+  script={installLonghornPortForwardManagerScript}
+  fields={[{ var: 'MANAGER_PORT', label: 'Porta no manager para a interface do Longhorn', defaultValue: '8080' }]}
+/>
 
 Em outro terminal da estação, crie o túnel:
 
 > **Executar em:** estação administrativa com acesso SSH ao nó que executa o port-forward.
-
-import setupLonghornTunnelScript from '../../../../../scripts/setup-longhorn-ssh-tunnel.sh?raw';
 
 <ScriptHelper
   script={setupLonghornTunnelScript}

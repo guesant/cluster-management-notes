@@ -5,6 +5,9 @@ sidebar:
   order: 5
 ---
 
+import ScriptHelper from '../../../../../components/ScriptHelper.astro';
+import createStorageClassScript from '../../../../../scripts/create-storage-class.sh?raw';
+
 > **Pré-requisitos:** [Longhorn instalado](../install-longhorn/).
 > **Versões testadas:** Longhorn 1.12.0.
 
@@ -12,25 +15,14 @@ O Longhorn já registra uma `StorageClass` padrão (`longhorn`) na instalação,
 
 ## Criar uma StorageClass customizada
 
-> **Executar em:** qualquer máquina com `KUBECONFIG` e acesso administrativo à API.
-
-```bash
-read -r -p "Nome da nova StorageClass: " STORAGE_CLASS_NAME
-read -r -p "Número de réplicas: " REPLICA_COUNT
-
-kubectl apply -f - <<EOF
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: ${STORAGE_CLASS_NAME}
-provisioner: driver.longhorn.io
-allowVolumeExpansion: true
-reclaimPolicy: Retain
-parameters:
-  numberOfReplicas: "${REPLICA_COUNT}"
-  staleReplicaTimeout: "30"
-EOF
-```
+<ScriptHelper
+  runWhere="qualquer máquina com `KUBECONFIG` e acesso administrativo à API"
+  script={createStorageClassScript}
+  fields={[
+    { var: 'STORAGE_CLASS_NAME', label: 'Nome da nova StorageClass' },
+    { var: 'REPLICA_COUNT', label: 'Número de réplicas' },
+  ]}
+/>
 
 `reclaimPolicy: Retain` evita exclusão automática de dados quando o PVC é removido; veja [PersistentVolumes na prática](../../../../learn/storage/persistent-volumes/) para os trade-offs entre `Retain` e `Delete`.
 

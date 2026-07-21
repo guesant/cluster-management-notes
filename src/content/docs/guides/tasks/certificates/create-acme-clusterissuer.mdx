@@ -5,6 +5,10 @@ sidebar:
   order: 2
 ---
 
+import ScriptHelper from '../../../../../components/ScriptHelper.astro';
+import dnsCredentialScript from '../../../../../scripts/create-acme-clusterissuer-dns-credential.sh?raw';
+import clusterIssuerScript from '../../../../../scripts/create-acme-clusterissuer.sh?raw';
+
 > **Pré-requisitos:** [cert-manager instalado](../install-cert-manager/), credencial de API do provedor DNS com permissão para criar/remover registros TXT na zona alvo.
 > **Versões testadas:** cert-manager v1.21.0.
 
@@ -16,42 +20,19 @@ O exemplo usa Cloudflare como provedor DNS; o cert-manager suporta outros proved
 
 A credencial concede permissão de escrita na zona DNS e não deve ser versionada em texto claro:
 
-> **Executar em:** qualquer máquina com `KUBECONFIG` e acesso administrativo à API.
-
-```bash
-read -r -s -p "Token de API do provedor DNS: " DNS_PROVIDER_TOKEN
-printf '\n'
-
-kubectl --namespace cert-manager create secret generic dns-provider-credentials \
-  --from-literal=api-token="${DNS_PROVIDER_TOKEN}"
-```
+<ScriptHelper
+  runWhere="qualquer máquina com `KUBECONFIG` e acesso administrativo à API"
+  script={dnsCredentialScript}
+  fields={[{ var: 'DNS_PROVIDER_TOKEN', label: 'Token de API do provedor DNS', type: 'password' }]}
+/>
 
 ## Criar o ClusterIssuer
 
-> **Executar em:** qualquer máquina com `KUBECONFIG` e acesso administrativo à API.
-
-```bash
-read -r -p "E-mail de contato ACME: " ACME_CONTACT_EMAIL
-
-kubectl apply -f - <<EOF
-apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
-metadata:
-  name: letsencrypt-dns01
-spec:
-  acme:
-    server: https://acme-v02.api.letsencrypt.org/directory
-    email: ${ACME_CONTACT_EMAIL}
-    privateKeySecretRef:
-      name: letsencrypt-dns01-account-key
-    solvers:
-      - dns01:
-          cloudflare:
-            apiTokenSecretRef:
-              name: dns-provider-credentials
-              key: api-token
-EOF
-```
+<ScriptHelper
+  runWhere="qualquer máquina com `KUBECONFIG` e acesso administrativo à API"
+  script={clusterIssuerScript}
+  fields={[{ var: 'ACME_CONTACT_EMAIL', label: 'E-mail de contato ACME' }]}
+/>
 
 Use o servidor de staging (`https://acme-staging-v02.api.letsencrypt.org/directory`) enquanto valida a configuração: o ambiente de produção do Let's Encrypt aplica limites de taxa por domínio que uma tentativa malsucedida repetida pode esgotar.
 

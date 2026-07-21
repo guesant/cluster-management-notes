@@ -5,6 +5,10 @@ sidebar:
   order: 5
 ---
 
+import ScriptHelper from '../../../../../components/ScriptHelper.astro';
+import backupCredentialScript from '../../../../../scripts/configure-postgresql-backups-credential.sh?raw';
+import backupDestinationScript from '../../../../../scripts/configure-postgresql-backups.sh?raw';
+
 > **Pré-requisitos:** [cluster PostgreSQL criado](../create-postgresql-cluster/), destino de object storage compatível com S3 (ou equivalente suportado).
 > **Versões testadas:** CloudNativePG 1.30.
 
@@ -12,62 +16,29 @@ O CloudNativePG integra backup físico contínuo com arquivamento de WAL, permit
 
 ## Criar a credencial do object storage
 
-> **Executar em:** qualquer máquina com `KUBECONFIG` e acesso administrativo à API.
+<ScriptHelper
+  runWhere="qualquer máquina com `KUBECONFIG` e acesso administrativo à API"
+  script={backupCredentialScript}
+  fields={[
+    { var: 'PG_NAMESPACE', label: 'Namespace do cluster' },
+    { var: 'BACKUP_ACCESS_KEY_ID', label: 'Access Key ID do object storage', type: 'password' },
+    { var: 'BACKUP_SECRET_ACCESS_KEY', label: 'Secret Access Key do object storage', type: 'password' },
+  ]}
+/>
 
-```bash
-read -r -p "Namespace do cluster: " PG_NAMESPACE
-read -r -s -p "Access Key ID do object storage: " BACKUP_ACCESS_KEY_ID
-printf '\n'
-read -r -s -p "Secret Access Key do object storage: " BACKUP_SECRET_ACCESS_KEY
-printf '\n'
+## Configurar o destino no Cluster e agendar backups completos
 
-kubectl --namespace "${PG_NAMESPACE}" create secret generic postgresql-backup-credentials \
-  --from-literal=ACCESS_KEY_ID="${BACKUP_ACCESS_KEY_ID}" \
-  --from-literal=ACCESS_SECRET_KEY="${BACKUP_SECRET_ACCESS_KEY}"
-```
+O arquivamento de WAL é contínuo assim que o destino é configurado; este script também agenda backups base completos:
 
-## Configurar o destino no Cluster
-
-```bash
-read -r -p "Nome do cluster: " PG_CLUSTER_NAME
-read -r -p "URL do destino (ex.: s3://meu-bucket/postgresql-backups): " BACKUP_DESTINATION
-
-kubectl --namespace "${PG_NAMESPACE}" patch cluster "${PG_CLUSTER_NAME}" --type=merge --patch "
-spec:
-  backup:
-    barmanObjectStore:
-      destinationPath: ${BACKUP_DESTINATION}
-      s3Credentials:
-        accessKeyId:
-          name: postgresql-backup-credentials
-          key: ACCESS_KEY_ID
-        secretAccessKey:
-          name: postgresql-backup-credentials
-          key: ACCESS_SECRET_KEY
-      wal:
-        compression: gzip
-    retentionPolicy: 30d
-"
-```
-
-## Agendar backups completos recorrentes
-
-O arquivamento de WAL é contínuo assim que o destino é configurado; agende também backups base completos:
-
-```bash
-kubectl apply -f - <<EOF
-apiVersion: postgresql.cnpg.io/v1
-kind: ScheduledBackup
-metadata:
-  name: ${PG_CLUSTER_NAME}-daily
-  namespace: ${PG_NAMESPACE}
-spec:
-  schedule: "0 2 * * *"
-  backupOwnerReference: self
-  cluster:
-    name: ${PG_CLUSTER_NAME}
-EOF
-```
+<ScriptHelper
+  runWhere="qualquer máquina com `KUBECONFIG` e acesso administrativo à API"
+  script={backupDestinationScript}
+  fields={[
+    { var: 'PG_NAMESPACE', label: 'Namespace do cluster' },
+    { var: 'PG_CLUSTER_NAME', label: 'Nome do cluster' },
+    { var: 'BACKUP_DESTINATION', label: 'URL do destino', placeholder: 's3://meu-bucket/postgresql-backups' },
+  ]}
+/>
 
 ## Validação
 

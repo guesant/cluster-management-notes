@@ -5,6 +5,9 @@ sidebar:
   order: 3
 ---
 
+import ScriptHelper from '../../../../../components/ScriptHelper.astro';
+import configurePodMonitorScript from '../../../../../scripts/configure-pod-monitor.sh?raw';
+
 > **Pré-requisitos:** [Prometheus stack instalado](../install-prometheus-stack/), Pods expondo métricas em formato Prometheus sem um Service estável.
 > **Versões testadas:** Prometheus Operator 0.86.
 
@@ -12,40 +15,17 @@ Um `PodMonitor` seleciona Pods diretamente, sem depender de um `Service`: útil 
 
 ## Criar o PodMonitor
 
-> **Executar em:** qualquer máquina com `KUBECONFIG` e acesso administrativo à API.
-
-```bash
-read -r -p "Namespace dos Pods: " APP_NAMESPACE
-read -r -p "Nome do PodMonitor: " POD_MONITOR_NAME
-read -r -p "Label selector dos Pods (ex.: app.kubernetes.io/name=worker): " POD_LABEL_SELECTOR
-read -r -p "Nome ou número da porta de métricas: " METRICS_PORT
-read -r -p "Caminho do endpoint de métricas [/metrics]: " METRICS_PATH
-METRICS_PATH="${METRICS_PATH:-/metrics}"
-
-SELECTOR_KEY="${POD_LABEL_SELECTOR%%=*}"
-SELECTOR_VALUE="${POD_LABEL_SELECTOR#*=}"
-
-kubectl apply -f - <<EOF
-apiVersion: monitoring.coreos.com/v1
-kind: PodMonitor
-metadata:
-  name: ${POD_MONITOR_NAME}
-  namespace: monitoring
-  labels:
-    release: kube-prometheus-stack
-spec:
-  namespaceSelector:
-    matchNames:
-      - ${APP_NAMESPACE}
-  selector:
-    matchLabels:
-      ${SELECTOR_KEY}: ${SELECTOR_VALUE}
-  podMetricsEndpoints:
-    - port: ${METRICS_PORT}
-      path: ${METRICS_PATH}
-      interval: 30s
-EOF
-```
+<ScriptHelper
+  runWhere="qualquer máquina com `KUBECONFIG` e acesso administrativo à API"
+  script={configurePodMonitorScript}
+  fields={[
+    { var: 'APP_NAMESPACE', label: 'Namespace dos Pods' },
+    { var: 'POD_MONITOR_NAME', label: 'Nome do PodMonitor' },
+    { var: 'POD_LABEL_SELECTOR', label: 'Label selector dos Pods', placeholder: 'app.kubernetes.io/name=worker' },
+    { var: 'METRICS_PORT', label: 'Nome ou número da porta de métricas' },
+    { var: 'METRICS_PATH', label: 'Caminho do endpoint de métricas', defaultValue: '/metrics' },
+  ]}
+/>
 
 ## Validação
 

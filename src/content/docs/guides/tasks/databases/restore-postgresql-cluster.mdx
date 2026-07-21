@@ -5,6 +5,9 @@ sidebar:
   order: 6
 ---
 
+import ScriptHelper from '../../../../../components/ScriptHelper.astro';
+import restorePostgresqlClusterScript from '../../../../../scripts/restore-postgresql-cluster.sh?raw';
+
 > **Pré-requisitos:** [backup do PostgreSQL configurado](../configure-postgresql-backups/) e um backup existente no destino.
 > **Versões testadas:** CloudNativePG 1.30.
 
@@ -12,47 +15,16 @@ O CloudNativePG restaura criando um **novo** cluster a partir do backup; não su
 
 ## Restaurar como um novo cluster
 
-> **Executar em:** qualquer máquina com `KUBECONFIG` e acesso administrativo à API.
-
-```bash
-read -r -p "Namespace do novo cluster: " PG_NAMESPACE
-read -r -p "Nome do novo cluster restaurado: " PG_RESTORED_NAME
-read -r -p "URL do destino de backup original: " BACKUP_DESTINATION
-read -r -p "Ponto de recuperação (timestamp ISO 8601, ou Enter para o mais recente): " RECOVERY_TARGET_TIME
-
-RECOVERY_TARGET_YAML=""
-if [[ -n "${RECOVERY_TARGET_TIME}" ]]; then
-  RECOVERY_TARGET_YAML="    targetTime: \"${RECOVERY_TARGET_TIME}\""
-fi
-
-kubectl apply -f - <<EOF
-apiVersion: postgresql.cnpg.io/v1
-kind: Cluster
-metadata:
-  name: ${PG_RESTORED_NAME}
-  namespace: ${PG_NAMESPACE}
-spec:
-  instances: 1
-  storage:
-    size: 10Gi
-  bootstrap:
-    recovery:
-      source: original-cluster
-      recoveryTarget:
-${RECOVERY_TARGET_YAML}
-  externalClusters:
-    - name: original-cluster
-      barmanObjectStore:
-        destinationPath: ${BACKUP_DESTINATION}
-        s3Credentials:
-          accessKeyId:
-            name: postgresql-backup-credentials
-            key: ACCESS_KEY_ID
-          secretAccessKey:
-            name: postgresql-backup-credentials
-            key: ACCESS_SECRET_KEY
-EOF
-```
+<ScriptHelper
+  runWhere="qualquer máquina com `KUBECONFIG` e acesso administrativo à API"
+  script={restorePostgresqlClusterScript}
+  fields={[
+    { var: 'PG_NAMESPACE', label: 'Namespace do novo cluster' },
+    { var: 'PG_RESTORED_NAME', label: 'Nome do novo cluster restaurado' },
+    { var: 'BACKUP_DESTINATION', label: 'URL do destino de backup original' },
+    { var: 'RECOVERY_TARGET_TIME', label: 'Ponto de recuperação (timestamp ISO 8601, vazio = mais recente)' },
+  ]}
+/>
 
 Sem `targetTime`, o CloudNativePG restaura até o ponto mais recente disponível no WAL arquivado.
 

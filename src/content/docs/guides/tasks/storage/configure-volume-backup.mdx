@@ -5,6 +5,11 @@ sidebar:
   order: 7
 ---
 
+import ScriptHelper from '../../../../../components/ScriptHelper.astro';
+import backupSecretScript from '../../../../../scripts/configure-volume-backup-secret.sh?raw';
+import backupTargetScript from '../../../../../scripts/configure-volume-backup-target.sh?raw';
+import backupManualScript from '../../../../../scripts/configure-volume-backup-manual.sh?raw';
+
 > **Pré-requisitos:** [Longhorn instalado](../install-longhorn/), destino de backup (object storage compatível com S3 ou servidor NFS) disponível.
 > **Versões testadas:** Longhorn 1.12.0.
 
@@ -16,48 +21,30 @@ Um backup do Longhorn copia os blocos de um volume para um backupstore externo, 
 
 Para um destino S3, crie primeiro um Secret com as credenciais:
 
-```bash
-read -r -s -p "AWS Access Key ID: " AWS_ACCESS_KEY_ID
-printf '\n'
-read -r -s -p "AWS Secret Access Key: " AWS_SECRET_ACCESS_KEY
-printf '\n'
-
-kubectl --namespace longhorn-system create secret generic longhorn-backup-secret \
-  --from-literal=AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" \
-  --from-literal=AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}"
-```
+<ScriptHelper
+  runWhere="qualquer máquina com `KUBECONFIG` e acesso administrativo à API"
+  script={backupSecretScript}
+  fields={[
+    { var: 'AWS_ACCESS_KEY_ID', label: 'AWS Access Key ID', type: 'password' },
+    { var: 'AWS_SECRET_ACCESS_KEY', label: 'AWS Secret Access Key', type: 'password' },
+  ]}
+/>
 
 Depois, configure o target via `Setting`:
 
-```bash
-read -r -p "URL do backup target (ex.: s3://meu-bucket@us-east-1/): " BACKUP_TARGET_URL
-
-kubectl --namespace longhorn-system patch settings.longhorn.io backup-target --type=merge \
-  --patch "{\"value\": \"${BACKUP_TARGET_URL}\"}"
-
-kubectl --namespace longhorn-system patch settings.longhorn.io backup-target-credential-secret --type=merge \
-  --patch '{"value": "longhorn-backup-secret"}'
-```
+<ScriptHelper
+  runWhere="qualquer máquina com `KUBECONFIG` e acesso administrativo à API"
+  script={backupTargetScript}
+  fields={[{ var: 'BACKUP_TARGET_URL', label: 'URL do backup target', placeholder: 's3://meu-bucket@us-east-1/' }]}
+/>
 
 ## Criar um backup manual
 
-```bash
-read -r -p "Nome do volume: " VOLUME_NAME
-
-kubectl --namespace longhorn-system patch volumes.longhorn.io "${VOLUME_NAME}" --type=merge \
-  --patch '{"spec": {"snapshotDataIntegrity": "fast-check"}}'
-
-kubectl --namespace longhorn-system create -f - <<EOF
-apiVersion: longhorn.io/v1beta2
-kind: Backup
-metadata:
-  name: ${VOLUME_NAME}-manual-$(date +%Y%m%d)
-  namespace: longhorn-system
-spec:
-  snapshotName: ""
-  volumeName: ${VOLUME_NAME}
-EOF
-```
+<ScriptHelper
+  runWhere="qualquer máquina com `KUBECONFIG` e acesso administrativo à API"
+  script={backupManualScript}
+  fields={[{ var: 'VOLUME_NAME', label: 'Nome do volume' }]}
+/>
 
 ## Agendar backups recorrentes
 

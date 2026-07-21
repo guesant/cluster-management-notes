@@ -5,6 +5,10 @@ sidebar:
   order: 8
 ---
 
+import ScriptHelper from '../../../../../components/ScriptHelper.astro';
+import restoreVolumeBackupScript from '../../../../../scripts/restore-volume-backup.sh?raw';
+import restoreVolumeBackupPvcScript from '../../../../../scripts/restore-volume-backup-pvc.sh?raw';
+
 > **Pré-requisitos:** [backup de volume configurado](../configure-volume-backup/) e um backup existente no backupstore.
 > **Versões testadas:** Longhorn 1.12.0.
 
@@ -20,46 +24,24 @@ kubectl --namespace longhorn-system get backups.longhorn.io
 
 ## Restaurar como um novo volume
 
-```bash
-read -r -p "Nome do backup (campo metadata.name do Backup): " BACKUP_NAME
-read -r -p "Nome do novo volume restaurado: " RESTORED_VOLUME_NAME
-
-kubectl --namespace longhorn-system apply -f - <<EOF
-apiVersion: longhorn.io/v1beta2
-kind: Volume
-metadata:
-  name: ${RESTORED_VOLUME_NAME}
-  namespace: longhorn-system
-spec:
-  fromBackup: "$(kubectl --namespace longhorn-system get backups.longhorn.io "${BACKUP_NAME}" -o jsonpath='{.status.url}')"
-  numberOfReplicas: 3
-  size: "$(kubectl --namespace longhorn-system get backups.longhorn.io "${BACKUP_NAME}" -o jsonpath='{.status.size}')"
-EOF
-```
+<ScriptHelper
+  runWhere="qualquer máquina com `KUBECONFIG` e acesso administrativo à API"
+  script={restoreVolumeBackupScript}
+  fields={[
+    { var: 'BACKUP_NAME', label: 'Nome do backup (campo metadata.name do Backup)' },
+    { var: 'RESTORED_VOLUME_NAME', label: 'Nome do novo volume restaurado' },
+  ]}
+/>
 
 ## Criar um PVC apontando para o volume restaurado
 
 O Longhorn precisa de um PV/PVC estático referenciando o volume já restaurado:
 
-```bash
-kubectl apply -f - <<EOF
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: ${RESTORED_VOLUME_NAME}-pv
-spec:
-  capacity:
-    storage: "$(kubectl --namespace longhorn-system get volumes.longhorn.io "${RESTORED_VOLUME_NAME}" -o jsonpath='{.spec.size}')"
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: longhorn-static
-  csi:
-    driver: driver.longhorn.io
-    volumeHandle: ${RESTORED_VOLUME_NAME}
-    fsType: ext4
-EOF
-```
+<ScriptHelper
+  runWhere="qualquer máquina com `KUBECONFIG` e acesso administrativo à API"
+  script={restoreVolumeBackupPvcScript}
+  fields={[{ var: 'RESTORED_VOLUME_NAME', label: 'Nome do volume restaurado' }]}
+/>
 
 ## Validação
 

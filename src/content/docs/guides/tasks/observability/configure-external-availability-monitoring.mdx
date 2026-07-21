@@ -5,6 +5,9 @@ sidebar:
   order: 11
 ---
 
+import ScriptHelper from '../../../../../components/ScriptHelper.astro';
+import externalAvailabilityMonitoringScript from '../../../../../scripts/configure-external-availability-monitoring.sh?raw';
+
 > **Pré-requisitos:** um serviço publicado externamente (veja [Gateway API e Traefik](../../networking/configure-traefik-gateway-api/)).
 > **Versões testadas:** não aplicável; este procedimento não depende de uma ferramenta específica.
 
@@ -14,26 +17,11 @@ Este procedimento é intencionalmente genérico: qualquer serviço de verificaç
 
 ## Opção simples: verificação via cron em outra máquina
 
-> **Executar em:** qualquer máquina fora do cluster, com saída de rede para o serviço publicado.
-
-```bash
-read -r -p "URL pública a verificar: " EXTERNAL_CHECK_URL
-
-cat >/usr/local/bin/check-availability.sh <<EOF
-#!/bin/sh
-set -eu
-
-HTTP_STATUS="\$(curl --silent --output /dev/null --write-out '%{http_code}' --max-time 10 "${EXTERNAL_CHECK_URL}")"
-
-if [ "\${HTTP_STATUS}" != "200" ]; then
-  printf 'Verificação falhou: %s retornou %s\n' "${EXTERNAL_CHECK_URL}" "\${HTTP_STATUS}" >&2
-  exit 1
-fi
-EOF
-chmod +x /usr/local/bin/check-availability.sh
-
-echo '*/5 * * * * /usr/local/bin/check-availability.sh || echo "Falha na verificação externa" | mail -s "Alerta de disponibilidade" seu-email@exemplo.com' | crontab -
-```
+<ScriptHelper
+  runWhere="qualquer máquina fora do cluster, com saída de rede para o serviço publicado"
+  script={externalAvailabilityMonitoringScript}
+  fields={[{ var: 'EXTERNAL_CHECK_URL', label: 'URL pública a verificar' }]}
+/>
 
 Ajuste o destino de notificação (`mail`, um webhook, um serviço de alerta) conforme os canais já usados pelo ambiente.
 

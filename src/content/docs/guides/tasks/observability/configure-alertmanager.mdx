@@ -5,6 +5,9 @@ sidebar:
   order: 8
 ---
 
+import ScriptHelper from '../../../../../components/ScriptHelper.astro';
+import alertmanagerReceiverScript from '../../../../../scripts/configure-alertmanager-receiver.sh?raw';
+
 > **Pré-requisitos:** [Prometheus stack instalado](../install-prometheus-stack/).
 > **Versões testadas:** Alertmanager (empacotado pelo kube-prometheus-stack).
 
@@ -14,48 +17,11 @@ Veja [alertas acionáveis](../../../../learn/observability/alerting/) para os pr
 
 Exemplo com um webhook do Slack; adapte ao destino real do ambiente:
 
-> **Executar em:** qualquer máquina com `KUBECONFIG` e acesso administrativo à API.
-
-```bash
-read -r -s -p "URL do webhook do Slack: " SLACK_WEBHOOK_URL
-printf '\n'
-
-kubectl --namespace monitoring create secret generic alertmanager-slack-webhook \
-  --from-literal=url="${SLACK_WEBHOOK_URL}"
-```
-
-```bash
-kubectl apply -f - <<EOF
-apiVersion: monitoring.coreos.com/v1alpha1
-kind: AlertmanagerConfig
-metadata:
-  name: default-routing
-  namespace: monitoring
-  labels:
-    alertmanagerConfig: kube-prometheus-stack
-spec:
-  route:
-    groupBy: ["alertname", "severity"]
-    groupWait: 30s
-    groupInterval: 5m
-    repeatInterval: 4h
-    receiver: slack-default
-    routes:
-      - matchers:
-          - name: severity
-            value: critical
-        receiver: slack-default
-        repeatInterval: 1h
-  receivers:
-    - name: slack-default
-      slackConfigs:
-        - apiURL:
-            name: alertmanager-slack-webhook
-            key: url
-          channel: "#alerts"
-          sendResolved: true
-EOF
-```
+<ScriptHelper
+  runWhere="qualquer máquina com `KUBECONFIG` e acesso administrativo à API"
+  script={alertmanagerReceiverScript}
+  fields={[{ var: 'SLACK_WEBHOOK_URL', label: 'URL do webhook do Slack', type: 'password' }]}
+/>
 
 ## Validação
 

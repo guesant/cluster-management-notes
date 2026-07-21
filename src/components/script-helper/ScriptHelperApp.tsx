@@ -133,8 +133,9 @@ export default function ScriptHelperApp(props: ScriptHelperAppProps) {
 				strict: props.strict,
 				identityPath,
 			};
+			const displayOpts = { ...opts, shell: 'bash' as const, heredoc: false, historyOff: false };
 			setOutput(composeScript(body, states, opts));
-			setDisplay(composeScript(body, maskFieldStates(states), opts));
+			setDisplay(composeScript(body, maskFieldStates(states), displayOpts));
 		}, 150);
 		return () => window.clearTimeout(timer);
 	}, [
@@ -177,6 +178,7 @@ export default function ScriptHelperApp(props: ScriptHelperAppProps) {
 	}, []);
 
 	const anyEncrypted = props.fields.some((f) => (modes[f.var] ?? 'read') === 'encrypted');
+	const wrapperHidden = shell === 'fish' || heredoc || (historyOff && shell === 'bash');
 
 	return (
 		<div className="sh-root">
@@ -203,6 +205,7 @@ export default function ScriptHelperApp(props: ScriptHelperAppProps) {
 						</button>
 					))}
 				</div>
+				{props.fields.length > 0 && (
 				<Dialog>
 					<DialogTrigger asChild>
 						<Button variant="outline" size="sm">
@@ -360,6 +363,7 @@ export default function ScriptHelperApp(props: ScriptHelperAppProps) {
 						</DialogFooter>
 					</DialogContent>
 				</Dialog>
+				)}
 				<Button size="sm" ref={copyButtonRef}>
 					<Icon icon={copied ? checkIcon : copyIcon} className="sh-icon" aria-hidden />
 					{copied ? 'Copiado!' : 'Copiar script'}
@@ -370,6 +374,23 @@ export default function ScriptHelperApp(props: ScriptHelperAppProps) {
 			</div>
 
 			<MonacoPane value={display} readOnly />
+
+			{wrapperHidden && (
+				<p className="sh-note">
+					O script copiado inclui{' '}
+					{shell === 'fish' ? (
+						<>
+							o encapsulamento <code>printf … | bash</code>
+						</>
+					) : (
+						<>
+							o encapsulamento <code>bash &lt;&lt;'EOF'</code>
+						</>
+					)}
+					{historyOff && shell === 'bash' && <> e a desativação do histórico</>}; esta
+					pré-visualização mostra só o conteúdo do script.
+				</p>
+			)}
 
 			<p className="sh-note">
 				Os valores preenchidos ficam só no seu navegador — nada é enviado para fora desta página.

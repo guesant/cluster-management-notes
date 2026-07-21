@@ -5,6 +5,9 @@ sidebar:
   order: 2
 ---
 
+import ScriptHelper from '../../../../../components/ScriptHelper.astro';
+import createPostgresqlClusterScript from '../../../../../scripts/create-postgresql-cluster.sh?raw';
+
 > **Pré-requisitos:** [operator CloudNativePG instalado](../install-cloudnative-pg-operator/), StorageClass disponível (veja [criar uma StorageClass](../../storage/create-storage-class/)).
 > **Versões testadas:** CloudNativePG 1.30, PostgreSQL 17.
 
@@ -12,33 +15,17 @@ Um recurso `Cluster` do CloudNativePG declara quantas instâncias PostgreSQL rod
 
 ## Criar o cluster
 
-> **Executar em:** qualquer máquina com `KUBECONFIG` e acesso administrativo à API.
-
-```bash
-read -r -p "Namespace do cluster: " PG_NAMESPACE
-read -r -p "Nome do cluster: " PG_CLUSTER_NAME
-read -r -p "Número de instâncias (1 = sem HA, 3 recomendado): " PG_INSTANCES
-read -r -p "Tamanho do volume (ex.: 10Gi): " PG_STORAGE_SIZE
-read -r -p "StorageClass a usar: " PG_STORAGE_CLASS
-
-kubectl create namespace "${PG_NAMESPACE}" --dry-run=client -o yaml | kubectl apply -f -
-
-kubectl apply -f - <<EOF
-apiVersion: postgresql.cnpg.io/v1
-kind: Cluster
-metadata:
-  name: ${PG_CLUSTER_NAME}
-  namespace: ${PG_NAMESPACE}
-spec:
-  instances: ${PG_INSTANCES}
-  storage:
-    size: ${PG_STORAGE_SIZE}
-    storageClass: ${PG_STORAGE_CLASS}
-  postgresql:
-    parameters:
-      max_connections: "100"
-EOF
-```
+<ScriptHelper
+  runWhere="qualquer máquina com `KUBECONFIG` e acesso administrativo à API"
+  script={createPostgresqlClusterScript}
+  fields={[
+    { var: 'PG_NAMESPACE', label: 'Namespace do cluster' },
+    { var: 'PG_CLUSTER_NAME', label: 'Nome do cluster' },
+    { var: 'PG_INSTANCES', label: 'Número de instâncias (1 = sem HA, 3 recomendado)' },
+    { var: 'PG_STORAGE_SIZE', label: 'Tamanho do volume', placeholder: '10Gi' },
+    { var: 'PG_STORAGE_CLASS', label: 'StorageClass a usar' },
+  ]}
+/>
 
 Em um cluster de nó único, `instances: 1` é a única opção realista: múltiplas instâncias não protegem contra a perda do único host físico, apenas do processo PostgreSQL isoladamente. Veja [decisões do blueprint](../../../../guides/blueprints/k3s-single-node-gitops/#decisões-adotadas) para o contexto dessa limitação.
 
