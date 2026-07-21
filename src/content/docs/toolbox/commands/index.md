@@ -24,6 +24,7 @@ Esta seção reúne recipes de comandos organizadas por tarefa, não por ferrame
 - [Kubernetes](../kubernetes/): `kubectl`, logs, port-forward, recursos.
 - [Helm](../helm/): releases, values efetivos, histórico, rollback e `helm template`.
 - [Git](../git/): branches, commits, stash, push e pull.
+- [tmux](tmux/): sessões que sobrevivem a queda de SSH, janelas, painéis e copy mode.
 
 ## Formato de uma recipe
 
