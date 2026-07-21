@@ -52,6 +52,10 @@ export default defineConfig({
 						{ label: 'Clusters', items: [{ autogenerate: { directory: 'learn/clusters' } }] },
 						{ label: 'Containers', items: [{ autogenerate: { directory: 'learn/containers' } }] },
 						{
+							label: 'Virtualização',
+							items: [{ autogenerate: { directory: 'learn/virtualization' } }],
+						},
+						{
 							label: 'Rede',
 							items: [{ autogenerate: { directory: 'learn/networking' } }],
 						},

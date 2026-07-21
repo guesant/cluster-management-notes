@@ -1,13 +1,13 @@
 ---
 title: Containers
-description: Trilha de leitura desta seção, dos fundamentos de isolamento do kernel ao ciclo de vida e distribuição de imagens.
+description: Trilha de leitura desta seção, dos fundamentos de isolamento do kernel ao ciclo de vida, distribuição e ecossistema de ferramentas de imagens.
 sidebar:
   order: 0
 ---
 
 > **Para quem é:** quem quer entender como um container funciona de verdade, não só como operá-lo pela linha de comando.
 
-Esta seção segue uma ordem deliberada: primeiro os fundamentos de isolamento do kernel (o que faz um processo comum se comportar como um container), depois o ciclo de vida e a distribuição de imagens (o que é montado dentro desse isolamento, e de onde vem). Ler fora de ordem é possível, já que cada página linka o que assume como conhecido, mas a sequência abaixo é a que menos exige ir e voltar.
+Esta seção segue uma ordem deliberada: primeiro os fundamentos de isolamento do kernel (o que faz um processo comum se comportar como um container), depois o ciclo de vida e a distribuição de imagens (o que é montado dentro desse isolamento, e de onde vem), e por fim o ecossistema de ferramentas que constrói e executa tudo isso (engines, runtimes, especificações abertas). Ler fora de ordem é possível, já que cada página linka o que assume como conhecido, mas a sequência abaixo é a que menos exige ir e voltar.
 
 ## Fundamentos de isolamento
 
@@ -24,6 +24,10 @@ Esta seção segue uma ordem deliberada: primeiro os fundamentos de isolamento d
 1. [Ciclo de vida de imagens](image-lifecycle/) — tags, digests, reprodutibilidade, atualização e rollback de um workload em produção.
 2. [Registries de containers](container-registries/) — panorama de registries OCI e gerenciadores universais de artefatos, com critérios de escolha.
 
-## Próximas seções
+## Ecossistema de containers
 
-O ecossistema de ferramentas em torno desses fundamentos (engines como Docker e Podman, runtimes como containerd e runc, a Compose Specification) ainda não tem página própria nesta seção; quando existir, esta trilha ganha uma terceira parte específica para isso.
+1. [As especificações OCI](oci-specifications/) — o que a Image, a Distribution e a Runtime Spec padronizam, e o que "compatível com OCI" significa.
+2. [Engines, runtimes e a pilha de camadas](engines-and-runtimes/) — a pilha completa entre `docker run` e o processo em execução: engine, runtime de alto nível, shim, runtime de baixo nível.
+3. [Docker vs. Podman: critérios de escolha](docker-vs-podman/) — daemon vs. daemonless, rootful vs. rootless na prática, o socket como superfície de risco.
+4. [Formato de imagem e distribuição](images-and-registries/) — `Dockerfile`/`Containerfile`, contexto de build, motores de build (BuildKit, Buildah), Skopeo.
+5. [A Compose Specification](compose-specification/) — o schema de `compose.yml`, como uma implementação o traduz em rede e containers, e as duas implementações principais.
