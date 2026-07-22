@@ -63,5 +63,6 @@ systemctl disable --now apt-daily-upgrade.timer apt-daily.timer
 
 ## Fontes e leitura adicional
 
-- [Debian Wiki: UnattendedUpgrades](https://wiki.debian.org/UnattendedUpgrades): guia oficial de instalação, configuração e comportamento padrão do pacote.
-- [`unattended-upgrades(8)`](https://manpages.debian.org/bookworm/unattended-upgrades/unattended-upgrade.8.en.html): referência de `--dry-run`, `--debug` e demais opções.
+- [Debian Wiki: UnattendedUpgrades](https://wiki.debian.org/UnattendedUpgrades): guia oficial de instalação, configuração e comportamento padrão do pacote no Debian.
+- [Ubuntu Server: About automatic updates](https://ubuntu.com/server/docs/about-automatic-updates): guia equivalente para Ubuntu, cujas origens padrão de segurança em `50unattended-upgrades` diferem das do Debian (`Ubuntu,${distro_codename}-security` em vez de `Debian,${distro_codename}-security`).
+- [`unattended-upgrades(8)`](https://manpages.debian.org/bookworm/unattended-upgrades/unattended-upgrade.8.en.html): referência de `--dry-run`, `--debug` e demais opções; o manpage vem do próprio pacote (idêntico em Debian e Ubuntu), o link aponta para o espelho do Debian só por conveniência.

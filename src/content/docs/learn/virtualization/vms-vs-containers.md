@@ -62,9 +62,9 @@ flowchart TB
 
 - [Um container é um processo](../../containers/container-as-a-process/), a página que esta conclui do lado oposto.
 - [Namespaces do kernel](../../containers/namespaces/) e [cgroups](../../containers/cgroups/), os mecanismos que produzem isolamento sem hypervisor.
+- [QEMU e KVM](../qemu-and-kvm/): detalha a combinação citada abaixo, TCG vs. KVM e a camada `libvirt`/`virt-manager`.
 
 ## Referências
 
 - [KVM — documentação oficial do kernel Linux](https://docs.kernel.org/virt/kvm/index.html): arquitetura do hypervisor integrado ao kernel Linux.
-- [QEMU — documentação oficial](https://www.qemu.org/docs/master/): a camada de emulação de hardware comumente usada junto ao KVM.
 - [`namespaces(7)`](https://man7.org/linux/man-pages/man7/namespaces.7.html): referência já citada na trilha de containers, para o mecanismo de isolamento sem hypervisor.

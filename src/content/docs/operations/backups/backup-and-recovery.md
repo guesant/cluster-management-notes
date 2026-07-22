@@ -240,6 +240,22 @@ Velero não substitui:
 
 ## Ordem de recuperação
 
+```mermaid
+flowchart TD
+    accTitle: Ordem de dependências de uma recuperação completa
+    accDescr: O incidente é declarado primeiro, seguido pela infraestrutura de acesso. A partir daí, o control plane precisa existir antes dos CRDs e operators, que por sua vez precisam existir antes de volumes e bancos. Segredos são recuperados em paralelo, mas os workloads dependem de dados e segredos já restaurados. A validação e a reabertura de tráfego são as últimas etapas.
+
+    Incidente["1. Declarar incidente<br/>e escolher ponto de recuperação"] --> Infra["2. Infraestrutura,<br/>rede e acesso"]
+    Infra --> ControlPlane["3. Control plane K3s<br/>(restaurar ou construir novo)"]
+    ControlPlane --> CRDs["4. CRDs, operators<br/>e storage"]
+    CRDs --> Dados["5. Volumes, bancos,<br/>filas"]
+    ControlPlane --> Segredos["6. Fonte de segredos<br/>e credenciais de bootstrap"]
+    Dados --> Workloads["7. Workloads<br/>(dados, serviços, APIs, gateway)"]
+    Segredos --> Workloads
+    Workloads --> Validacao["8. Validação"]
+    Validacao --> Trafego["9. Reabertura de tráfego"]
+```
+
 Registre um grafo simples das dependências. Uma ordem inicial comum é:
 
 1. declarar o incidente, preservar evidências, limitar escritas e escolher o ponto de recuperação;

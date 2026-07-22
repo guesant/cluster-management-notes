@@ -13,6 +13,17 @@ import restorePostgresqlClusterScript from '../../../../../scripts/restore-postg
 
 O CloudNativePG restaura criando um **novo** cluster a partir do backup; não substitui o cluster existente no lugar. Isso permite validar a restauração sem afetar o cluster em produção, o mesmo princípio usado na [restauração de volumes Longhorn](../../storage/restore-volume-backup/).
 
+```mermaid
+flowchart LR
+    accTitle: Restauração como cluster novo, não substituição
+    accDescr: O cluster original continua rodando sem alteração. O destino de backup fornece o WAL arquivado e a base, a partir dos quais um cluster novo e independente é criado para validação.
+
+    Original["Cluster original<br/>(continua rodando)"] -.->|"gera"| Backup["Destino de backup<br/>(WAL arquivado)"]
+    Backup -->|"restaura"| Novo["Cluster novo<br/>(independente, para validação)"]
+```
+
+Só depois de validar a integridade dos dados no cluster novo é que se decide redirecionar a aplicação para ele; até lá, o original permanece intocado.
+
 ## Restaurar como um novo cluster
 
 <ScriptHelper

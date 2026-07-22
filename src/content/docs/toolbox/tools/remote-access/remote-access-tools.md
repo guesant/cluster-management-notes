@@ -21,13 +21,27 @@ ssh user@host
 
 **Quando usar:** é o caminho padrão para qualquer acesso remoto interativo a um host Linux. O pacote `openssh-client` já vem pré-instalado na maioria das distribuições desktop; a instalação explícita é necessária principalmente em imagens mínimas de container ou servidor.
 
-**Considerações:** além da sessão interativa, o mesmo pacote inclui `scp` (cópia pontual de arquivos) e `sftp` (sessão de transferência interativa); veja [transferência de arquivos](../file-transfer/transfer-tools/) para uma comparação entre os dois. No Windows, a alternativa mais usada historicamente é o PuTTY, com interface gráfica própria; para acesso multiplataforma (desktop e mobile) com catálogo de hosts, o Termius é uma opção comercial (veja a linha correspondente na [tabela de acesso remoto](../overview/#acesso-remoto-e-administração-dos-hosts) do catálogo geral).
+**Considerações:** além da sessão interativa, o mesmo pacote inclui `scp` (cópia pontual de arquivos) e `sftp` (sessão de transferência interativa); veja [transferência de arquivos](../file-transfer/transfer-tools/) para uma comparação entre os dois. No Windows, a alternativa mais usada historicamente é o PuTTY, com interface gráfica própria; para acesso multiplataforma (desktop e mobile) com catálogo de hosts, o Termius é uma opção comercial (veja a linha correspondente na [tabela de acesso remoto](../overview/#acesso-remoto-e-administração-dos-hosts) do catálogo geral). O SSH Pilot, descrito a seguir, é uma terceira alternativa gráfica, de código aberto e sem custo, para quem administra vários hosts a partir de um desktop Linux ou macOS.
 
 **Modelo de acesso, privilégios e autenticação:** a sessão herda os privilégios da conta usada para autenticar no host remoto; a autenticação pode ser por senha (desaconselhada para hosts administrativos) ou por par de chaves pública/privada, o padrão recomendado (veja [reforçar o SSH](../../../guides/tasks/host/harden-ssh/)). Não há um servidor central: cada host mantém sua própria lista de chaves autorizadas.
 
 **Riscos:** uma chave privada sem senha (`passphrase`) copiada para uma máquina comprometida dá acesso direto a todo host que a aceita; proteja a chave privada com passphrase e, em ambientes com múltiplos operadores, prefira certificados de curta duração (como os do Teleport, abaixo) a chaves estáticas de longa duração.
 
 **Licença e plataformas:** licença BSD/ISC (OpenSSH é mantido pelo projeto OpenBSD). Nativo em Linux, macOS e BSD; incluído por padrão no Windows 10 e superior.
+
+## SSH Pilot: gerenciador gráfico de conexões SSH
+
+O SSH Pilot é um cliente gráfico que organiza várias conexões SSH em um catálogo de hosts, sem substituir o `ssh` de linha de comando por baixo: ele importa e opera sobre o mesmo `~/.ssh/config` já usado pelo OpenSSH, em vez de manter seu próprio formato de armazenamento de hosts. A interface reúne terminal com abas e divisão de tela, um gerenciador de arquivos SFTP em painel duplo, transferência de chaves via `ssh-copy-id`, gerenciamento de `known_hosts` e chaves autorizadas, um painel gráfico para containers Docker no host remoto, e snippets para repetir comandos ou scripts comuns entre sessões.
+
+**Quando usar:** administração interativa de múltiplos hosts a partir de um desktop Linux ou macOS, quando o volume de conexões torna útil ter abas, um catálogo visual e um cliente SFTP integrado em vez de alternar entre janelas de terminal e um cliente `sftp`/`scp` separado.
+
+**Considerações:** por reaproveitar `~/.ssh/config`, migrar para o SSH Pilot ou abandoná-lo não exige reescrever o inventário de hosts; a ferramenta soma uma camada de conveniência sobre o OpenSSH, não o substitui como mecanismo de transporte. Não há suporte a Windows: a opção gráfica equivalente nesse sistema continua sendo o PuTTY ou o Termius, citados acima.
+
+**Modelo de acesso, privilégios e autenticação:** o SSH Pilot não introduz um modelo de autenticação próprio; cada conexão usa a mesma autenticação por senha ou par de chaves que o `ssh` de linha de comando usaria contra o mesmo host, herdando os privilégios da conta remota. As credenciais e segredos que a aplicação precisa guardar localmente (senhas de chave, por exemplo) usam armazenamento seguro multiplataforma (libsecret, KeePass ou Bitwarden/Vaultwarden), com backup e restauração através de um desses back-ends.
+
+**Riscos:** os mesmos riscos de chave privada e passphrase já descritos para o OpenSSH se aplicam integralmente, já que o SSH Pilot autentica exatamente da mesma forma; adicionalmente, comprometer a estação onde o SSH Pilot roda expõe o catálogo completo de hosts cadastrados de uma vez, um raciocínio de risco concentrado equivalente ao de um bastion host, mas do lado do operador em vez do lado do destino.
+
+**Licença e plataformas:** licença GPL-3.0, código aberto. Linux (Debian, Ubuntu, Fedora, RHEL/CentOS Stream, Arch, entre outras, além de Flatpak) e macOS 14 ou superior (aarch64 e x86-64); sem suporte a Windows.
 
 ## Teleport: acesso Zero Trust com auditoria
 
@@ -94,5 +108,6 @@ Guacamole não implementa um servidor RDP ou VNC próprio: ele se conecta como c
 
 - [OpenSSH documentation](https://man.openbsd.org/ssh): manual oficial do cliente `ssh`.
 - [OpenSSH: ProxyJump](https://man.openbsd.org/ssh_config#ProxyJump): referência da diretiva usada para encadear o acesso via bastion.
+- [SSH Pilot (repositório oficial)](https://github.com/mfat/sshpilot): código-fonte, licença GPL-3.0, plataformas suportadas e lista completa de funcionalidades.
 - [Teleport documentation](https://goteleport.com/docs/): arquitetura, certificados de curta duração e RBAC.
 - [Apache Guacamole documentation](https://guacamole.apache.org/doc/gug/): instalação, `guacd` e configuração de conexões RDP/VNC/SSH.

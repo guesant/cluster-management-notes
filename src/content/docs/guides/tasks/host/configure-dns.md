@@ -71,3 +71,4 @@ Restaure o `/etc/resolv.conf` anterior ou reverta a configuração da interface.
 
 - [man7.org: `resolv.conf(5)`](https://man7.org/linux/man-pages/man5/resolv.conf.5.html): referência da sintaxe e da ordem de resolução dos resolvers.
 - [Debian Wiki: Network Configuration](https://wiki.debian.org/NetworkConfiguration): explica a interação entre `ifupdown`, NetworkManager e `/etc/resolv.conf` no Debian.
+- [Ubuntu Server: Netplan](https://netplan.readthedocs.io/en/stable/): referência equivalente para hosts Ubuntu, que usa Netplan como camada de configuração de rede por padrão desde a 18.04, em vez do `ifupdown` clássico do Debian.

@@ -50,6 +50,11 @@ export default defineConfig({
 					label: 'Aprender',
 					items: [
 						{
+							label: 'Fundamentos de computação',
+							collapsed: true,
+							items: [{ autogenerate: { directory: 'learn/computing-fundamentals' } }],
+						},
+						{
 							label: 'Unix',
 							collapsed: true,
 							items: [{ autogenerate: { directory: 'learn/unix' } }],

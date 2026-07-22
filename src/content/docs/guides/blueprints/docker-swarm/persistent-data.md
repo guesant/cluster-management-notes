@@ -11,6 +11,29 @@ que o container roda; se o Swarm reagenda esse container para outro host (por fa
 ou rebalanceamento), o volume antigo fica para trás e o container reinicia com um volume vazio no
 novo host.
 
+O diagrama a seguir contrasta o que acontece com os dados nas três abordagens descritas nesta
+página quando o Swarm decide reagendar o container para outro host: o volume local perde os dados,
+o volume driver externo preserva o acesso porque os dados nunca estiveram presos a um host
+específico, e a constraint de placement evita o reagendamento por completo, trocando disponibilidade
+por simplicidade.
+
+```mermaid
+flowchart TB
+    accTitle: O que acontece com os dados ao reagendar o container
+    accDescr: Com volume local, o reagendamento para outro host deixa o volume antigo para trás e o container reinicia com dados vazios. Com volume driver externo, o novo host acessa o mesmo backend compartilhado, sem perda. Com constraint de placement, o Swarm nunca reagenda o container para outro host, então o volume nunca muda de lugar.
+
+    Reagenda["Swarm decide reagendar o container"]
+
+    Reagenda --> Local["Volume local"]
+    Local --> LocalResult["Novo host, volume vazio<br/>dados antigos perdidos"]
+
+    Reagenda --> Externo["Volume driver externo"]
+    Externo --> ExternoResult["Novo host acessa o mesmo backend<br/>(NFS, iSCSI, plugin de nuvem)<br/>sem perda"]
+
+    Reagenda -.->|"bloqueado por constraint"| Constraint["Constraint de placement"]
+    Constraint --> ConstraintResult["Container só roda no host fixado<br/>indisponível se esse host cair"]
+```
+
 ## Local volumes
 
 Esse é o comportamento padrão: cada host mantém sua própria cópia local do volume, sem

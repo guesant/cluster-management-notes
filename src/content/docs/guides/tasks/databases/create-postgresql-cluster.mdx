@@ -13,6 +13,19 @@ import createPostgresqlClusterScript from '../../../../../scripts/create-postgre
 
 Um recurso `Cluster` do CloudNativePG declara quantas instâncias PostgreSQL rodam, qual armazenamento usam e como se comunicam entre si. O operator provisiona os Pods, configura replicação em streaming entre elas e promove uma réplica automaticamente se a primária falhar.
 
+```mermaid
+flowchart LR
+    accTitle: Failover automático em um cluster CloudNativePG com 3 instâncias
+    accDescr: A instância primária replica em streaming para duas réplicas. Se a primária falhar, o operator promove automaticamente uma das réplicas a nova primária, sem intervenção manual.
+
+    Primary["Primária"] -- "streaming replication" --> R1["Réplica 1"]
+    Primary -- "streaming replication" --> R2["Réplica 2"]
+    Primary -.->|"falha"| Fail["Primária indisponível"]
+    Fail -.->|"operator promove"| R1
+```
+
+Em um cluster de nó único (`instances: 1`), esse diagrama não se aplica: não há réplica para promover, e a única proteção contra a perda do Pod é o restart automático do Kubernetes no mesmo volume.
+
 ## Criar o cluster
 
 <ScriptHelper

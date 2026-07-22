@@ -22,6 +22,28 @@ Docker Engine e Podman produzem o mesmo resultado final, um processo confinado a
 
 ## Daemon vs. daemonless na prática
 
+O diagrama a seguir contrasta os dois caminhos entre o comando digitado pelo operador e o container
+em execução: no Docker, o cliente sempre fala com o daemon `dockerd`, que delega a `containerd`; no
+Podman, não há processo intermediário persistente, `podman run` inicia `conmon` diretamente, que por
+sua vez invoca o runtime de baixo nível.
+
+```mermaid
+flowchart LR
+    accTitle: Docker Engine vs. Podman, do comando ao container
+    accDescr: No Docker, o cliente sempre fala com o daemon dockerd em execução contínua, que delega a containerd e depois a runc. No Podman, não há daemon persistente; cada comando inicia conmon diretamente, que invoca runc ou crun.
+
+    subgraph Docker["Docker Engine"]
+        DCli["docker run"] --> Dockerd["dockerd (daemon persistente)"]
+        Dockerd --> Containerd["containerd"]
+        Containerd --> Runc1["runc"]
+    end
+
+    subgraph Podman["Podman"]
+        PCli["podman run"] --> Conmon["conmon (processo por invocação)"]
+        Conmon --> Runc2["runc ou crun"]
+    end
+```
+
 Um daemon central significa mais um processo para manter atualizado, monitorado e reiniciado quando necessário, mas também um ponto único onde toda a atividade de containers do host passa, o que simplifica auditoria centralizada em ambientes que já esperam esse modelo. Sem daemon, cada `podman run` é só mais um processo filho de quem o invocou (via `conmon`, como já detalhado em [engines e runtimes](../engines-and-runtimes/#engine-docker-engine-e-podman)): não há serviço para reiniciar ou atualizar separadamente, mas também não há um ponto central único para auditar toda a atividade de containers do host de uma vez, exceto compondo os logs de cada invocação individual.
 
 ## Rootful vs. rootless na prática

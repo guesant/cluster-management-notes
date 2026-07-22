@@ -131,6 +131,6 @@ journalctl --unit fail2ban --since "1 hour ago" | grep -E 'Ban|Unban'
 ## Fontes e leitura adicional
 
 - [Fail2Ban: projeto oficial](https://github.com/fail2ban/fail2ban): apresenta o funcionamento, a estrutura de configuração e os canais oficiais do projeto.
-- [Debian Manpages: `jail.conf(5)`](https://manpages.debian.org/testing/fail2ban/jail.conf.5.en.html): documenta jails, filtros, ações, precedência dos arquivos `.conf` e `.local`, além de opções como `bantime`, `findtime` e `maxretry`.
-- [Debian Manpages: `fail2ban-client(1)`](https://manpages.debian.org/testing/fail2ban/fail2ban-client.1.en.html): referência dos comandos de validação, estado e controle usados para operar o serviço e suas jails.
+- [`jail.conf(5)`](https://manpages.debian.org/testing/fail2ban/jail.conf.5.en.html): documenta jails, filtros, ações, precedência dos arquivos `.conf` e `.local`, além de opções como `bantime`, `findtime` e `maxretry`. O manpage vem do próprio pacote `fail2ban` (idêntico em Debian e Ubuntu, disponível localmente via `man jail.conf`); o link aponta para o espelho público do Debian só por conveniência de leitura no navegador.
+- [`fail2ban-client(1)`](https://manpages.debian.org/testing/fail2ban/fail2ban-client.1.en.html): referência dos comandos de validação, estado e controle usados para operar o serviço e suas jails, mesma observação acima sobre o manpage ser parte do pacote, não específico do Debian.
 - [Fail2Ban: filtro `sshd` (repositório oficial)](https://github.com/fail2ban/fail2ban/blob/master/config/filter.d/sshd.conf): fonte dos modos e padrões utilizados para reconhecer falhas de autenticação do OpenSSH.

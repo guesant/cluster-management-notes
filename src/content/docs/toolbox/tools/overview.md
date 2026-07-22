@@ -28,9 +28,10 @@ Use uma identidade individual de privilégio mínimo para avaliar clientes. Não
 | --- | --- | --- | --- |
 | [OpenSSH](https://www.openssh.com/) | Cliente e servidor livres | Acesso remoto, túneis, cópia de arquivos e automação usando componentes amplamente disponíveis | Hardening, custódia das chaves, `known_hosts`, bastion e encaminhamentos permitidos |
 | [Termius](https://termius.com/) | Cliente comercial para desktop e dispositivos móveis | Catálogo de hosts, SSH, SFTP e recursos de colaboração ou sincronização conforme o plano | Política do plano, armazenamento e sincronização de chaves, conta externa, telemetria e uso de cofres da equipe |
+| [SSH Pilot](https://github.com/mfat/sshpilot) | Cliente livre (GPL-3.0) para Linux e macOS | Catálogo de hosts a partir do `~/.ssh/config` existente, terminal com abas, SFTP em painel duplo e gerenciador de containers Docker | Sem suporte a Windows; segredos guardados localmente (libsecret/KeePass/Bitwarden) concentram acesso à estação do operador |
 | [Cockpit](https://cockpit-project.org/) | Interface web livre executada no host | Estado do sistema, serviços, logs, armazenamento e tarefas administrativas comuns | Porta exposta, autenticação do sistema, elevação de privilégio e necessidade de uma interface web em cada host |
 
-Termius e Cockpit são conveniências operacionais, não substitutos para identidade individual, SSH endurecido, firewall, logs de auditoria ou procedimentos reproduzíveis.
+Termius, SSH Pilot e Cockpit são conveniências operacionais, não substitutos para identidade individual, SSH endurecido, firewall, logs de auditoria ou procedimentos reproduzíveis.
 
 ## Interfaces para Kubernetes
 

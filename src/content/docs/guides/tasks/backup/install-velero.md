@@ -13,6 +13,21 @@ guia cobre a instalação com **MinIO** rodando dentro do próprio cluster, o ca
 para laboratório e ambientes sem um provedor de nuvem já disponível; a variante com AWS S3 real
 está descrita mais abaixo, na seção "Configuração com AWS S3".
 
+```mermaid
+flowchart LR
+    accTitle: Componentes do Velero e o caminho do backup
+    accDescr: O controller do Velero lê objetos da API do Kubernetes e grava manifests no backend S3. Para volumes sem suporte a snapshot CSI, o DaemonSet node-agent copia os dados diretamente dos nós para o mesmo backend. Na restauração, o fluxo se inverte.
+
+    subgraph Cluster["Cluster K3s"]
+        API["API do Kubernetes"] --> Controller["Controller Velero"]
+        Nodes["Nós<br/>(volumes sem snapshot CSI)"] --> NodeAgent["DaemonSet node-agent"]
+    end
+
+    Controller -->|"manifests dos recursos"| S3["Backend S3<br/>(MinIO ou AWS)"]
+    NodeAgent -->|"cópia dos dados do volume"| S3
+    S3 -.->|"restauração"| Controller
+```
+
 ## Passo 1: Instalar o MinIO como backend de storage
 
 Se for usar storage local em vez de um provedor de nuvem:

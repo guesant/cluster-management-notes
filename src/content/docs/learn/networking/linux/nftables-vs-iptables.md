@@ -59,4 +59,5 @@ Manter regras em `iptables` (via `iptables-nft`, o caso comum hoje) continua sen
 - [Kubernetes Blog: NFTables mode for kube-proxy](https://kubernetes.io/blog/2025/02/28/nftables-kube-proxy/): introdução em alfa na 1.29, beta na 1.31, GA prevista para a 1.33, benchmarks de latência O(1) vs. O(n) (até a escrita; confira a documentação oficial do Kubernetes para o estado atual do recurso).
 - [Kubernetes: Service IP address and virtual IP addressing (documentação oficial)](https://kubernetes.io/docs/reference/networking/virtual-ips/): modos de encaminhamento do kube-proxy (`iptables`, `ipvs`, `nftables`), `iptables` como padrão.
 - [Docker Docs: Packet filtering and firewalls](https://docs.docker.com/engine/network/packet-filtering-firewalls/): opção `firewall-backend`, suporte experimental a nftables.
-- [Debian Wiki: nftables](https://wiki.debian.org/nftables): `update-alternatives` para `iptables-nft`/`iptables-legacy`.
+- [nftables wiki (projeto upstream)](https://wiki.nftables.org/): documentação do projeto nftables, independente de distribuição.
+- [Debian Wiki: nftables](https://wiki.debian.org/nftables): `update-alternatives` para `iptables-nft`/`iptables-legacy`; o mecanismo `update-alternatives` vem do `dpkg` e se aplica igualmente a hosts Ubuntu, não é específico do Debian.

@@ -16,6 +16,24 @@ Um `ClusterIssuer` declara como o cert-manager deve emitir certificados para o c
 
 O exemplo usa Cloudflare como provedor DNS; o cert-manager suporta outros provedores nativamente ou por webhook. Ajuste `solvers` conforme o provedor real do ambiente.
 
+```mermaid
+sequenceDiagram
+    accTitle: Desafio ACME DNS-01
+    accDescr: O cert-manager solicita um certificado à Let's Encrypt, que responde com um desafio. O cert-manager cria um registro TXT temporário via API do provedor DNS. A Let's Encrypt consulta esse registro pelos resolvers configurados e, se válido, emite o certificado.
+
+    participant CM as cert-manager
+    participant DNS as Provedor DNS
+    participant LE as Let's Encrypt
+
+    CM->>LE: Solicita certificado
+    LE-->>CM: Desafio DNS-01
+    CM->>DNS: Cria registro TXT temporário
+    LE->>DNS: Consulta o registro TXT
+    DNS-->>LE: Registro válido
+    LE-->>CM: Certificado emitido
+    CM->>DNS: Remove o registro TXT
+```
+
 ## Guardar a credencial do provedor DNS
 
 A credencial concede permissão de escrita na zona DNS e não deve ser versionada em texto claro:

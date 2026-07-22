@@ -10,6 +10,17 @@ sidebar:
 
 O kube-prometheus-stack reúne Prometheus Operator, Prometheus, Alertmanager, Grafana e exporters (`node-exporter`, `kube-state-metrics`) em um único chart. Veja [arquitetura do Prometheus](../../../../learn/observability/prometheus-architecture/) antes de instalar, e a política completa em [observabilidade e alertas](../../../../operations/observability/observability-and-alerting/).
 
+```mermaid
+flowchart LR
+    accTitle: Componentes instalados pelo kube-prometheus-stack
+    accDescr: Os exporters expõem métricas que o Prometheus coleta. O Prometheus Operator gerencia a configuração do Prometheus a partir de CRDs como ServiceMonitor. O Prometheus avalia regras de alerta e as envia ao Alertmanager, enquanto o Grafana consulta o Prometheus para exibir dashboards.
+
+    Exporters["node-exporter<br/>kube-state-metrics"] -->|"métricas"| Prometheus
+    Operator["Prometheus Operator"] -->|"gerencia via CRDs<br/>(ServiceMonitor, PrometheusRule)"| Prometheus
+    Prometheus -->|"alertas disparados"| Alertmanager
+    Grafana -->|"consulta"| Prometheus
+```
+
 ## Instalar o chart
 
 > **Executar em:** qualquer máquina com `KUBECONFIG`, Helm e acesso administrativo à API.

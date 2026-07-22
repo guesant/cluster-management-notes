@@ -172,7 +172,19 @@ Silêncios são exceções temporárias. Exija responsável, motivo, referência
 
 ## Teste ponta a ponta e metamonitoramento
 
-Validar somente a expressão deixa sem teste a maior parte do caminho. Em ambiente controlado, crie uma condição sintética identificável ou uma regra temporária e confirme:
+Validar somente a expressão deixa sem teste a maior parte do caminho. O caminho completo passa por vários componentes independentes, e cada um pode falhar sem afetar os demais:
+
+```mermaid
+flowchart LR
+    accTitle: Caminho completo de um alerta, do alvo ao destino
+    accDescr: A métrica é coletada de um target, o Prometheus avalia a regra contra ela, o alerta disparado é entregue ao Alertmanager, que o roteia até o receptor real. Validar apenas a expressão PromQL testa só a segunda etapa desta cadeia.
+
+    Target["Target coletado"] --> Prometheus["Prometheus avalia a regra"]
+    Prometheus -->|"dispara após o for"| Alertmanager["Alertmanager roteia"]
+    Alertmanager -->|"corresponde à rota"| Receptor["Receptor real<br/>(Slack, e-mail, etc.)"]
+```
+
+Em ambiente controlado, crie uma condição sintética identificável ou uma regra temporária e confirme:
 
 1. ingestão da métrica e estado saudável do target;
 2. carregamento e avaliação da regra;

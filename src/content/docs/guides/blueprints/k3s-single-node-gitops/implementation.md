@@ -6,6 +6,19 @@ sidebar:
 
 Esta página detalha a sequência de implantação resumida em [visão geral do blueprint](../k3s-single-node-gitops/), com o checkpoint de cada etapa. Não repete os comandos; cada linha aponta para o task guide canônico.
 
+```mermaid
+flowchart LR
+    accTitle: Sequência de implantação do blueprint single-node
+    accDescr: Sete etapas em ordem, cada uma com um checkpoint antes de avançar para a próxima, do host até os módulos opcionais de GitOps.
+
+    Host["1. Host"] --> Cluster["2. Cluster K3s"]
+    Cluster --> Admin["3. Acesso administrativo"]
+    Admin --> Rede["4. Rede e exposição"]
+    Rede --> Cert["5. Certificados"]
+    Cert --> GitOps["6. GitOps"]
+    GitOps --> Modulos["7. Módulos opcionais"]
+```
+
 ## 1. Host
 
 Siga [preparar um servidor Debian](../../../guides/tasks/host/prepare-debian-server/), que por sua vez encadeia hostname, DNS, sincronização de horário, firewall, hardening de SSH, journal persistente, desabilitação de serviços desnecessários, atualizações automáticas e validação de requisitos.

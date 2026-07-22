@@ -15,6 +15,20 @@ import upgradeK3sAgentScript from '../../../../scripts/upgrade-k3s-agent.sh?raw'
 
 Em um cluster com múltiplos servidores, a atualização não precisa interromper o cluster inteiro: cada nó é drenado, atualizado e reintegrado individualmente, enquanto os demais continuam servindo tráfego. Isso só funciona se os nós forem atualizados um de cada vez, na ordem correta (servidores antes de agentes), com o quorum verificado entre cada etapa; atualizar vários nós em paralelo elimina exatamente a margem de segurança que esse procedimento existe para garantir.
 
+```mermaid
+flowchart LR
+    accTitle: Ordem da atualização e o portão de verificação de quorum
+    accDescr: Cada servidor é drenado, atualizado e reintegrado individualmente. Antes de seguir para o próximo servidor, o quorum precisa estar restabelecido. Só depois que todos os servidores estiverem na versão alvo é que os agentes começam a ser atualizados, um de cada vez.
+
+    S1["Servidor 1<br/>drenar → atualizar → reintegrar"] --> Q1{"Quorum OK?"}
+    Q1 -->|"sim"| S2["Servidor 2<br/>drenar → atualizar → reintegrar"]
+    Q1 -->|"não"| Parar["Parar e tratar como incidente"]
+    S2 --> Q2{"Quorum OK?"}
+    Q2 -->|"sim"| S3["Servidor 3<br/>drenar → atualizar → reintegrar"]
+    Q2 -->|"não"| Parar
+    S3 --> Agentes["Agentes,<br/>um de cada vez"]
+```
+
 ## Antes de começar
 
 Confirme que o cluster está em condição saudável antes de iniciar: `kubectl get nodes` deve mostrar todos os nós `Ready`, sem nenhum servidor já indisponível. Crie e copie um snapshot recente do etcd (veja [backup do etcd](../../backups/backup-k3s-etcd/)) e mantenha-o acessível fora do host, para o caso de a atualização precisar de uma recuperação. Leia também as notas de versão do release alvo e confirme a compatibilidade com os componentes já instalados (cert-manager, Argo CD, Longhorn).

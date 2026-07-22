@@ -10,6 +10,16 @@ sidebar:
 
 Grafana Alloy é um coletor de telemetria (sucessor do Grafana Agent) que roda como DaemonSet, lendo logs de todos os Pods do nó e enviando-os ao Loki com os labels do Kubernetes já anexados.
 
+```mermaid
+flowchart LR
+    accTitle: Caminho dos logs, do Pod ao Grafana
+    accDescr: O DaemonSet Alloy roda um Pod por nó, lê os logs de todos os Pods locais e os envia ao Loki com labels do Kubernetes anexados. O Grafana consulta o Loki como datasource para exibir os logs.
+
+    Pods["Pods do nó"] -->|"logs"| Alloy["DaemonSet Alloy<br/>(um Pod por nó)"]
+    Alloy -->|"push com labels<br/>do Kubernetes"| Loki
+    Grafana -->|"consulta"| Loki
+```
+
 ## Instalar o Alloy
 
 > **Executar em:** qualquer máquina com `KUBECONFIG`, Helm e acesso administrativo à API.

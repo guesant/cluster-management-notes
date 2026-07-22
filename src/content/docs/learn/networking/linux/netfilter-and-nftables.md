@@ -55,4 +55,5 @@ Essa é a mesma peça que a página de firewall já menciona de passagem ao expl
 
 - [nftables — Wikipédia](https://en.wikipedia.org/wiki/Nftables): introdução no kernel 3.13, arquitetura de máquina virtual, unificação de `iptables`/`ip6tables`/`arptables`/`ebtables` (até a escrita; confira a wiki oficial em `wiki.nftables.org` para a referência técnica completa).
 - [conntrack-tools: Manual](https://conntrack-tools.netfilter.org/manual.html): estados de conexão (`NEW`, `ESTABLISHED`, `RELATED`, `INVALID`) e o papel do conntrack em firewalls stateful.
-- [Debian Wiki: nftables](https://wiki.debian.org/nftables): `update-alternatives` para `iptables-nft`/`iptables-legacy`, nftables como padrão desde o Debian 10.
+- [nftables wiki (projeto upstream)](https://wiki.nftables.org/): documentação do projeto nftables, independente de distribuição.
+- [Debian Wiki: nftables](https://wiki.debian.org/nftables): `update-alternatives` para `iptables-nft`/`iptables-legacy`, nftables como padrão desde o Debian 10; o mecanismo `update-alternatives` vem do `dpkg` e se aplica igualmente a hosts Ubuntu.

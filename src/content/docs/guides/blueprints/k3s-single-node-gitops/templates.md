@@ -19,7 +19,20 @@ Os exemplos são opcionais e independentes: estar disponível em `templates/` n�
 | `apps/monitoring/kube-prometheus-stack/` | Prometheus Operator, Prometheus, Alertmanager, Grafana, exporters e HTTPRoutes opcionais | Coletar métricas, consultar séries temporais, visualizar dashboards e encaminhar alertas |
 | `apps/management/rancher/` | Rancher com publicação opcional por HTTPRoute e TLS terminado no Gateway | Oferecer uma interface e uma camada adicional de administração para clusters Kubernetes |
 
-No template de monitoring, o Prometheus coleta métricas numéricas de endpoints e as armazena como séries temporais; o Grafana consulta essas métricas e as apresenta em dashboards; o Alertmanager recebe alertas gerados por regras, agrupa notificações e as encaminha aos destinos configurados. Essa pilha não substitui coleta de logs, backup nem monitoramento externo do próprio cluster. Antes de produção, defina retenção, armazenamento persistente, regras úteis e receptores reais usando o guia de [observabilidade e alertas](../../../../operations/observability/observability-and-alerting/). Referências: [visão geral do Prometheus](https://prometheus.io/docs/introduction/overview/) e [introdução ao Grafana](https://grafana.com/docs/grafana/latest/introduction/).
+No template de monitoring, o Prometheus coleta métricas numéricas de endpoints e as armazena como séries temporais; o Grafana consulta essas métricas e as apresenta em dashboards; o Alertmanager recebe alertas gerados por regras, agrupa notificações e as encaminha aos destinos configurados.
+
+```mermaid
+flowchart LR
+    accTitle: Fluxo de dados na pilha de monitoring do template
+    accDescr: O Prometheus coleta métricas de endpoints e as armazena como séries temporais. O Grafana consulta essas séries e as apresenta em dashboards. Regras de alerta no Prometheus disparam o Alertmanager, que agrupa e encaminha notificações aos destinos configurados.
+
+    Endpoints["Endpoints da aplicação"] --> Prom["Prometheus<br/>(coleta e séries temporais)"]
+    Prom --> Grafana["Grafana<br/>(dashboards)"]
+    Prom -- "regras de alerta" --> AM["Alertmanager<br/>(agrupa e encaminha)"]
+    AM --> Destinos["Destinos configurados"]
+```
+
+Essa pilha não substitui coleta de logs, backup nem monitoramento externo do próprio cluster. Antes de produção, defina retenção, armazenamento persistente, regras úteis e receptores reais usando o guia de [observabilidade e alertas](../../../../operations/observability/observability-and-alerting/). Referências: [visão geral do Prometheus](https://prometheus.io/docs/introduction/overview/) e [introdução ao Grafana](https://grafana.com/docs/grafana/latest/introduction/).
 
 O Rancher é opcional. Ele adiciona interface, autenticação e recursos de gestão sobre Kubernetes e pode centralizar vários clusters, mas não é necessário para que K3s, `kubectl` ou Argo CD funcionem. Rancher e Argo CD também não têm o mesmo papel: Rancher oferece administração ampla do cluster, enquanto Argo CD reconcilia aplicações a partir do Git. Referência: [visão geral do Rancher](https://ranchermanager.docs.rancher.com/getting-started/overview).
 

@@ -40,6 +40,27 @@ porta, já que todos expõem por padrão.
 
 ## Host mode (bypass mesh)
 
+O diagrama a seguir contrasta os dois modos de publicação de porta descritos nesta página: no modo
+padrão (ingress routing mesh), todo host do cluster responde na porta publicada e roteia
+internamente até um container do service, esteja ele rodando ali ou não; no modo host, só os hosts
+que efetivamente executam o container respondem, e os demais não escutam a porta.
+
+```mermaid
+flowchart LR
+    accTitle: Ingress routing mesh vs. modo host
+    accDescr: No modo padrão, qualquer host do cluster responde na porta publicada e roteia até um container do service. No modo host, apenas os hosts que executam o container respondem na porta; os demais não escutam nela.
+
+    subgraph Mesh["Modo padrão: ingress routing mesh"]
+        ReqA["Requisição"] --> H1["Qualquer host do cluster"]
+        H1 --> C1["Container do service<br/>(em outro host, se preciso)"]
+    end
+
+    subgraph Host["Modo host"]
+        ReqB["Requisição"] --> H2["Só o host que executa<br/>o container"]
+        H2 --> C2["Container do service<br/>(mesmo host)"]
+    end
+```
+
 Quando esse controle fino é necessário, o modo host contorna o ingress routing mesh:
 
 ```bash

@@ -10,6 +10,25 @@ Docker Swarm oferece rolling updates e rollback automático se algo falhar.
 
 ## Rolling update com validação
 
+O diagrama a seguir mostra a ordem temporal de um rolling update com `--update-parallelism 1`: o
+Swarm atualiza uma réplica por vez, espera o `--update-delay` configurado, e só então passa para a
+próxima. Se uma réplica falhar o health check nesse meio-tempo, `--update-failure-action pause`
+interrompe a sequência antes de atualizar as réplicas restantes, deixando a decisão de continuar ou
+reverter para o operador.
+
+```mermaid
+flowchart LR
+    accTitle: Sequência temporal de um rolling update
+    accDescr: O Swarm atualiza uma réplica por vez, respeitando o delay configurado entre cada uma. Se uma réplica falhar o health check, a atualização pausa antes de atualizar as réplicas restantes.
+
+    R1["Réplica 1: v1 → v2"] -->|"aguarda update-delay"| R2["Réplica 2: v1 → v2"]
+    R2 -->|"aguarda update-delay"| R3["Réplica 3: v1 → v2"]
+    R3 -.->|"health check falha"| Pause["Deploy pausado<br/>(update-failure-action=pause)"]
+    Pause --> Decide{"Operador decide"}
+    Decide -->|"continuar"| R4["Réplicas restantes: v1 → v2"]
+    Decide -->|"reverter"| Rollback["docker service rollback"]
+```
+
 Configurar um service para atualizar uma réplica por vez:
 
 ```bash

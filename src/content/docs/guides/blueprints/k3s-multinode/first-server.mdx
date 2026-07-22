@@ -83,13 +83,24 @@ Ambos os guias usam o token que você recuperou no Passo 2 e apontam para o prim
 
 ## Quorum e consenso
 
-O quorum evolui conforme servidores são adicionados: com o 1º servidor, ainda não existe quorum
-formado (o etcd ainda não tem outros membros para sincronizar). Com o 2º, o quorum passa a exigir
-2 membros ativos, o que significa que nenhum dos dois pode falhar isoladamente sem travar o
-cluster; é um estado transitório indesejável para permanecer por muito tempo. Só com o 3º servidor
-o cluster atinge a configuração-alvo deste blueprint: quorum = 2, o que permite perder qualquer 1
-dos 3 servidores sem perder a capacidade de tomar decisões (ver
-[Arquitetura de quorum e etcd](../architecture/) para o raciocínio completo).
+O quorum evolui conforme servidores são adicionados, e o estado intermediário com 2 servidores é o
+mais frágil dos três, não o mais seguro: com o 1º servidor, ainda não existe quorum formado (o etcd
+ainda não tem outros membros para sincronizar); com o 2º, o quorum passa a exigir os 2 membros
+ativos ao mesmo tempo, o que significa que nenhum dos dois pode falhar isoladamente sem travar o
+cluster; só com o 3º servidor o cluster atinge a configuração-alvo deste blueprint, quorum = 2 de 3,
+que permite perder qualquer 1 dos 3 servidores sem perder a capacidade de tomar decisões.
+
+```mermaid
+flowchart LR
+    accTitle: Evolução do quorum ao adicionar servidores
+    accDescr: Com 1 servidor não há quorum formado. Com 2 servidores, os dois precisam estar ativos ao mesmo tempo, um estado transitório frágil. Com 3 servidores, o cluster tolera a perda de qualquer um deles sem travar.
+
+    S1["1 servidor<br/>sem quorum formado"] --> S2["2 servidores<br/>quorum exige os 2 ativos<br/>(estado frágil, transitório)"]
+    S2 --> S3["3 servidores<br/>quorum = 2 de 3<br/>tolera perder qualquer 1"]
+```
+
+Veja [Arquitetura de quorum e etcd](../architecture/) para o raciocínio completo por trás desses
+números.
 
 A forma mais confiável de confirmar que o quorum está saudável é verificar que todos os
 servidores aparecem como `Ready`:

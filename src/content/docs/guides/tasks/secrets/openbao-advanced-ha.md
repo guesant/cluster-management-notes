@@ -82,6 +82,23 @@ Não faça backup de arquivos de configuração (`openbao.hcl`) como substituto 
 
 Os três cenários abaixo cobrem as formas de perda relevantes para esta topologia (réplicas de OpenBao, PostgreSQL compartilhado, chave KMS de auto-unseal). Eles não são equivalentes: identifique qual componente foi perdido antes de agir.
 
+```mermaid
+flowchart TD
+    accTitle: Gravidade da perda por componente na topologia de HA do OpenBao
+    accDescr: Perder uma ou duas réplicas de OpenBao não exige recuperação, elas se reintegram sozinhas. Perder o PostgreSQL exige restaurar o backup mais recente. Perder a chave KMS de auto-unseal é irrecuperável, por isso a única proteção é preventiva.
+
+    Perda["Componente perdido"]
+
+    Perda --> Replica["1 ou 2 réplicas de OpenBao"]
+    Replica --> ReplicaOK["Reintegram sozinhas<br/>sem comando manual"]
+
+    Perda --> PG["PostgreSQL"]
+    PG --> PGRestore["Restaurar backup mais recente<br/>reiniciar réplicas"]
+
+    Perda --> KMS["Chave KMS do auto-unseal"]
+    KMS --> KMSIrrecuperavel["Irrecuperável<br/>proteção só preventiva"]
+```
+
 **Perda de uma ou duas réplicas de OpenBao, com PostgreSQL e a chave KMS intactos.** Não é um evento de disaster recovery: basta reimplantar as réplicas perdidas com a mesma configuração (`openbao.hcl` apontando para o mesmo PostgreSQL e a mesma chave KMS). Elas se reintegram automaticamente ao cluster como standby, sem qualquer comando manual de restauração.
 
 **Perda do PostgreSQL.** Restaure o backup mais recente em uma nova instância e aponte a `connection_string` de todas as réplicas para ela:

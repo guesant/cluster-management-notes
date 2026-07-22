@@ -65,4 +65,5 @@ Checklist especializado referenciado pelo [checklist central](../cluster-operati
 
 ## Fontes e leitura adicional
 
-- [Debian Security](https://www.debian.org/security/): referência oficial de segurança e avisos da distribuição usada como base neste notebook.
+- [Debian Security](https://www.debian.org/security/): avisos e referência oficial de segurança para hosts Debian.
+- [Ubuntu Security Notices](https://ubuntu.com/security/notices): avisos e referência oficial de segurança equivalente para hosts Ubuntu, a outra distribuição coberta pelo [escopo do projeto](../../project/scope/).

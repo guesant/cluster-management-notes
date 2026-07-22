@@ -15,6 +15,21 @@ O `cloudflared`, o conector que implementa o Cloudflare Tunnel, inicia uma conex
 
 O ponto que exige atenção é onde o TLS é terminado: a conexão HTTPS pública do visitante termina na borda da Cloudflare, não no servidor de origem. A Cloudflare decifra a requisição, e o tráfego entre a borda e o `cloudflared` viaja por dentro do canal já cifrado do túnel, não necessariamente como uma segunda conexão TLS própria do serviço de origem. Na prática, isso significa que a Cloudflare tem acesso ao conteúdo decifrado da requisição em algum ponto do caminho, o preço operacional de terceirizar a borda pública para não precisar expor porta nenhuma.
 
+O diagrama a seguir mostra por que não existe porta de entrada para abrir: a única conexão de rede
+é iniciada de dentro para fora, pelo `cloudflared`, e o tráfego do visitante público chega ao
+serviço de origem viajando de volta por esse mesmo canal já estabelecido.
+
+```mermaid
+flowchart LR
+    accTitle: Caminho do tráfego no Cloudflare Tunnel
+    accDescr: O cloudflared inicia uma conexão de saída até a borda da Cloudflare. Um visitante público acessa o nome DNS, que a Cloudflare resolve roteando a requisição de volta por essa mesma conexão até o cloudflared, que entrega ao serviço local. Não existe conexão de entrada aberta no roteador ou firewall da origem.
+
+    Visitante["Visitante público"] -->|"HTTPS"| Borda["Borda da Cloudflare<br/>(TLS terminado aqui)"]
+    Cloudflared["cloudflared<br/>(origem, atrás de NAT)"] -->|"conexão de saída"| Borda
+    Borda -->|"tráfego roteado de volta<br/>pela mesma conexão"| Cloudflared
+    Cloudflared --> Servico["Serviço local"]
+```
+
 ## ngrok: da sessão efêmera ao domínio reservado
 
 O ngrok resolve o mesmo problema de fundo (publicar um serviço local sem abrir porta) com um modelo de uso historicamente mais associado a desenvolvimento e demonstração: rodar `ngrok http <porta>` cria uma URL pública imediatamente, útil para testar um webhook, mostrar uma tela em progresso, ou depurar uma integração que precisa alcançar `localhost`. No uso gratuito, essa URL costuma ser efêmera: muda a cada sessão, o que a torna inadequada como endereço permanente de um serviço.

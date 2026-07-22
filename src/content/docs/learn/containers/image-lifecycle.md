@@ -135,6 +135,24 @@ Notas de release e uma matriz declarada pelo fornecedor são o ponto de partida,
 
 Use uma mudança no estado desejado para iniciar o rollout. Uma automação pode descobrir releases e abrir uma proposta, mas não deve trocar silenciosamente a imagem efetiva de produção.
 
+O diagrama a seguir situa as três seções seguintes desta página (avaliação, PR/GitOps, rollout com
+critérios de sucesso ou interrupção) como um único fluxo, e mostra onde o rollback entra quando um
+critério de interrupção é atingido.
+
+```mermaid
+flowchart LR
+    accTitle: Fluxo de atualização de imagem por PR e GitOps
+    accDescr: A avaliação da release leva a um PR que altera o estado desejado no Git. O Argo CD reconcilia essa mudança e o rollout é acompanhado contra critérios de sucesso ou interrupção definidos antes do merge. Um critério de interrupção atingido leva a um PR de rollback, que reconcilia de volta o último estado bom conhecido.
+
+    Avaliar["Avaliar release<br/>e compatibilidade"] --> PR["PR altera<br/>estado desejado no Git"]
+    PR --> Argo["Argo CD reconcilia"]
+    Argo --> Rollout["Rollout acompanhado"]
+    Rollout --> Criterio{"Critério de sucesso<br/>ou interrupção?"}
+    Criterio -->|"sucesso"| Concluido["Evidência final registrada"]
+    Criterio -->|"interrupção"| Rollback["PR de rollback"]
+    Rollback --> Argo
+```
+
 Fluxo recomendado:
 
 1. inventarie a referência desejada e o `imageID` observado antes da mudança;

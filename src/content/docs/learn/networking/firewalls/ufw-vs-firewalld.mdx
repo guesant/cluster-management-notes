@@ -20,6 +20,26 @@ Nenhuma das duas ferramentas é estritamente superior: ambas configuram o mesmo 
 | Convenção de distribuição | Comum em Debian/Ubuntu | Comum em distribuições da família RHEL |
 | Sintaxe para regras complexas | Limitada; casos avançados exigem `iptables`/`nftables` diretamente | Rich rules cobrem mais casos sem sair do firewalld |
 
+O diagrama a seguir mostra a diferença de organização que mais separa as duas ferramentas na
+prática: UFW aplica uma política padrão por direção e uma lista de regras que vale para o host
+inteiro, enquanto firewalld associa cada interface a uma zona nomeada, com seu próprio conjunto de
+regras e nível de confiança.
+
+```mermaid
+flowchart TB
+    accTitle: Modelo de organização de UFW vs. firewalld
+    accDescr: No UFW, uma política padrão por direção e uma lista de regras se aplicam a todas as interfaces do host igualmente. No firewalld, cada interface é associada a uma zona nomeada, e cada zona tem seu próprio conjunto de regras e nível de confiança.
+
+    subgraph UFW["UFW"]
+        Host1["Host"] --> Policy["Política padrão + lista de regras<br/>(vale para todas as interfaces)"]
+    end
+
+    subgraph Firewalld["firewalld"]
+        Eth0["eth0 (pública)"] --> ZonaPublic["Zona: public"]
+        Eth1["eth1 (gerenciamento)"] --> ZonaInternal["Zona: internal"]
+    end
+```
+
 ## Quando UFW tende a ser a escolha mais simples
 
 Host com uma única interface relevante, política de confiança única ("bloqueia tudo, libera o necessário") e equipe já familiarizada com Debian/Ubuntu. É o caso padrão coberto por este notebook para um nó K3s single-node.

@@ -43,6 +43,22 @@ Pulumi descreve infraestrutura em linguagens de programação de propósito gera
 
 ## Gerenciamento do estado
 
+O ciclo `plan`/`apply` depende desse arquivo de estado para calcular a diferença entre o que o
+código declara e o que já existe de fato na nuvem, antes de decidir o que criar, alterar ou destruir.
+
+```mermaid
+flowchart LR
+    accTitle: Ciclo plan/apply do Terraform e Pulumi
+    accDescr: O código declara a infraestrutura desejada. O comando plan compara essa declaração com o arquivo de estado, que reflete o que a nuvem tem de fato, e calcula a diferença. O apply executa essa diferença e atualiza o estado.
+
+    Codigo["Código declarado"] --> Plan["plan: compara com o estado"]
+    Estado["Arquivo de estado<br/>(o que já existe)"] --> Plan
+    Plan --> Diff["Diferença calculada"]
+    Diff --> Apply["apply: executa a diferença"]
+    Apply --> Nuvem["Infraestrutura na nuvem"]
+    Apply --> Estado
+```
+
 Terraform e Pulumi dependem de um arquivo de estado para saber o que já foi provisionado. Mantê-lo localmente (`terraform.tfstate` no disco) significa perder todo o rastro de infraestrutura se esse disco falhar; um backend remoto com lock (um bucket S3 com DynamoDB para o lock, ou um serviço gerenciado como Terraform Cloud ou Pulumi Cloud) evita esse risco e também permite que mais de uma pessoa aplique mudanças sem corromper o estado por uma corrida entre duas execuções simultâneas. Um backend remoto é a configuração recomendada para qualquer ambiente além de um experimento local descartável.
 
 ## Módulos

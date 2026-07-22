@@ -90,6 +90,23 @@ cluster do zero, perdendo services, secrets e configs registrados nele.
 
 ### Procedimento
 
+O diagrama a seguir resume a sequência e destaca o ponto que mais gera erro nessa recuperação:
+`--force-new-cluster` cria um cluster novo a partir do backup restaurado, e rodá-lo em mais de um
+manager ao mesmo tempo produz dois clusters divergentes em vez de um só recuperado.
+
+```mermaid
+flowchart TD
+    accTitle: Recuperação de perda de quorum no Docker Swarm
+    accDescr: Restaura o backup em um único manager escolhido, roda force-new-cluster apenas nele, e traz os demais managers de volta como se fossem novos, juntando-se ao cluster recém-recriado.
+
+    Backup["Backup válido de /var/lib/docker/swarm/"] --> Restore["Restaurar no manager escolhido"]
+    Restore --> Force["docker swarm init --force-new-cluster<br/>(rodar uma única vez)"]
+    Force --> Join1["Manager 2 se junta<br/>como novo membro"]
+    Force --> Join2["Manager 3 se junta<br/>como novo membro"]
+    Join1 --> Verify["docker node ls / docker service ls"]
+    Join2 --> Verify
+```
+
 1. **No manager a ser restaurado** (ou em qualquer máquina que assumirá esse papel):
 
    ```bash

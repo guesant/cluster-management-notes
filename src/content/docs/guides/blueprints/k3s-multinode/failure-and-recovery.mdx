@@ -10,6 +10,32 @@ sidebar:
 Este guia cobre os cenários de falha mais comuns em um cluster multinode K3s com etcd embarcado
 e o procedimento de recuperação para cada um.
 
+O que determina a gravidade de cada cenário abaixo não é quantos nós falharam, mas se os
+servidores sobreviventes ainda formam quorum do etcd. Perder um agente nunca afeta o quorum
+(agentes não participam do consenso Raft); perder um servidor só é grave se o número de
+servidores restantes deixar de ser maioria.
+
+```mermaid
+flowchart TD
+    accTitle: Gravidade de cada cenário de falha por impacto no quorum
+    accDescr: Perder um agente nunca afeta o quorum. Perder um servidor mantém o cluster funcional enquanto os sobreviventes ainda formam maioria; perder servidores suficientes para ficar sem maioria trava o cluster para escrita e exige restaurar de um backup de etcd.
+
+    Falha["Um ou mais nós falham"]
+
+    Falha --> Agente["Só agentes<br/>(Cenário 1)"]
+    Agente --> AgenteOK["Cluster continua normal<br/>pods reagendados"]
+
+    Falha --> Servidor["Um ou mais servidores"]
+    Servidor --> Quorum{"Sobreviventes ainda<br/>formam maioria?"}
+    Quorum -->|"sim (Cenário 2)"| ServidorOK["Cluster continua<br/>eleição de líder se necessário"]
+    Quorum -->|"não (Cenário 3)"| Travado["Cluster travado para escrita<br/>restaurar de backup de etcd"]
+
+    Falha --> Rede["Partição de rede<br/>(Cenário 5)"]
+    Rede --> RedeQuorum{"Lado com quorum?"}
+    RedeQuorum -->|"existe"| RedeOK["Esse lado continua operando"]
+    RedeQuorum -->|"nenhum"| Travado
+```
+
 ## Cenário 1: Perda de 1 agente
 
 **Situação:** agente-1 fica inacessível ou falha (hardware, kernel panic, partição de rede).

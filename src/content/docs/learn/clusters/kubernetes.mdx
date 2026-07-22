@@ -7,6 +7,19 @@ sidebar:
 
 Kubernetes mantém aplicações em containers de acordo com recursos declarativos enviados à sua API. Em vez de descrever uma sequência de comandos para criar cada processo, o usuário declara o **estado desejado** em objetos como Deployments e Services. Controllers observam continuamente esses objetos, comparam o estado desejado com o estado atual e executam ações para aproximar os dois; esse ciclo é chamado de **reconciliação**.
 
+```mermaid
+flowchart LR
+    accTitle: Ciclo de reconciliação do Kubernetes
+    accDescr: O usuário declara o estado desejado na API. Um controller observa continuamente esse estado, compara com o estado atual do cluster e age para aproximar os dois, repetindo o ciclo indefinidamente.
+
+    User["Usuário declara<br/>estado desejado"] --> API["API do Kubernetes"]
+    API --> Controller["Controller observa"]
+    Controller --> Compare{"Estado atual<br/>= estado desejado?"}
+    Compare -->|"não"| Act["Executa ação<br/>(criar, atualizar, remover)"]
+    Act --> Controller
+    Compare -->|"sim"| Controller
+```
+
 Alguns recursos aparecem repetidamente neste guia e nos templates:
 
 | Recurso ou conceito | Função |

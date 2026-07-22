@@ -9,6 +9,15 @@ sidebar:
 
 Um cluster de nó único não tem failover: a perda do host físico (disco, hardware, provedor) exige reconstruir o cluster inteiro em uma nova máquina. Esta página cobre as duas estratégias possíveis; escolha uma antes de começar, conforme [ordem de recuperação](../../backups/backup-and-recovery/#ordem-de-recuperação). Misturar as duas estratégias no mesmo processo produz um estado inconsistente.
 
+```mermaid
+flowchart LR
+    accTitle: Duas estratégias de reconstrução, a partir de origens diferentes
+    accDescr: A estratégia 1 restaura o snapshot do etcd, recuperando exatamente o que estava registrado nele, incluindo recursos não declarados no Git. A estratégia 2 reconstrói via GitOps, recuperando apenas o que está declarado no repositório. As duas levam a um novo host com o cluster funcional, mas nunca devem ser combinadas no mesmo processo.
+
+    Snapshot["Snapshot do etcd"] -->|"Estratégia 1<br/>--cluster-reset"| Host["Novo host<br/>com cluster restaurado"]
+    Git["Repositório GitOps"] -->|"Estratégia 2<br/>Argo CD reconcilia do zero"| Host
+```
+
 ## Estratégia 1: restaurar do snapshot do etcd
 
 Recupera o estado exato registrado no último snapshot, incluindo recursos que não estavam declarados no Git.

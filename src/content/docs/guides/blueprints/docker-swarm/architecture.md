@@ -12,6 +12,38 @@ opcionalmente, também executam containers, além de suas responsabilidades de c
 
 ## Componentes
 
+O diagrama abaixo situa os quatro componentes descritos nesta seção uns em relação aos outros:
+managers trocam mensagens de consenso Raft entre si e agendam tarefas nos workers; uma requisição
+externa chega a qualquer nó do cluster através do ingress routing mesh, que a roteia até um
+container do service correspondente, onde quer que ele esteja rodando; e a rede overlay é o que
+permite que containers desse mesmo service, espalhados por hosts diferentes, se enxerguem como se
+estivessem numa única rede.
+
+```mermaid
+flowchart TB
+    accTitle: Componentes do Docker Swarm e como se relacionam
+    accDescr: Managers trocam consenso Raft entre si e agendam tarefas nos workers. Uma requisição externa entra pelo ingress routing mesh em qualquer nó do cluster e é roteada até um container do service, que se comunica com réplicas em outros hosts através da rede overlay.
+
+    subgraph Managers["Managers (consenso Raft)"]
+        M0["Manager-0"]
+        M1["Manager-1"]
+        M2["Manager-2"]
+    end
+
+    M0 <--> M1
+    M1 <--> M2
+    M0 <--> M2
+
+    Managers -- "agenda tarefas" --> W0["Worker-0"]
+    Managers -- "agenda tarefas" --> W1["Worker-1"]
+
+    Req["Requisição externa"] --> Mesh["Ingress routing mesh<br/>(qualquer nó do cluster)"]
+    Mesh --> W0
+    Mesh --> W1
+
+    W0 <-. "rede overlay" .-> W1
+```
+
 ### Manager
 
 Um manager participa do consenso Raft com os demais managers, mantém o estado do cluster

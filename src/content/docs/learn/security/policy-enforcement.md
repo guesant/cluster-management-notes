@@ -8,6 +8,17 @@ sidebar:
 
 Um cluster Kubernetes aceita, por padrão, qualquer manifest que passe pela validação de esquema da API. Nada impede que um Pod suba como root, sem limites de recursos, com `hostNetwork` habilitado ou com uma `NetworkPolicy` que libera todo o tráfego. Essas condições não são erros de sintaxe: são manifests tecnicamente válidos que violam expectativas de segurança e operação. Policy enforcement resolve esse problema inserindo uma etapa de validação (e, em alguns casos, de modificação) entre o `kubectl apply` e a gravação do recurso no etcd, usando o mecanismo de admission webhooks da API do Kubernetes.
 
+```mermaid
+flowchart LR
+    accTitle: Onde o admission webhook intercepta uma requisição
+    accDescr: kubectl apply chega à API do Kubernetes, que consulta o admission webhook antes de gravar o recurso no etcd. O webhook pode rejeitar a requisição ou, em alguns casos, mutá-la antes de aceitar.
+
+    Apply["kubectl apply"] --> API["API do Kubernetes"]
+    API --> Webhook{"Admission webhook<br/>(PSA, Kyverno ou Gatekeeper)"}
+    Webhook -->|"aceita (íntegro ou mutado)"| Etcd["Gravado no etcd"]
+    Webhook -->|"rejeita"| Erro["Requisição recusada"]
+```
+
 As três abordagens mais usadas para isso são o Pod Security Admission, o Kyverno e o OPA/Gatekeeper. Elas não competem pelo mesmo espaço: diferem em quanto controle oferecem, em que linguagem as políticas são escritas e em se conseguem apenas rejeitar recursos ou também modificá-los antes de aceitá-los.
 
 ## Pod Security Admission: o piso mínimo nativo
