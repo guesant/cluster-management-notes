@@ -9,12 +9,12 @@ sidebar:
 Checklist especializado referenciado pelo [checklist central](../cluster-operational-checklist/).
 
 - [ ] RBAC com privilégio mínimo para identidades não administrativas
-  - Explicação e configuração: [identidade, autenticação e RBAC](../../guides/tasks/kubernetes/configure-rbac/)
+  - Explicação e configuração: [identidade, autenticação e RBAC](../../../guides/tasks/kubernetes/configure-rbac/)
   - Verificação: `kubectl auth can-i --list --as <identidade>`
   - Frequência: ao criar uma identidade; revisar trimestralmente
 
 - [ ] Kubeconfig administrativo tratado como credencial sensível
-  - Explicação e configuração: [acesso remoto (kubeconfig)](../../guides/tasks/kubernetes/configure-kubeconfig/)
+  - Explicação e configuração: [acesso remoto (kubeconfig)](../../../guides/tasks/kubernetes/configure-kubeconfig/)
   - Verificação: `stat --format '%a %n' ~/.kube/config`
   - Resultado esperado: `600`
   - Frequência: após qualquer cópia ou distribuição do arquivo
@@ -25,7 +25,7 @@ Checklist especializado referenciado pelo [checklist central](../cluster-operati
   - Frequência: ao adicionar um novo workload
 
 - [ ] NetworkPolicies aplicadas conforme os fluxos reais das aplicações
-  - Explicação e configuração: [NetworkPolicy](../../guides/tasks/networking/configure-network-policies/)
+  - Explicação e configuração: [NetworkPolicy](../../../guides/tasks/networking/configure-network-policies/)
   - Verificação: `kubectl get networkpolicy --all-namespaces`
   - Frequência: ao alterar dependências de rede de um workload
 
@@ -35,12 +35,12 @@ Checklist especializado referenciado pelo [checklist central](../cluster-operati
   - Frequência: ao criar um namespace
 
 - [ ] Secrets não versionados em texto claro e não expostos em logs
-  - Explicação e configuração: [Infisical](../../guides/tasks/secrets/install-infisical/)
+  - Explicação e configuração: [Infisical](../../../guides/tasks/secrets/install-infisical/)
   - Verificação: `grep -rIl "BEGIN.*PRIVATE KEY\|password" gitops/ 2>/dev/null || printf 'nenhuma ocorrência\n'`
   - Frequência: antes de cada commit no repositório GitOps
 
 - [ ] Origem e versão das imagens controladas (sem tags flutuantes)
-  - Explicação e configuração: [ciclo de vida de imagens](../../learn/containers/image-lifecycle/)
+  - Explicação e configuração: [ciclo de vida de imagens](../../../learn/containers/image-lifecycle/)
   - Verificação: `kubectl get pods --all-namespaces -o jsonpath='{range .items[*].spec.containers[*]}{.image}{"\n"}{end}' | grep -E ':latest$|:lts$|:stable$'`
   - Resultado esperado: nenhuma linha retornada
   - Frequência: semanal
@@ -62,14 +62,20 @@ Checklist especializado referenciado pelo [checklist central](../cluster-operati
   - Frequência: ao criar um workload
 
 - [ ] Acesso à API restrito ao necessário (sem exposição pública desnecessária)
-  - Explicação e configuração: [acesso remoto (kubeconfig)](../../guides/tasks/kubernetes/configure-kubeconfig/)
+  - Explicação e configuração: [acesso remoto (kubeconfig)](../../../guides/tasks/kubernetes/configure-kubeconfig/)
   - Verificação: `kubectl cluster-info` a partir de uma rede não autorizada deve falhar
   - Frequência: trimestral
 
 - [ ] Certificados TLS válidos e renovação automática funcionando
-  - Explicação e configuração: [instalar o cert-manager](../../guides/tasks/certificates/install-cert-manager/)
+  - Explicação e configuração: [instalar o cert-manager](../../../guides/tasks/certificates/install-cert-manager/)
   - Verificação: veja [revisão de certificados](../../maintenance/certificate-review/)
   - Frequência: semanal
+
+- [ ] Varredura de postura do cluster sem falhas de severidade alta não justificadas
+  - Explicação e configuração: [modelo mental do Kubescape](../../../learn/security/kubescape/) e [varrer um cluster com Kubescape](../../../guides/tasks/security/scan-cluster-with-kubescape/)
+  - Verificação: `kubescape scan framework nsa --keep-local --severity-threshold High`
+  - Resultado esperado: código de saída zero, ou falhas registradas como exceção documentada
+  - Frequência: semanal, ou como gate de CI a cada mudança relevante
 
 ## Fontes e leitura adicional
 

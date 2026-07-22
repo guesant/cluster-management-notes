@@ -46,6 +46,7 @@ Quando os Pods não têm (ou não deveriam ter) um `Service` correspondente, ou 
 - [Instalar o Prometheus stack](../../../guides/tasks/observability/install-prometheus-stack/)
 - [Configurar um ServiceMonitor](../../../guides/tasks/observability/configure-service-monitor/)
 - [Alertas](../alerting/)
+- [Grafana Labs Blog](../../../resources/engineering-blogs/#grafana-labs-blog): acompanhamento contínuo de releases e práticas de observabilidade, no catálogo de recursos.
 
 ## Referências
 

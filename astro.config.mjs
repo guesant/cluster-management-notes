@@ -79,6 +79,14 @@ export default defineConfig({
 							label: 'Unix',
 							items: [{ autogenerate: { directory: 'learn/unix' } }],
 						},
+						{
+							label: 'Automação',
+							items: [{ autogenerate: { directory: 'learn/automation' } }],
+						},
+						{
+							label: 'Segurança',
+							items: [{ autogenerate: { directory: 'learn/security' } }],
+						},
 					],
 				},
 				{
@@ -87,6 +95,14 @@ export default defineConfig({
 						{
 							label: 'Blueprints',
 							items: [{ autogenerate: { directory: 'guides/blueprints' } }],
+						},
+						{
+							label: 'Automação',
+							items: [{ autogenerate: { directory: 'guides/tasks/automation' } }],
+						},
+						{
+							label: 'Segurança',
+							items: [{ autogenerate: { directory: 'guides/tasks/security' } }],
 						},
 						{
 							label: 'Host',

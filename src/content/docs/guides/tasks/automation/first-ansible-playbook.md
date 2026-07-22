@@ -153,6 +153,7 @@ Se a segunda execução ainda reportar `changed` numa tarefa que deveria estar e
 
 - [Modelo mental do Ansible](../../../../learn/automation/ansible-model/): control node, inventário, módulos e o contrato de idempotência que este procedimento valida na prática.
 - [Estrutura de um projeto Ansible](../../../../learn/automation/ansible-structure/): como este playbook cresceria para uma role, se o escopo aumentasse.
+- [Qualidade em Ansible: ansible-lint, Molecule e execução segura](../../../../learn/automation/ansible-quality/): como automatizar a validação de idempotência feita manualmente aqui.
 - [Preparar um servidor Debian](../../host/prepare-debian-server/): o roteiro completo, do qual a etapa de journal persistente usada aqui é apenas uma parte.
 - [Configurar journal persistente](../../host/configure-persistent-journal/): o mesmo procedimento, feito manualmente, sem Ansible.
 

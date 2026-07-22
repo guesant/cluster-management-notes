@@ -68,20 +68,7 @@ Ferramentas de varredura geram evidências auxiliares. Elas não substituem patc
 
 ## Catálogos e listas `awesome-*`
 
-| Catálogo | Escopo | Observação |
-| --- | --- | --- |
-| [CNCF Cloud Native Landscape](https://landscape.cncf.io/) | Projetos e produtos cloud native organizados por categoria | Fonte mantida pela CNCF para descoberta; inclusão no mapa não equivale a recomendação ou maturidade CNCF |
-| [Awesome Selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted) | Serviços e aplicações livres que podem ser hospedados pelo próprio usuário | Útil para descoberta; valide imagem, dependências, autenticação, backup e manutenção de cada projeto |
-| [Awesome Docker](https://github.com/veggiemonk/awesome-docker) | Ferramentas, imagens, operação e recursos relacionados ao Docker | Lista comunitária; observe os marcadores de projetos comerciais ou sem atividade |
-| [Awesome Compose](https://github.com/docker/awesome-compose) | Exemplos de Docker Compose mantidos pela organização Docker | Os próprios mantenedores classificam os exemplos como ponto de partida, não configuração pronta para produção |
-| [Awesome Kubernetes](https://github.com/ramitsurana/awesome-kubernetes) | Projetos, materiais e ferramentas para Kubernetes | Catálogo amplo; confirme atividade e compatibilidade diretamente no projeto escolhido |
-| [Awesome K8s Tools](https://github.com/vilaca/awesome-k8s-tools) | Índice automatizado de ferramentas para containers e Kubernetes | Ajuda a comparar categorias e atividade, mas métricas de repositório não substituem avaliação técnica |
-| [Awesome Security](https://github.com/sbilly/awesome-security) | Segurança de rede, host, aplicações e DevSecOps, incluindo firewalls | Mistura ferramentas defensivas e ofensivas; defina autorização e ambiente isolado antes de testar qualquer item |
-| [Awesome Sysadmin](https://github.com/awesome-foss/awesome-sysadmin) | Software livre para administração de sistemas e serviços | Útil para hosts, inventário e automação; verifique manutenção e privilégio exigido por cada ferramenta |
-| [Awesome WAF](https://github.com/0xInfection/Awesome-WAF) | Pesquisa e ferramentas sobre Web Application Firewalls | WAF atua sobre tráfego de aplicação e não substitui UFW, firewalld, nftables ou o firewall dos nós K3s |
-| [Awesome](https://github.com/sindresorhus/awesome) | Índice de listas comunitárias de muitos assuntos | Use como ponto de descoberta e siga até a documentação e o repositório oficial de cada projeto |
-
-Antes de copiar um exemplo de um catálogo, confira a data da última release, mantenedores ativos, advisories de segurança, licença, imagens oficiais, checksums ou assinaturas, privilégios solicitados e procedimento de remoção. Faça a primeira implantação em ambiente isolado e registre por que a ferramenta foi escolhida.
+Migrado para [materiais de estudo](../../../resources/study-materials/#catálogos-e-listas-awesome-), em `resources/`.
 
 ## Fontes e leitura adicional
 
