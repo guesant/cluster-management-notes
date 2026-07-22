@@ -66,4 +66,4 @@ O critério de decisão proposto é objetivo: se `cmcli check k3s` rodar em um o
 
 ## Referências
 
-- Ferramentas que inspiram o formato: `k9s` (TUI completa, veja [ferramentas de gerenciamento visual](../../learn/tools/visual-management/)), `kubectx` (descoberta rápida de contexto), `dive` (análise de camadas de imagem).
+- Ferramentas que inspiram o formato: `k9s` (TUI completa, veja [ferramentas de gerenciamento visual](../../toolbox/tools/host-management/visual-management/)), `kubectx` (descoberta rápida de contexto), `dive` (análise de camadas de imagem).

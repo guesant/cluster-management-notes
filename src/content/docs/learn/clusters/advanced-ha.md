@@ -46,7 +46,7 @@ O etcd embarcado do K3s liga o quorum de dados ao número de servidores em execu
 
 ## Backup permanece obrigatório
 
-Nenhuma das três medidas acima substitui backup: elas reduzem a chance de indisponibilidade por falha de infraestrutura, não protegem contra um erro lógico (exclusão acidental, corrupção, um `kubectl delete` no namespace errado). Continue com o snapshot do etcd e, para dados de workloads e volumes, o [Velero](../../backup/velero-overview/), independentemente de qual topologia de HA for adotada.
+Nenhuma das três medidas acima substitui backup: elas reduzem a chance de indisponibilidade por falha de infraestrutura, não protegem contra um erro lógico (exclusão acidental, corrupção, um `kubectl delete` no namespace errado). Continue com o snapshot do etcd e, para dados de workloads e volumes, o [Velero](../../backups/velero-overview/), independentemente de qual topologia de HA for adotada.
 
 ## Quando adotar HA avançada
 

@@ -26,7 +26,7 @@ restante do escopo está em expansão. Veja o que ainda falta em
   operacional acima de flexibilidade.
 
 As premissas técnicas detalhadas (usuário assumido, formato dos blocos de comando, versões de
-referência) estão em [Escopo, convenções e versões](../../reference/conventions/).
+referência) estão em [Escopo, convenções e versões](../conventions/).
 
 ## Para quem é
 

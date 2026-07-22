@@ -12,7 +12,7 @@ Referência única dos valores que precisam ser decididos antes ou durante a imp
 | IP do nó | [Instalar o primeiro servidor](../../../guides/tasks/kubernetes/install-first-k3s-server/) | Usado em `node-ip` e `tls-san`. |
 | Host/IP estável da API | [Instalar o primeiro servidor](../../../guides/tasks/kubernetes/install-first-k3s-server/) | Endereço que clientes e outros nós usarão para alcançar a API; incluído em `tls-san`. |
 | Token do cluster | [Instalar o primeiro servidor](../../../guides/tasks/kubernetes/install-first-k3s-server/) | Gerado automaticamente pelo formulário; guarde em um gerenciador de segredos. |
-| Versão do K3s | [Instalar o primeiro servidor](../../../guides/tasks/kubernetes/install-first-k3s-server/) | Fixe a versão testada; veja [convenções e versões](../../../reference/conventions/). |
+| Versão do K3s | [Instalar o primeiro servidor](../../../guides/tasks/kubernetes/install-first-k3s-server/) | Fixe a versão testada; veja [convenções e versões](../../../project/conventions/). |
 | Versão da Gateway API | [Gateway API e Traefik](../../../guides/tasks/networking/configure-traefik-gateway-api/) | CRDs Standard. |
 | Versão do cert-manager | [Instalar o cert-manager](../../../guides/tasks/certificates/install-cert-manager/) | Fixe a versão testada. |
 | E-mail de contato ACME | [Criar um ClusterIssuer ACME](../../../guides/tasks/certificates/create-acme-clusterissuer/) | Usado pelo Let's Encrypt para avisos de expiração/problemas. |
@@ -27,4 +27,4 @@ Cada variável relevante ao escopo escolhido (nem todo cluster usa todos os mód
 
 ## Fontes e leitura adicional
 
-- [Escopo, convenções e versões](../../../reference/conventions/): versões de referência usadas por padrão nos formulários deste notebook.
+- [Escopo, convenções e versões](../../../project/conventions/): versões de referência usadas por padrão nos formulários deste notebook.

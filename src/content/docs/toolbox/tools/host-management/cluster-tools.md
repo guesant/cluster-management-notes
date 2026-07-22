@@ -7,7 +7,7 @@ sidebar:
 
 > **Para quem é:** operadores que já decidiram qual ferramenta visual usar e querem o comando de instalação, sem repetir a comparação entre elas.
 
-Esta página é a referência rápida de instalação. Para entender as diferenças entre k9s, Lens, Rancher, Portainer e Headlamp (categoria, overhead, quando cada um se justifica), veja [ferramentas de gerenciamento visual](../../../../learn/tools/visual-management/); esta página não repete essa comparação, só os comandos.
+Esta página é a referência rápida de instalação. Para entender as diferenças entre k9s, Lens, Rancher, Portainer e Headlamp (categoria, overhead, quando cada um se justifica), veja [ferramentas de gerenciamento visual](../visual-management/); esta página não repete essa comparação, só os comandos.
 
 ## k9s
 
@@ -27,7 +27,7 @@ Dentro da TUI: `:pod`, `:deployment`, `:node` navegam entre tipos de recurso; `?
 
 ## Lens
 
-Download na [página oficial](https://k8slens.dev/). O modelo de licenciamento do Lens mudou mais de uma vez desde que o projeto passou para a Mirantis, incluindo o fork comunitário OpenLens; confirme na documentação oficial qual edição está sendo instalada antes de adotar em um ambiente corporativo (veja a ressalva completa em [ferramentas de gerenciamento visual](../../../../learn/tools/visual-management/#lens-cliente-desktop-com-múltiplos-clusters)).
+Download na [página oficial](https://k8slens.dev/). O modelo de licenciamento do Lens mudou mais de uma vez desde que o projeto passou para a Mirantis, incluindo o fork comunitário OpenLens; confirme na documentação oficial qual edição está sendo instalada antes de adotar em um ambiente corporativo (veja a ressalva completa em [ferramentas de gerenciamento visual](../visual-management/#lens-cliente-desktop-com-múltiplos-clusters)).
 
 ## Rancher
 

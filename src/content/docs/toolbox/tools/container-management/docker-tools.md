@@ -7,7 +7,7 @@ sidebar:
 
 > **Para quem é:** quem já usa `docker`/`docker compose` pela linha de comando (ver [cookbook de containers](../../commands/containers/)) e quer uma sessão interativa para navegar entre containers, acompanhar consumo de recursos em tempo real, ou entender por que uma imagem ficou grande.
 
-Esta categoria cobre ferramentas específicas do Docker/Compose em um único host. Para administração visual de um cluster Kubernetes/K3s (k9s, Lens, Rancher, Portainer, Headlamp), veja [administração de hosts](../../host-management/) e a comparação em [ferramentas de gerenciamento visual](../../../learn/tools/visual-management/); `lazydocker` também aparece resumido na tabela de [Docker, Swarm e containers](../../overview/#docker-swarm-e-containers) do catálogo geral, esta página é o ponto de referência dedicado.
+Esta categoria cobre ferramentas específicas do Docker/Compose em um único host. Para administração visual de um cluster Kubernetes/K3s (k9s, Lens, Rancher, Portainer, Headlamp), veja [administração de hosts](../../host-management/) e a comparação em [ferramentas de gerenciamento visual](../../host-management/visual-management/); `lazydocker` também aparece resumido na tabela de [Docker, Swarm e containers](../../overview/#docker-swarm-e-containers) do catálogo geral, esta página é o ponto de referência dedicado.
 
 ## lazydocker: TUI de administração do Docker
 

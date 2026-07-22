@@ -35,7 +35,7 @@ Todos os perfis pedem um host ou IP estável para a API. Este roteiro usa esse e
 
 **Obrigatória para todos os perfis.**
 
-1. Confirme o [escopo, as convenções e as versões de referência](../../reference/conventions/).
+1. Confirme o [escopo, as convenções e as versões de referência](../../project/conventions/).
 2. Leia os [conceitos do Kubernetes](../../learn/clusters/kubernetes/) e a [arquitetura do K3s](../../learn/clusters/k3s-architecture/).
 3. Siga o [planejamento do cluster](../planning/) para definir nomes, endereços, endpoint da API, quantidade de servidores e custódia do token.
 4. Escolha um dos perfis acima.

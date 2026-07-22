@@ -2,7 +2,7 @@
 title: Visão geral do Velero
 description: Explica o que o Velero cobre além de um snapshot de etcd (volumes, manifests, restauração seletiva) e quando cada um dos dois é a ferramenta certa.
 sidebar:
-  order: 4
+  order: 7
 ---
 
 > **Para quem é:** operadores que já conhecem o snapshot do etcd e precisam decidir se também precisam do Velero para cobrir volumes e workloads.

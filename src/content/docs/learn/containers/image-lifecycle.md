@@ -5,7 +5,7 @@ sidebar:
   order: 8
 ---
 
-Este guia transforma os itens de imagens do [guia de operação contínua](../../../operations/checklists/cluster-operational-checklist/) em um fluxo prático de avaliação, atualização, implantação e rollback. Antes de aplicá-lo a produção, confirme também os requisitos de [prontidão dos workloads](../../../operations/checklists/application-readiness/) e as [convenções deste repositório](../../../reference/conventions/).
+Este guia transforma os itens de imagens do [guia de operação contínua](../../../operations/checklists/cluster-operational-checklist/) em um fluxo prático de avaliação, atualização, implantação e rollback. Antes de aplicá-lo a produção, confirme também os requisitos de [prontidão dos workloads](../../../operations/checklists/application-readiness/) e as [convenções deste repositório](../../../project/conventions/).
 
 O objetivo não é atualizar toda imagem assim que uma versão aparece. O objetivo é manter cada mudança identificável, revisável, compatível, observável e reversível dentro dos limites reais da aplicação.
 

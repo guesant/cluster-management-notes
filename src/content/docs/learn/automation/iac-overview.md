@@ -2,7 +2,7 @@
 title: "Infraestrutura como código: Terraform, OpenTofu, Pulumi"
 description: Explica o que Infraestrutura como Código resolve e compara Terraform, OpenTofu e Pulumi para provisionar máquinas e infraestrutura de nuvem.
 sidebar:
-  order: 1
+  order: 4
 ---
 
 > **Para quem é:** operadores que querem provisionar máquinas e infraestrutura, não apenas aplicações dentro de um cluster já existente, a partir de código versionado.

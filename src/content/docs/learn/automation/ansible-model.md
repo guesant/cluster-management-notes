@@ -7,7 +7,7 @@ sidebar:
 
 > **Para quem é:** quem nunca usou Ansible e precisa entender o modelo antes de escrever o primeiro playbook.
 
-Ansible aplica configuração em um conjunto de hosts a partir de um único ponto de controle, sem exigir que nenhum agente fique instalado e rodando permanentemente nesses hosts. Ele resolve um problema diferente do provisionamento de máquinas: enquanto uma ferramenta de Infraestrutura como Código como o [Terraform](../../infrastructure/iac-overview/) cria a máquina, o Ansible configura o que roda dentro dela (pacotes instalados, arquivos de configuração, serviços habilitados) depois que ela já existe.
+Ansible aplica configuração em um conjunto de hosts a partir de um único ponto de controle, sem exigir que nenhum agente fique instalado e rodando permanentemente nesses hosts. Ele resolve um problema diferente do provisionamento de máquinas: enquanto uma ferramenta de Infraestrutura como Código como o [Terraform](../iac-overview/) cria a máquina, o Ansible configura o que roda dentro dela (pacotes instalados, arquivos de configuração, serviços habilitados) depois que ela já existe.
 
 ## Como funciona
 
@@ -58,7 +58,7 @@ Para provisionar a máquina em si (criar a instância, alocar disco, configurar 
 ## Páginas relacionadas
 
 - [Estrutura de um projeto Ansible: playbooks, roles e Vault](../ansible-structure/), a continuação natural: como organizar mais de uma tarefa num projeto real.
-- [Infraestrutura como código: Terraform, OpenTofu, Pulumi](../../infrastructure/iac-overview/), para a camada de provisionamento que o Ansible não cobre.
+- [Infraestrutura como código: Terraform, OpenTofu, Pulumi](../iac-overview/), para a camada de provisionamento que o Ansible não cobre.
 - [Ferramentas de automação e orquestração](../../../toolbox/tools/automation/automation-tools/), para instalação do `ansible-core` e o que avaliar antes de adotá-lo.
 
 ## Referências

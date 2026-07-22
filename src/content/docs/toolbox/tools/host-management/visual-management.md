@@ -2,7 +2,7 @@
 title: Ferramentas de gerenciamento visual
 description: Compara k9s, Lens, Rancher, Portainer e Headlamp como alternativas visuais ao kubectl puro, por interface, escopo multi-cluster e overhead operacional.
 sidebar:
-  order: 1
+  order: 2
 ---
 
 > **Para quem é:** operadores que já usam `kubectl` no dia a dia e querem avaliar se uma ferramenta visual reduz o esforço de navegar, inspecionar ou operar o cluster.
@@ -66,7 +66,7 @@ Até a escrita deste texto, a versão mais recente do chart no Artifact Hub é `
 há uma versão mais nova nas [releases do repositório](https://github.com/kubernetes-sigs/headlamp/releases)
 antes de instalar, e leia o changelog do chart para identificar mudanças que afetem uma instalação
 já existente. Este notebook não fixa uma versão de referência para o Headlamp em
-[convenções](../../../reference/conventions/).
+[convenções](../../../../project/conventions/).
 
 Depois de instalado, o acesso ao dashboard normalmente passa por `kubectl port-forward` ou por uma `Ingress`/`Gateway` própria, e não deveria ser exposto publicamente sem autenticação: um dashboard administrativo do cluster tem, por definição, acesso a segredos e à capacidade de criar ou excluir recursos, então a mesma segmentação de rede aplicada a outros serviços de administração (VPN, rede interna, ou autenticação forte no ponto de entrada) deve valer aqui.
 
